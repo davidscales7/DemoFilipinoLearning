@@ -30,12 +30,14 @@ const AppHeader = () => {
         </TouchableOpacity>
       ) : (
         <View style={styles.header}>
+         
           <TouchableOpacity onPress={handleNavigateToFilipinoScreen}>
             <Image
               source={require('../../assets/images/FlagPhil.gif')}
               style={styles.reactLogo}
             />
           </TouchableOpacity>
+
           <TouchableOpacity onPress={handleNavigateToUkrainianScreen}>
             <Image
               source={require('../../assets/images/FlagUkraine.gif')}

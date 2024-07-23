@@ -6,6 +6,7 @@ import { RootStackParamList } from './navigation';
 import AppHeader from '../components/AppHeader';
 import UkrainianScreen from '../components/UkrainianLearning';
 import FilipinoLearning from '../components/FilipinoLearning';
+import FilipinoGreetingsScreen from '../components/FilipinoLessons/FilipinoGreetings';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -16,6 +17,9 @@ function AppNavigator() {
         <Stack.Screen name="Home" component={AppHeader} />
         <Stack.Screen name="Ukrainian" component={UkrainianScreen} />
         <Stack.Screen name="Filipino" component={FilipinoLearning} />
+        <Stack.Screen name="FilipinoGreetings" component={FilipinoGreetingsScreen} /> 
+      
+
       </Stack.Navigator>
     </NavigationContainer>
   );
