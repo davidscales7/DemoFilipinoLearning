@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './../navigation/navigation';
@@ -14,6 +14,14 @@ const FilipinoLearning: React.FC = () => {
   };
 
   return (
+
+
+<ImageBackground 
+    source={require('../../assets/images/PhilipinesBackground.jpg')} // Update this path to your actual image path
+    style={styles.ImageBackground}
+  >
+
+
     <View style={styles.container}>
       <Text style={styles.titleText}>Filipino Learning</Text>
 
@@ -50,6 +58,7 @@ const FilipinoLearning: React.FC = () => {
       <Text style={styles.catogoriesText}>House items</Text>
       
       </View>
+    </ImageBackground>
   );
 };
 
@@ -58,28 +67,33 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F0F4F8',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     paddingVertical: 20,
   },
   titleText: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20, // Adds space below the title
+    marginBottom: 20,
   },
   catogoriesText: {
     fontSize: 20,
-    marginVertical: 5, // Adds space above and below each category
+    marginVertical: 10,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 5, // Adds space above and below the row
+    marginVertical: 10,
   },
   image: {
-    width: 20, // Set the width of the image
-    height: 20, // Set the height of the image
-    marginLeft: 10, // Adds space between the text and the image
+    width: 20,
+    height: 20,
+    marginLeft: 10,
+  },
+  ImageBackground: {
+    flex: 1,
+    resizeMode: 'repeat',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
-
 export default FilipinoLearning;

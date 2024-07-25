@@ -2,7 +2,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground} from 'react-native';
 import { RootStackParamList } from '../navigation/navigation';
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -19,6 +19,14 @@ const AppHeader = () => {
   };
 
   return (
+
+    <ImageBackground 
+    source={require('../../assets/images/PhilipinesBackground.jpg')} // Update this path to your actual image path
+    style={styles.backgroundImage}
+  >
+
+
+
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Welcome</Text>
       {!isClicked ? (
@@ -47,35 +55,42 @@ const AppHeader = () => {
         </View>
       )}
     </View>
+    </ImageBackground>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F0F4F8',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 20,
   },
   clickableGif: {
-    width: 200,
-    height: 200,
+    width: 100,
+    height: 100,
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     alignItems: 'center',
     marginTop: 50,
   },
   welcomeText: {
     fontSize: 24,
-    marginTop: 50,
+    marginVertical: 20,
+    textAlign: 'center',
   },
   reactLogo: {
-    width: 200,
-    height: 100,
-    marginHorizontal: 10,
+    width: 100,
+    height: 50,
+    marginHorizontal: 20,
   },
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }
 });
-
 export default AppHeader;
