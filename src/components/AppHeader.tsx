@@ -20,12 +20,10 @@ const AppHeader = () => {
 
   return (
 
-    <ImageBackground 
-    source={require('../../assets/images/PhilipinesBackground.jpg')} // Update this path to your actual image path
-    style={styles.backgroundImage}
-  >
-
-
+  //   <ImageBackground 
+  //   source={require('../../assets/images/PhilipinesBackground.jpg')} // Update this path to your actual image path
+  //   style={styles.backgroundImage}
+  // >
 
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Welcome</Text>
@@ -55,15 +53,15 @@ const AppHeader = () => {
         </View>
       )}
     </View>
-    </ImageBackground>
+    // </ImageBackground>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0F4F8',
-    alignItems: 'center',
+    // backgroundColor: '#F0F4F8',
     justifyContent: 'center',
+    alignItems: 'center',
     padding: 20,
   },
   clickableGif: {

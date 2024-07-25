@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './../navigation/navigation';
@@ -14,49 +14,36 @@ const FilipinoLearning: React.FC = () => {
   };
 
   return (
+    <ImageBackground 
+      source={require('../../assets/images/PhilipinesBackground.jpg')}
+      resizeMode="cover"
+    >
+      <View style={styles.container}>
+        <Text style={styles.titleText}>Filipino Learning</Text>
+        
+        <Text style={styles.catogoriesText}>Daily lessons</Text>
+        <Text style={styles.catogoriesText}>Learn new topic</Text>
+        
+        <TouchableOpacity 
+          style={styles.row} 
+          onPress={handleNavigateToFilipinoGreetingScreen}
+        >
+          <Text style={styles.catogoriesText}>Greetings</Text>
+          <Image 
+            source={require('../../assets/images/GreetingImg.jpg')}
+            style={styles.image}
+          />
+        </TouchableOpacity>
 
-
-<ImageBackground 
-    source={require('../../assets/images/PhilipinesBackground.jpg')} // Update this path to your actual image path
-    style={styles.ImageBackground}
-  >
-
-
-    <View style={styles.container}>
-      <Text style={styles.titleText}>Filipino Learning</Text>
-
-      <Text style={styles.catogoriesText}>Daily lessons</Text>
-      <Text style={styles.catogoriesText}>Learn new topic</Text>
-
-      <TouchableOpacity 
-        style={styles.row} 
-        onPress={handleNavigateToFilipinoGreetingScreen}
-      >
-        <Text style={styles.catogoriesText}>Greetings</Text>
-        <Image 
-          source={require('../../assets/images/GreetingImg.jpg')} // Update this path to your actual image path
-          style={styles.image}
-        />
-      </TouchableOpacity>
-
-      <Text style={styles.catogoriesText}>Body parts</Text>
-
-      <Text style={styles.catogoriesText}>Colours</Text>
-
-      <Text style={styles.catogoriesText}>Food + drink</Text>
-
-      <Text style={styles.catogoriesText}>Weather</Text>
-
-      <Text style={styles.catogoriesText}>Sports</Text>
-
-      <Text style={styles.catogoriesText}>Transports</Text>
-
-      <Text style={styles.catogoriesText}>Family</Text>
-
-      <Text style={styles.catogoriesText}>General topics</Text>
-
-      <Text style={styles.catogoriesText}>House items</Text>
-      
+        <Text style={styles.catogoriesText}>Body parts</Text>
+        <Text style={styles.catogoriesText}>Colours</Text>
+        <Text style={styles.catogoriesText}>Food + drink</Text>
+        <Text style={styles.catogoriesText}>Weather</Text>
+        <Text style={styles.catogoriesText}>Sports</Text>
+        <Text style={styles.catogoriesText}>Transports</Text>
+        <Text style={styles.catogoriesText}>Family</Text>
+        <Text style={styles.catogoriesText}>General topics</Text>
+        <Text style={styles.catogoriesText}>House items</Text>
       </View>
     </ImageBackground>
   );
@@ -65,7 +52,6 @@ const FilipinoLearning: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0F4F8',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
@@ -89,11 +75,13 @@ const styles = StyleSheet.create({
     height: 20,
     marginLeft: 10,
   },
-  ImageBackground: {
+  imageBackground: {
     flex: 1,
-    resizeMode: 'repeat',
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
 });
+
 export default FilipinoLearning;

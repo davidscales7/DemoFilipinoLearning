@@ -18,8 +18,6 @@ function AppNavigator() {
         <Stack.Screen name="Ukrainian" component={UkrainianScreen} />
         <Stack.Screen name="Filipino" component={FilipinoLearning} />
         <Stack.Screen name="FilipinoGreetings" component={FilipinoGreetingsScreen} /> 
-      
-
       </Stack.Navigator>
     </NavigationContainer>
   );
