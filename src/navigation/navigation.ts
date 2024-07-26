@@ -4,6 +4,9 @@ export type RootStackParamList = {
     Ukrainian: String;
     Filipino: String;
     FilipinoGreetings: String;
+    FilipinoBodyparts:String;
+    FilipinoNewTopic:String;
+    FilipinoDailyLesson:String;
     NotFound: undefined;
 
   };
