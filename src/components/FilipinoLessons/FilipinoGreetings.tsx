@@ -1,15 +1,46 @@
-// FilipinoGreetingsScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import Flashcard from '../Flashcard';
 
-const FilipinoGreetingsScreen: React.FC = () => {
+const Greetings: React.FC = () => {
   const flashcards = [
-    { front: 'Hello', back: 'Kamusta' },
-    { front: 'Goodbye', back: 'Paalam' },
-    { front: 'Thank you', back: 'Salamat' },
-    { front: 'Yes', back: 'Oo' },
-    { front: 'No', back: 'Hindi' },
+    {
+      front: 'Hello',
+      back: 'Kamusta',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+    },
+    {
+      front: 'Good morning',
+      back: 'Magandang Hapon',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+    },
+    {
+      front: 'Good evening',
+      back: 'Magandang gabi',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+    },
+    {
+      front: 'Good afternoon',
+      back: 'Magandang hapon',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+    },
+    {
+      front: 'Goodbye',
+      back: 'palaam',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+    },
+    {
+      front: 'You',
+      back: 'Ikaw',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+    },
+   
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -34,6 +65,8 @@ const FilipinoGreetingsScreen: React.FC = () => {
       <Flashcard
         frontText={flashcards[currentIndex].front}
         backText={flashcards[currentIndex].back}
+        frontImageSrc={flashcards[currentIndex].frontImageSrc}
+        backImageSrc={flashcards[currentIndex].backImageSrc}
         reset={reset}
         onResetComplete={handleResetComplete}
       />
@@ -64,4 +97,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FilipinoGreetingsScreen;
+export default Greetings;
