@@ -55,7 +55,7 @@ const handleNavigateToFilipinoFamilyScreen = () => {
 };
 
 const handleNavigateToFilipinoGeneralTopicsScreen = () => {
-  navigation.navigate('FilipinoGeneralTopics');
+ navigation.navigate('FilipinoGeneralTopics');
 };
 
 const handleNavigateToFilipinoHouseItemsScreen = () => {

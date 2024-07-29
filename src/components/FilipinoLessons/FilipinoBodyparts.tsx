@@ -74,8 +74,6 @@ const FilipinoBodyparts: React.FC = () => {
       <Flashcard
         frontText={flashcards[currentIndex].front}
         backText={flashcards[currentIndex].back}
-        frontImageSrc={flashcards[currentIndex].frontImageSrc}
-        backImageSrc={flashcards[currentIndex].backImageSrc}
         reset={reset}
         onResetComplete={handleResetComplete}
       />

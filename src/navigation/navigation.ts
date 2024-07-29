@@ -7,7 +7,19 @@ export type RootStackParamList = {
     FilipinoBodyparts:String;
     FilipinoNewTopic:String;
     FilipinoDailyLesson:String;
+    FilipinoColours:String;
+    FilipinoFamily:String;
+    FilipinoFoodAndDrink:String;
+    FilipinoWeather:String;
+    FilipinoGeneralTopcs:String;
+    FilipinoHouseItems:String;
+    FilipinoSports:String;
+    FilipinoTransports:String;
+    FilipinoGeneralTopics:String
+    FilipinoAnimals:String;
+    
     NotFound: undefined;
+    
 
   };
   

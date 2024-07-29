@@ -11,7 +11,12 @@ import FilipinoBodyparts from '../components/FilipinoLessons/FilipinoBodyparts';
 import FilipinoNewTopic from '../components/FilipinoLessons/FilipinoNewTopic';
 import FilipinoDailyLesson from '../components/FilipinoLessons/FilipinoDailyLesson';
 
+import FilipinoColours from '../components/FilipinoLessons/FilipinoColours';
+import FilipinoFamily from '../components/FilipinoLessons/FilipinoFamily';
 
+import FilipinoFoodAndDrink from '../components/FilipinoLessons/FilipinoFoodAndDrink';
+
+import FilipinoAnimals from '../components/FilipinoLessons/FilipinoAnimals';
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -27,6 +32,12 @@ function AppNavigator() {
        <Stack.Screen name = "FilipinoBodyparts" component={FilipinoBodyparts}/>
        <Stack.Screen name = "FilipinoNewTopic" component={FilipinoNewTopic}/>
        <Stack.Screen name = "FilipinoDailyLesson" component={FilipinoDailyLesson}/>
+       <Stack.Screen name = "FilipinoColours" component={FilipinoColours}/>
+       <Stack.Screen name = "FilipinoFamily" component = {FilipinoFamily}/>
+       <Stack.Screen name = "FilipinoAnimals" component = {FilipinoAnimals}/>
+        <Stack.Screen name = "FilipinoFoodAndDrink" component = {FilipinoFoodAndDrink}/>
+
+
 
 
       </Stack.Navigator>
