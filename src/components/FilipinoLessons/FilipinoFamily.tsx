@@ -1,55 +1,65 @@
-// FilipinoGreetingsScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import Flashcard from '../Flashcard';
 
-const FilipinoFamily: React.FC = () => {
+const FilipinoFamily: React.FC = () => { // Consider renaming this component to better reflect the content
   const flashcards = [
     {
-      front: 'Eye',
-      back: 'Mata',
+      front: 'Sister',
+      back: 'Ate',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
- 
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-    },
-
-    {
-      front: 'Eyes',
-      back: 'Mga mata',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-    },
-
-    {
-      front: 'Nose',
-      back: 'Ilong',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/sister.png'),
+      soundSrc: require('../../../assets/Voice/Ate.mp3'),
     },
     {
-      front: 'Ears',
-      back: 'Tainga',
+      front: 'Brother',
+      back: 'Kuya',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/brother.png'),
+      soundSrc: require('../../../assets/Voice/kuya.mp3'),
     },
     {
-      front: 'Finger',
-      back: 'Daliri',
+      front: 'Father',
+      back: 'Papa/Tatay',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/father.png'),
+      soundSrc: require('../../../assets/Voice/Papa-tatay.mp3'),
     },
     {
-        front: 'Hand',
-        back: 'Kamay',
-        frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-        backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      },
-      {
-        front: 'Feet',
-        back: 'Paa',
-        frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-        backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      },
+      front: 'Mother',
+      back: 'Mama/Nanay',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/mother.png'),
+      soundSrc: require('../../../assets/Voice/Mama-Nanay.mp3'),
+    },
+    {
+      front: 'Cousin',
+      back: 'Pinsan',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/cousin.png'),
+      soundSrc: require('../../../assets/Voice/pinsan.mp3'),
+    },
+    {
+      front: 'Sibling',
+      back: 'Kapatid',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/sibling.png'),
+      soundSrc: require('../../../assets/Voice/kapatid.mp3'),
+    },
+    {
+      front: 'Grandad',
+      back: 'Lolo',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/grandad.png'),
+      soundSrc: require('../../../assets/Voice/Lolo.mp3'),
+    },
+    {
+      front: 'Grandma',
+      back: 'Lola',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/grandma.png'),
+      soundSrc: require('../../../assets/Voice/Lola.mp3'),
+    },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -70,10 +80,13 @@ const FilipinoFamily: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Filipino Greetings</Text>
+      <Text style={styles.title}>Filipino Family</Text>
       <Flashcard
         frontText={flashcards[currentIndex].front}
         backText={flashcards[currentIndex].back}
+        frontImageSrc={flashcards[currentIndex].frontImageSrc}
+        backImageSrc={flashcards[currentIndex].backImageSrc}
+        soundSrc={flashcards[currentIndex].soundSrc}
         reset={reset}
         onResetComplete={handleResetComplete}
       />
@@ -104,4 +117,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FilipinoFamily
+export default FilipinoFamily; // Adjusted component name

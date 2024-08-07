@@ -1,4 +1,3 @@
-// FilipinoGreetingsScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import Flashcard from '../Flashcard';
@@ -9,47 +8,51 @@ const FilipinoBodyparts: React.FC = () => {
       front: 'Eye',
       back: 'Mata',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
- 
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/eye.jpg'),
+      soundSrc: require('../../../assets/Voice/Mata.mp3'),
     },
-
     {
       front: 'Eyes',
-      back: 'Mga mata',
+      back: 'Mga Mata',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/eyes.jpg'),
+      soundSrc: require('../../../assets/Voice/MgaMata.mp3'),
     },
-
     {
       front: 'Nose',
       back: 'Ilong',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/nose.jpg'),
+      soundSrc: require('../../../assets/Voice/Ilong.mp3'),
     },
     {
       front: 'Ears',
       back: 'Tainga',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/ears.jpg'),
+      soundSrc: require('../../../assets/Voice/Tainga.mp3'),
     },
     {
       front: 'Finger',
       back: 'Daliri',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/finger.png'),
+      soundSrc: require('../../../assets/Voice/Daliri.mp3'),
     },
     {
-        front: 'Hand',
-        back: 'Kamay',
-        frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-        backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      },
-      {
-        front: 'Feet',
-        back: 'Paa',
-        frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-        backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      },
+      front: 'Hand',
+      back: 'Kamay',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/hand.jpg'),
+      soundSrc: require('../../../assets/Voice/Kamay.mp3'),
+    },
+    {
+      front: 'Feet',
+      back: 'Paa',
+      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      backImageSrc: require('../../../assets/images/feet.jpg'),
+      soundSrc: require('../../../assets/Voice/Paa.mp3'),
+    },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -70,10 +73,13 @@ const FilipinoBodyparts: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Filipino Greetings</Text>
+      <Text style={styles.title}>Filipino Body Parts</Text>
       <Flashcard
         frontText={flashcards[currentIndex].front}
         backText={flashcards[currentIndex].back}
+        frontImageSrc={flashcards[currentIndex].frontImageSrc}
+        backImageSrc={flashcards[currentIndex].backImageSrc}
+        soundSrc={flashcards[currentIndex].soundSrc}
         reset={reset}
         onResetComplete={handleResetComplete}
       />

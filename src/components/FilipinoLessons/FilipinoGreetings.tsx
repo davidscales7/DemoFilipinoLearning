@@ -9,38 +9,43 @@ const Greetings: React.FC = () => {
       back: 'Kamusta',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
       backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      soundSrc: require('../../../assets/Voice/Kamusta.mp3'),
     },
     {
       front: 'Good morning',
       back: 'Magandang Hapon',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
       backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      soundSrc: require('../../../assets/Voice/MagandangHapon.mp3'),
     },
     {
       front: 'Good evening',
       back: 'Magandang gabi',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
       backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      soundSrc: require('../../../assets/Voice/MagandangGabi.mp3'),
     },
     {
       front: 'Good afternoon',
       back: 'Magandang hapon',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
       backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      soundSrc: require('../../../assets/Voice/MagandangHapon.mp3'),
     },
     {
       front: 'Goodbye',
-      back: 'palaam',
+      back: 'Paalam',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
       backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      soundSrc: require('../../../assets/Voice/Paalam.mp3'),
     },
     {
       front: 'You',
       back: 'Ikaw',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
       backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
+      soundSrc: require('../../../assets/Voice/ikaw.mp3'),
     },
-   
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -67,6 +72,7 @@ const Greetings: React.FC = () => {
         backText={flashcards[currentIndex].back}
         frontImageSrc={flashcards[currentIndex].frontImageSrc}
         backImageSrc={flashcards[currentIndex].backImageSrc}
+        soundSrc={flashcards[currentIndex].soundSrc}
         reset={reset}
         onResetComplete={handleResetComplete}
       />
@@ -77,6 +83,7 @@ const Greetings: React.FC = () => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const FilipinoSports: React.FC = () => {
+const FilipinoSportsScreen: React.FC = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Filipino sport screen</Text>
+      <Text style={styles.text}>They're all the same </Text>
     </View>
   );
 };
@@ -23,4 +23,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FilipinoSports;
+export default FilipinoSportsScreen;

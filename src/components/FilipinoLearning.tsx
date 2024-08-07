@@ -38,10 +38,7 @@ const FilipinoLearning: React.FC = () => {
     navigation.navigate('FilipinoWeather');
   };
 
-  const handleNavigateToFilipinoSportsScreen = () => {
-    navigation.navigate('FilipinoSports');
-  };
-
+ 
   const handleNavigateToFilipinoTransportsScreen = () => {
     navigation.navigate('FilipinoTransports');
   };
@@ -149,7 +146,7 @@ const FilipinoLearning: React.FC = () => {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             style={[styles.row, styles.box]} 
             onPress={handleNavigateToFilipinoSportsScreen}
           >
@@ -158,7 +155,7 @@ const FilipinoLearning: React.FC = () => {
               source={require('../../assets/images/sports.jpg')}
               style={styles.image}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity 
             style={[styles.row, styles.box]} 

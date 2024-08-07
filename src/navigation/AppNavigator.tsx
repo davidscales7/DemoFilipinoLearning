@@ -10,18 +10,17 @@ import FilipinoGreetingsScreen from '../components/FilipinoLessons/FilipinoGreet
 import FilipinoBodyparts from '../components/FilipinoLessons/FilipinoBodyparts';
 import FilipinoNewTopic from '../components/FilipinoLessons/FilipinoNewTopic';
 import FilipinoDailyLesson from '../components/FilipinoLessons/FilipinoDailyLesson';
-
-import FilipinoColours from '../components/FilipinoLessons/FilipinoColours';
-import FilipinoFamily from '../components/FilipinoLessons/FilipinoFamily';
-
-import FilipinoFoodAndDrink from '../components/FilipinoLessons/FilipinoFoodAndDrink';
-
-import FilipinoAnimals from '../components/FilipinoLessons/FilipinoAnimals';
-import FilipinoWeather from '../components/FilipinoLessons/FilipinoWeather';
-import FilipinoSports from '../components/FilipinoLessons/FilipinoSports';
-
-import FilipinoTransportScreen from '../components/FilipinoLessons/FilipinoTransports';
+import FilipinoColoursScreen from '../components/FilipinoLessons/FilipinoColours';
+import FilipinoFamilyScreen from '../components/FilipinoLessons/FilipinoFamily';
+import FilipinoFoodAndDrinkScreen from '../components/FilipinoLessons/FilipinoFoodAndDrink';
+import FilipinoGeneralTopics from '../components/FilipinoLessons/FilipinoGeneralTopics';
 import FilipinoHouseItemsScreen from '../components/FilipinoLessons/FilipinoHouseItems';
+import FilipinoSportsScreen from '../components/FilipinoLessons/FilipinoSports';
+import FilipinoTransportScreen from '../components/FilipinoLessons/FilipinoTransports';
+import FilipinoWeatherScreen from '../components/FilipinoLessons/FilipinoWeather';
+import FilipinoAnimalsScreen from '../components/FilipinoLessons/FilipinoAnimals';
+
+
 
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -37,20 +36,18 @@ function AppNavigator() {
        <Stack.Screen name = "FilipinoBodyparts" component={FilipinoBodyparts}/>
        <Stack.Screen name = "FilipinoNewTopic" component={FilipinoNewTopic}/>
        <Stack.Screen name = "FilipinoDailyLesson" component={FilipinoDailyLesson}/>
-       <Stack.Screen name = "FilipinoColours" component={FilipinoColours}/>
-       <Stack.Screen name = "FilipinoFamily" component = {FilipinoFamily}/>
-       <Stack.Screen name = "FilipinoAnimals" component = {FilipinoAnimals}/>
-        <Stack.Screen name = "FilipinoFoodAndDrink" component = {FilipinoFoodAndDrink}/>
-        <Stack.Screen name = "FilipinoWeather" component = {FilipinoWeather}/>
-      
-        <Stack.Screen name = "FilipinoSports" component = {FilipinoSports}/>
-          
-        <Stack.Screen name = "FilipinoTransports" component = {FilipinoTransportScreen}/>
-          
-        <Stack.Screen name = "FilipinoHouseItems" component = {FilipinoHouseItemsScreen}/>
-        
-      
-
+       <Stack.Screen name = "FilipinoColours" component={FilipinoColoursScreen}/>
+       <Stack.Screen name = "FilipinoFamily" component={FilipinoFamilyScreen}/>
+       <Stack.Screen name = "FilipinoFoodAndDrink" component={FilipinoFoodAndDrinkScreen}/>
+       <Stack.Screen name = "FilipinoGeneralTopics" component={FilipinoGeneralTopics}/>
+       <Stack.Screen name = "FilipinoHouseItems" component={FilipinoHouseItemsScreen}/>
+       <Stack.Screen name = "FilipinoSports" component={FilipinoSportsScreen}/>
+       <Stack.Screen name = "FilipinoTransports" component={FilipinoTransportScreen}/>
+       <Stack.Screen name = "FilipinoWeather" component={FilipinoWeatherScreen}/>
+       <Stack.Screen name = "FilipinoAnimals" component={FilipinoAnimalsScreen}/>
+       
+       
+       
 
       </Stack.Navigator>
     </NavigationContainer>
