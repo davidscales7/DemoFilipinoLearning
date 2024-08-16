@@ -2,118 +2,41 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from './../navigation/navigation';
+import { RootStackParamList } from './../../navigation/navigation';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
-const FilipinoLearning: React.FC = () => {
-  const navigation = useNavigation<HomeScreenNavigationProp>();
-  const [showFlashcards, setShowFlashcards] = useState(false);
+const FilipinoFlashHome: React.FC = () => {
+    const navigation = useNavigation<HomeScreenNavigationProp>();
+    const [showFlashcards, ] = useState(true);
+  
+   
+  
+    const handleNavigateToTopic = (topic: keyof RootStackParamList) => {
+      navigation.navigate(topic);
+    };
+  
+   
 
-  const toggleFlashcards = () => {
-    setShowFlashcards(!showFlashcards);
-  };
-
-  const handleNavigateToTopic = (topic: keyof RootStackParamList) => {
-    navigation.navigate(topic);
-  };
-
-  const handleNavigateToQuizzesScreen = () => {
-    navigation.navigate('FilipinoQuizzes');
-  };
-
-  const handleNavigateToFilipinoFlashHome = () => {
-    navigation.navigate('FilipinoFlashHome');
-  };
-
-
-
-  const handleNavigateToLessonsScreen = () => {
-    navigation.navigate('FilipinoLessons');
-  };
-
-  const handleNavigateToAccoladesScreen = () => {
-    navigation.navigate('FilipinoAccolades');
-  };
+ 
 
   return (
     <ImageBackground
-      source={require('../../assets/images/PhilipinesBackground.jpg')}
+      source={require('../../../assets/images/PhilipinesBackground.jpg')}
       resizeMode="cover"
       style={styles.imageBackground}
     >
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.container}>
-          <Text style={styles.titleText}>Filipino Learning</Text>
+          <Text style={styles.titleText}>Filipino Flashcards</Text>
 
-          <View style={styles.gridContainer}>
-            <TouchableOpacity 
-              style={[styles.gridItem, styles.box]} 
-              onPress={handleNavigateToFilipinoFlashHome}>
-              <Text style={styles.categoriesText}>Flashcards</Text>
-              <Image 
-                source={require('../../assets/images/flashcards.jpg')}
-                style={styles.image}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[styles.gridItem, styles.box]} 
-              onPress={handleNavigateToQuizzesScreen}
-            >
-              <Text style={styles.categoriesText}>Quizzes</Text>
-              <Image 
-                source={require('../../assets/images/quizzes.jpg')}
-                style={styles.image}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[styles.gridItem, styles.box]} 
-              onPress={handleNavigateToLessonsScreen}
-            >
-              <Text style={styles.categoriesText}>Lessons</Text>
-              <Image 
-                source={require('../../assets/images/lessons.jpg')}
-                style={styles.image}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={[styles.gridItem, styles.box]} 
-              onPress={handleNavigateToAccoladesScreen}
-            >
-              <Text style={styles.categoriesText}>Accolades</Text>
-              <Image 
-                source={require('../../assets/images/accolades.jpg')}
-                style={styles.image}
-              />
-            </TouchableOpacity>
+        
           </View>
 
           {showFlashcards && (
             <View style={styles.flashcardsContainer}>
-              <TouchableOpacity 
-                style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoDailyLesson')}
-              >
-                <Text style={styles.categoriesText}>Daily lessons</Text>
-                <Image 
-                  source={require('../../assets/images/DailyLesson.jpg')}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
+             
 
-              <TouchableOpacity 
-                style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoNewTopic')}
-              >
-                <Text style={styles.categoriesText}>Learn new topic</Text>
-                <Image 
-                  source={require('../../assets/images/newTopic.png')}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
@@ -121,7 +44,7 @@ const FilipinoLearning: React.FC = () => {
               >
                 <Text style={styles.categoriesText}>Greetings</Text>
                 <Image 
-                  source={require('../../assets/images/GreetingImg.jpg')}
+                  source={require('../../../assets/images/GreetingImg.jpg')}
                   style={styles.image}
                 />
               </TouchableOpacity>
@@ -132,7 +55,7 @@ const FilipinoLearning: React.FC = () => {
               >
                 <Text style={styles.categoriesText}>Body Parts</Text>
                 <Image 
-                  source={require('../../assets/images/bodyPartsImg.jpg')}
+                  source={require('../../../assets/images/bodyPartsImg.jpg')}
                   style={styles.image}
                 />
               </TouchableOpacity>
@@ -143,7 +66,7 @@ const FilipinoLearning: React.FC = () => {
               >
                 <Text style={styles.categoriesText}>Colours</Text>
                 <Image 
-                  source={require('../../assets/images/Colours.jpg')}
+                  source={require('../../../assets/images/Colours.jpg')}
                   style={styles.image}
                 />
               </TouchableOpacity>
@@ -154,7 +77,7 @@ const FilipinoLearning: React.FC = () => {
               >
                 <Text style={styles.categoriesText}>Food + drink</Text>
                 <Image 
-                  source={require('../../assets/images/FoodAndDrink.jpg')}
+                  source={require('../../../assets/images/FoodAndDrink.jpg')}
                   style={styles.image}
                 />
               </TouchableOpacity>
@@ -165,7 +88,7 @@ const FilipinoLearning: React.FC = () => {
               >
                 <Text style={styles.categoriesText}>Weather</Text>
                 <Image 
-                  source={require('../../assets/images/Weather.jpg')}
+                  source={require('../../../assets/images/Weather.jpg')}
                   style={styles.image}
                 />
               </TouchableOpacity>
@@ -176,7 +99,7 @@ const FilipinoLearning: React.FC = () => {
               >
                 <Text style={styles.categoriesText}>Transports</Text>
                 <Image 
-                  source={require('../../assets/images/family.jpg')}
+                  source={require('../../../assets/images/family.jpg')}
                   style={styles.image}
                 />
               </TouchableOpacity>
@@ -187,7 +110,7 @@ const FilipinoLearning: React.FC = () => {
               >
                 <Text style={styles.categoriesText}>Family</Text>
                 <Image 
-                  source={require('../../assets/images/family.jpg')}
+                  source={require('../../../assets/images/family.jpg')}
                   style={styles.image}
                 />
               </TouchableOpacity>
@@ -198,7 +121,7 @@ const FilipinoLearning: React.FC = () => {
               >
                 <Text style={styles.categoriesText}>General topics</Text>
                 <Image 
-                  source={require('../../assets/images/GeneralTopics.jpg')}
+                  source={require('../../../assets/images/GeneralTopics.jpg')}
                   style={styles.image}
                 />
               </TouchableOpacity>
@@ -209,7 +132,7 @@ const FilipinoLearning: React.FC = () => {
               >
                 <Text style={styles.categoriesText}>House Items</Text>
                 <Image 
-                  source={require('../../assets/images/transports.jpg')}
+                  source={require('../../../assets/images/transports.jpg')}
                   style={styles.image}
                 />
               </TouchableOpacity>
@@ -220,13 +143,13 @@ const FilipinoLearning: React.FC = () => {
               >
                 <Text style={styles.categoriesText}>Animals</Text>
                 <Image 
-                  source={require('../../assets/images/Animals.jpg')}
+                  source={require('../../../assets/images/Animals.jpg')}
                   style={styles.image}
                 />
               </TouchableOpacity>
             </View>
           )}
-        </View>
+        
       </ScrollView>
     </ImageBackground>
   );
@@ -295,4 +218,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default FilipinoLearning;
+export default FilipinoFlashHome;

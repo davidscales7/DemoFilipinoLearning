@@ -6,23 +6,23 @@ import { RootStackParamList } from './navigation';
 import AppHeader from '../components/AppHeader';
 import UkrainianScreen from '../components/UkrainianLearning';
 import FilipinoLearning from '../components/FilipinoLearning';
-import FilipinoGreetingsScreen from '../components/FilipinoLessons/FilipinoGreetings';
-import FilipinoBodyparts from '../components/FilipinoLessons/FilipinoBodyparts';
-import FilipinoNewTopic from '../components/FilipinoLessons/FilipinoNewTopic';
-import FilipinoDailyLesson from '../components/FilipinoLessons/FilipinoDailyLesson';
-import FilipinoColoursScreen from '../components/FilipinoLessons/FilipinoColours';
-import FilipinoFamilyScreen from '../components/FilipinoLessons/FilipinoFamily';
-import FilipinoFoodAndDrinkScreen from '../components/FilipinoLessons/FilipinoFoodAndDrink';
-import FilipinoGeneralTopics from '../components/FilipinoLessons/FilipinoGeneralTopics';
-import FilipinoHouseItemsScreen from '../components/FilipinoLessons/FilipinoHouseItems';
-import FilipinoSportsScreen from '../components/FilipinoLessons/FilipinoSports';
-import FilipinoTransportScreen from '../components/FilipinoLessons/FilipinoTransports';
-import FilipinoWeatherScreen from '../components/FilipinoLessons/FilipinoWeather';
-import FilipinoAnimalsScreen from '../components/FilipinoLessons/FilipinoAnimals';
-
-
-
-
+import FilipinoGreetingsScreen from '../components/FilipinoFlash/FilipinoGreetings';
+import FilipinoBodyparts from '../components/FilipinoFlash/FilipinoBodyparts';
+import FilipinoNewTopic from '../components/FilipinoFlash/FilipinoNewTopic';
+import FilipinoDailyLesson from '../components/FilipinoFlash/FilipinoDailyLesson';
+import FilipinoColoursScreen from '../components/FilipinoFlash/FilipinoColours';
+import FilipinoFamilyScreen from '../components/FilipinoFlash/FilipinoFamily';
+import FilipinoFoodAndDrinkScreen from '../components/FilipinoFlash/FilipinoFoodAndDrink';
+import FilipinoGeneralTopics from '../components/FilipinoFlash/FilipinoGeneralTopics';
+import FilipinoHouseItemsScreen from '../components/FilipinoFlash/FilipinoHouseItems';
+import FilipinoSportsScreen from '../components/FilipinoFlash/FilipinoSports';
+import FilipinoTransportScreen from '../components/FilipinoFlash/FilipinoTransports';
+import FilipinoWeatherScreen from '../components/FilipinoFlash/FilipinoWeather';
+import FilipinoAnimalsScreen from '../components/FilipinoFlash/FilipinoAnimals';
+import FilipinoLessons from '../components/FilipinoLessons/FilipinoLessons';
+import FilipinoAccolades from '../components/FilipinoAccolades/FilipinoAccolades';
+import FilipinoQuizzes from '../components/FilipinoQuizzes/FiliipinoQuizzes';
+import FilipinoFlashHome from '../components/FilipinoFlash/FilipinoFlashHome';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
@@ -45,7 +45,10 @@ function AppNavigator() {
        <Stack.Screen name = "FilipinoTransports" component={FilipinoTransportScreen}/>
        <Stack.Screen name = "FilipinoWeather" component={FilipinoWeatherScreen}/>
        <Stack.Screen name = "FilipinoAnimals" component={FilipinoAnimalsScreen}/>
-       
+       <Stack.Screen name = "FilipinoLessons" component={FilipinoLessons}/>
+       <Stack.Screen name = "FilipinoQuizzes" component={FilipinoQuizzes}/>
+       <Stack.Screen name = "FilipinoAccolades" component ={FilipinoAccolades}/>     
+       <Stack.Screen name = "FilipinoFlashHome" component ={FilipinoFlashHome}/>
        
        
 

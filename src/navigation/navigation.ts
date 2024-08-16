@@ -17,6 +17,12 @@ export type RootStackParamList = {
     FilipinoTransports:String;
     FilipinoGeneralTopics:String
     FilipinoAnimals:String;
+    FilipinoLessons:String;
+    FilipinoAccolades:String;
+    FilipinoQuizzes:String;
+    
+    FilipinoFlashHome:String;
+
     NotFound: undefined;
 
   };

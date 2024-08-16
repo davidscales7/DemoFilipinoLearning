@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import Flashcard from '../Flashcard';
 
-const Greetings: React.FC = () => {
+const animals: React.FC = () => {
   const flashcards = [
     {
       front: 'Cat',
@@ -143,4 +143,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Greetings;
+export default animals;
