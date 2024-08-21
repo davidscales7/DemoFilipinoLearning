@@ -22,12 +22,6 @@ const FilipinoLearning: React.FC = () => {
     navigation.navigate('FilipinoQuizzes');
   };
 
-  const handleNavigateToFilipinoFlashHome = () => {
-    navigation.navigate('FilipinoFlashHome');
-  };
-
-
-
   const handleNavigateToLessonsScreen = () => {
     navigation.navigate('FilipinoLessons');
   };
@@ -49,7 +43,8 @@ const FilipinoLearning: React.FC = () => {
           <View style={styles.gridContainer}>
             <TouchableOpacity 
               style={[styles.gridItem, styles.box]} 
-              onPress={handleNavigateToFilipinoFlashHome}>
+              onPress={toggleFlashcards}
+            >
               <Text style={styles.categoriesText}>Flashcards</Text>
               <Image 
                 source={require('../../assets/images/flashcards.jpg')}

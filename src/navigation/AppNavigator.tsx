@@ -23,6 +23,9 @@ import FilipinoLessons from '../components/FilipinoLessons/FilipinoLessons';
 import FilipinoAccolades from '../components/FilipinoAccolades/FilipinoAccolades';
 import FilipinoQuizzes from '../components/FilipinoQuizzes/FiliipinoQuizzes';
 import FilipinoFlashHome from '../components/FilipinoFlash/FilipinoFlashHome';
+
+
+import Lesson1 from '../components/FilipinoLessons/Lesson1';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
@@ -50,7 +53,7 @@ function AppNavigator() {
        <Stack.Screen name = "FilipinoAccolades" component ={FilipinoAccolades}/>     
        <Stack.Screen name = "FilipinoFlashHome" component ={FilipinoFlashHome}/>
        
-       
+       <Stack.Screen name = "Lesson1" component ={Lesson1}/>
 
       </Stack.Navigator>
     </NavigationContainer>

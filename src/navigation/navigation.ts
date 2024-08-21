@@ -21,7 +21,23 @@ export type RootStackParamList = {
     FilipinoAccolades:String;
     FilipinoQuizzes:String;
     
+   
+    
     FilipinoFlashHome:String;
+
+
+
+
+    Lesson1: String;
+//     Lesson2: String;
+// Lesson3: String;
+// Lesson4: String;
+// Lesson5: String;
+// Lesson6: String;
+// Lesson7: String;
+// Lesson8: String;
+// Lesson9: String;
+// Lesson10: String;
 
     NotFound: undefined;
 

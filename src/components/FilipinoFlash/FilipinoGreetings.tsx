@@ -13,10 +13,10 @@ const Greetings: React.FC = () => {
     },
     {
       front: 'Good morning',
-      back: 'Magandang Hapon',
+      back: 'Magandang Umaga',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
       backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      soundSrc: require('../../../assets/Voice/MagandangHapon.mp3'),
+      soundSrc: require('../../../assets/Voice/MagandangUmaga.mp3'),
     },
     {
       front: 'Good evening',
