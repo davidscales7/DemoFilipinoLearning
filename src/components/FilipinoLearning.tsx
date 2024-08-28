@@ -14,8 +14,8 @@ const FilipinoLearning: React.FC = () => {
     setShowFlashcards(!showFlashcards);
   };
 
-  const handleNavigateToTopic = (topic: keyof RootStackParamList) => {
-    navigation.navigate(topic);
+  const handleNavigateToDailyLesson = () => {
+    navigation.navigate('FilipinoDailyLesson');
   };
 
   const handleNavigateToQuizzesScreen = () => {
@@ -28,6 +28,50 @@ const FilipinoLearning: React.FC = () => {
 
   const handleNavigateToAccoladesScreen = () => {
     navigation.navigate('FilipinoAccolades');
+  };
+
+  const handleNavigateToBodyParts = () => {
+    navigation.navigate('FilipinoBodyParts');
+  };
+
+  const handleNavigateToNewTopic = () => {
+    navigation.navigate('FilipinoNewTopic');
+  };
+
+  const handleNavigateToFoodAndDrink = () => {
+    navigation.navigate('FilipinoFoodAndDrink');
+  };
+
+  const handleNavigateToColours = () => {
+    navigation.navigate('FilipinoColours');
+  };
+
+  const handleNavigateToGreetings = () => {
+    navigation.navigate('FilipinoGreetings');
+  };
+
+  const handleNavigateToGeneralTopics = () => {
+    navigation.navigate('FilipinoGeneralTopics');
+  };
+
+  const handleNavigateToFamily = () => {
+    navigation.navigate('FilipinoFamily');
+  };
+
+  const handleNavigateToTransport = () => {
+    navigation.navigate('FilipinoTransports');
+  };
+
+  const handleNavigateToHouseItems = () => {
+    navigation.navigate('FilipinoHouseItems');
+  };
+
+  const handleNavigateToWeather = () => {
+    navigation.navigate('FilipinoWeather');
+  };
+
+  const handleNavigateToAnimals = () => {
+    navigation.navigate('FilipinoAnimals');
   };
 
   return (
@@ -90,7 +134,7 @@ const FilipinoLearning: React.FC = () => {
             <View style={styles.flashcardsContainer}>
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoDailyLesson')}
+                onPress={handleNavigateToDailyLesson}
               >
                 <Text style={styles.categoriesText}>Daily lessons</Text>
                 <Image 
@@ -101,7 +145,7 @@ const FilipinoLearning: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoNewTopic')}
+                onPress={handleNavigateToNewTopic}
               >
                 <Text style={styles.categoriesText}>Learn new topic</Text>
                 <Image 
@@ -112,7 +156,7 @@ const FilipinoLearning: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoGreetings')}
+                onPress={handleNavigateToGreetings}
               >
                 <Text style={styles.categoriesText}>Greetings</Text>
                 <Image 
@@ -123,7 +167,7 @@ const FilipinoLearning: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoBodyparts')}
+                onPress={handleNavigateToBodyParts}
               >
                 <Text style={styles.categoriesText}>Body Parts</Text>
                 <Image 
@@ -134,7 +178,7 @@ const FilipinoLearning: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoColours')}
+                onPress={handleNavigateToColours}
               >
                 <Text style={styles.categoriesText}>Colours</Text>
                 <Image 
@@ -145,7 +189,7 @@ const FilipinoLearning: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoFoodAndDrink')}
+                onPress={handleNavigateToFoodAndDrink}
               >
                 <Text style={styles.categoriesText}>Food + drink</Text>
                 <Image 
@@ -156,7 +200,7 @@ const FilipinoLearning: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoWeather')}
+                onPress={handleNavigateToWeather}
               >
                 <Text style={styles.categoriesText}>Weather</Text>
                 <Image 
@@ -167,18 +211,18 @@ const FilipinoLearning: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoTransports')}
+                onPress={handleNavigateToTransport}
               >
                 <Text style={styles.categoriesText}>Transports</Text>
                 <Image 
-                  source={require('../../assets/images/family.jpg')}
+                  source={require('../../assets/images/transports.jpg')}
                   style={styles.image}
                 />
               </TouchableOpacity>
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoFamily')}
+                onPress={handleNavigateToFamily}
               >
                 <Text style={styles.categoriesText}>Family</Text>
                 <Image 
@@ -189,7 +233,7 @@ const FilipinoLearning: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoGeneralTopics')}
+                onPress={handleNavigateToGeneralTopics}
               >
                 <Text style={styles.categoriesText}>General topics</Text>
                 <Image 
@@ -200,18 +244,18 @@ const FilipinoLearning: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoHouseItems')}
+                onPress={handleNavigateToHouseItems}
               >
                 <Text style={styles.categoriesText}>House Items</Text>
                 <Image 
-                  source={require('../../assets/images/transports.jpg')}
+                  source={require('../../assets/images/houseItems.jpg')}
                   style={styles.image}
                 />
               </TouchableOpacity>
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoAnimals')}
+                onPress={handleNavigateToAnimals}
               >
                 <Text style={styles.categoriesText}>Animals</Text>
                 <Image 

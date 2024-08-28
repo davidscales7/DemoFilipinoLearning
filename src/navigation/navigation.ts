@@ -1,45 +1,28 @@
-// navigation.ts
 export type RootStackParamList = {
-    Home: String;
-    Ukrainian: String;
-    Filipino: String;
-    FilipinoGreetings: String;
-    FilipinoBodyparts:String;
-    FilipinoNewTopic:String;
-    FilipinoDailyLesson:String;
-    FilipinoColours:String;
-    FilipinoFamily:String;
-    FilipinoFoodAndDrink:String;
-    FilipinoWeather:String;
-    FilipinoGeneralTopcs:String;
-    FilipinoHouseItems:String;
-    FilipinoSports:String;
-    FilipinoTransports:String;
-    FilipinoGeneralTopics:String
-    FilipinoAnimals:String;
-    FilipinoLessons:String;
-    FilipinoAccolades:String;
-    FilipinoQuizzes:String;
-    
-   
-    
-    FilipinoFlashHome:String;
-
-
-
-
-    Lesson1: String;
-//     Lesson2: String;
-// Lesson3: String;
-// Lesson4: String;
-// Lesson5: String;
-// Lesson6: String;
-// Lesson7: String;
-// Lesson8: String;
-// Lesson9: String;
-// Lesson10: String;
-
+    Home: undefined;
+    Ukrainian: undefined;
+    Filipino: undefined;
+    FilipinoGreetings: undefined;
+    FilipinoBodyParts: undefined;
+    FilipinoNewTopic: undefined;
+    FilipinoDailyLesson: undefined;
+    FilipinoColours: undefined;
+    FilipinoFamily: undefined;
+    FilipinoFoodAndDrink: undefined;
+    FilipinoWeather: undefined;
+    FilipinoGeneralTopics: undefined;
+    FilipinoHouseItems: undefined;
+    FilipinoSports: undefined;
+    FilipinoTransports: undefined;
+    FilipinoAnimals: undefined;
+    FilipinoLessons: undefined;
+    FilipinoAccolades: undefined;
+    FilipinoQuizzes: undefined;
+    FilipinoFlashHome: undefined;
+    Lesson1: undefined;
+    Lesson2: undefined;
+    Lesson3: undefined;
+    Lesson4: undefined;
     NotFound: undefined;
-
   };
   

@@ -10,12 +10,13 @@ const FilipinoLessons: React.FC = () => {
   const navigation = useNavigation<LessonsScreenNavigationProp>();
 
   const handleNavigateToLesson = (lesson: keyof RootStackParamList) => {
-    navigation.navigate(lesson);
+    navigation.navigate(lesson as any);
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.titleText}>Filipino Lessons</Text>
+      
       {Array.from({ length: 10 }, (_, i) => (
         <TouchableOpacity
           key={i}

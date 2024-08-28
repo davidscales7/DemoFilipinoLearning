@@ -7,7 +7,7 @@ import AppHeader from '../components/AppHeader';
 import UkrainianScreen from '../components/UkrainianLearning';
 import FilipinoLearning from '../components/FilipinoLearning';
 import FilipinoGreetingsScreen from '../components/FilipinoFlash/FilipinoGreetings';
-import FilipinoBodyparts from '../components/FilipinoFlash/FilipinoBodyparts';
+import FilipinoBodyParts from '../components/FilipinoFlash/FilipinoBodyparts';
 import FilipinoNewTopic from '../components/FilipinoFlash/FilipinoNewTopic';
 import FilipinoDailyLesson from '../components/FilipinoFlash/FilipinoDailyLesson';
 import FilipinoColoursScreen from '../components/FilipinoFlash/FilipinoColours';
@@ -26,6 +26,14 @@ import FilipinoFlashHome from '../components/FilipinoFlash/FilipinoFlashHome';
 
 
 import Lesson1 from '../components/FilipinoLessons/Lesson1';
+import Lesson2 from '../components/FilipinoLessons/Lesson2';
+import Lesson3 from '../components/FilipinoLessons/Lesson3';
+
+import Lesson4 from '../components/FilipinoLessons/Lesson4';
+
+
+
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
@@ -36,7 +44,7 @@ function AppNavigator() {
         <Stack.Screen name="Ukrainian" component={UkrainianScreen} />
         <Stack.Screen name="Filipino" component ={FilipinoLearning} />
         <Stack.Screen name="FilipinoGreetings" component={FilipinoGreetingsScreen} /> 
-       <Stack.Screen name = "FilipinoBodyparts" component={FilipinoBodyparts}/>
+       <Stack.Screen name = "FilipinoBodyParts" component={FilipinoBodyParts}/>
        <Stack.Screen name = "FilipinoNewTopic" component={FilipinoNewTopic}/>
        <Stack.Screen name = "FilipinoDailyLesson" component={FilipinoDailyLesson}/>
        <Stack.Screen name = "FilipinoColours" component={FilipinoColoursScreen}/>
@@ -51,10 +59,16 @@ function AppNavigator() {
        <Stack.Screen name = "FilipinoLessons" component={FilipinoLessons}/>
        <Stack.Screen name = "FilipinoQuizzes" component={FilipinoQuizzes}/>
        <Stack.Screen name = "FilipinoAccolades" component ={FilipinoAccolades}/>     
+     
+
        <Stack.Screen name = "FilipinoFlashHome" component ={FilipinoFlashHome}/>
        
        <Stack.Screen name = "Lesson1" component ={Lesson1}/>
-
+       <Stack.Screen name = "Lesson2" component ={Lesson2}/>
+       <Stack.Screen name = "Lesson3" component ={Lesson3}/>
+      
+       <Stack.Screen name = "Lesson4" component ={Lesson4}/>
+      
       </Stack.Navigator>
     </NavigationContainer>
   );
