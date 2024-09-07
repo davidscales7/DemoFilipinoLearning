@@ -19,9 +19,9 @@ const questions = [
     image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
   },
   {
-    question: "2+2",
-    options: ["2", "3", "4", "5"],
-    correctAnswer: "4",
+    question: "What is the correct way to say Number 2",
+    options: ["Dalawa", "Apat", "Lima", "Anim"],
+    correctAnswer: "Dalawa",
     image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
   },
   // Add more questions as needed
