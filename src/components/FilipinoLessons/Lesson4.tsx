@@ -5,40 +5,54 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigation';
 
-
-
-type Lesson4NavigationProp = StackNavigationProp<RootStackParamList, 'FilipinoLessons'>;
-
-
+type Lesson3NavigationProp = StackNavigationProp<RootStackParamList, 'FilipinoLessons'>;
 
 const questions = [
   {
-    question: "____ are ____ today?",
-    options: ["you", "I", "me", "How", "they", "she", "we"],
-    correctAnswer: "you",
-    image: require('../../../assets/images/rightAnswerQuestion1.jpg'), // Replace with your image path
+    question: "How are ____ and ____ today?",
+    options: ["you", "I", "me", "we"],
+    correctAnswer: ["you", "we"], // Two correct answers
+    image: require('../../../assets/images/correct.jpg'), // Replace with your image path
   },
   // Add more questions as needed
 ];
 
 const Lesson4: React.FC = () => {
-  const navigation = useNavigation<Lesson4NavigationProp>();
+  const navigation = useNavigation<Lesson3NavigationProp>();
 
-
-  const [currentQuestion, setCurrentQuestion] = useState<number>(0);  // Explicitly type as number
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedOptions, setSelectedOptions] = useState<string[]>([]); // Store two selected options
   const [showAnswer, setShowAnswer] = useState(false);
+  const [isIncorrect, setIsIncorrect] = useState(false); // To track incorrect answers
 
   const handleOptionPress = (option: string) => {
-    if (questions[currentQuestion].correctAnswer === option) {
-      setShowAnswer(true);
-      setTimeout(() => {
-        setCurrentQuestion((prev) => prev + 1);
-        setSelectedOption(null);
-        setShowAnswer(false);
-      }, 3000); // 3 seconds delay before moving to the next question
-    } else {
-      setSelectedOption(option);
+    // If two options have already been selected, ignore further presses
+    if (selectedOptions.length >= 2) return;
+
+    // Update selected options
+    const updatedSelectedOptions = [...selectedOptions, option];
+    setSelectedOptions(updatedSelectedOptions);
+
+    // Check if both answers are selected and compare with correct answers
+    if (updatedSelectedOptions.length === 2) {
+      if (
+        updatedSelectedOptions[0] === questions[currentQuestion].correctAnswer[0] &&
+        updatedSelectedOptions[1] === questions[currentQuestion].correctAnswer[1]
+      ) {
+        setShowAnswer(true);
+        setIsIncorrect(false);
+        setTimeout(() => {
+          setCurrentQuestion((prev) => prev + 1);
+          setSelectedOptions([]);
+          setShowAnswer(false);
+        }, 3000); // 3 seconds delay before moving to the next question
+      } else {
+        setIsIncorrect(true); // Mark as incorrect
+        setTimeout(() => {
+          setSelectedOptions([]); // Reset options after 2 seconds
+          setIsIncorrect(false); // Reset incorrect state
+        }, 2000);
+      }
     }
   };
 
@@ -49,7 +63,7 @@ const Lesson4: React.FC = () => {
   if (currentQuestion >= questions.length) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>You've completed the First lesson</Text>
+        <Text style={styles.text}>You've completed the Fouth lesson</Text>
         <TouchableOpacity
           style={styles.button}
           onPress={handleNavigateToLessonsScreen}
@@ -60,35 +74,46 @@ const Lesson4: React.FC = () => {
     );
   }
 
-  const currentQuestionObj = questions[currentQuestion]; // Access the current question object
-
   return (
     <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>Question {currentQuestion + 1} of {questions.length}</Text>
       </View>
       <View style={styles.card}>
-        <Text style={styles.text}>{currentQuestionObj.question}</Text>
+        <Text style={styles.text}>{questions[currentQuestion].question}</Text>
         {!showAnswer ? (
-          currentQuestionObj.options.map((option) => (
-            <TouchableOpacity
-              key={option}
-              onPress={() => handleOptionPress(option)}
-              style={[
-                styles.optionButton,
-                selectedOption === option && styles.selectedOption,
-              ]}
-            >
-              <Text style={styles.optionText}>{option}</Text>
-            </TouchableOpacity>
-          ))
+          <>
+            <View style={styles.answerContainer}>
+              {/* Display selected options or underscores if not selected */}
+              <Text style={styles.selectedText}>
+                {selectedOptions[0] || '____'}
+              </Text>
+              <Text style={styles.selectedText}>
+                {selectedOptions[1] || '____'}
+              </Text>
+            </View>
+            {/* Display option buttons */}
+            {questions[currentQuestion].options.map((option) => (
+              <TouchableOpacity
+                key={option}
+                onPress={() => handleOptionPress(option)}
+                style={[
+                  styles.optionButton,
+                  selectedOptions.includes(option) && styles.selectedOption, // Highlight selected option
+                  isIncorrect && selectedOptions.includes(option) && styles.incorrectOption, // Highlight incorrect answer
+                ]}
+              >
+                <Text style={styles.optionText}>{option}</Text>
+              </TouchableOpacity>
+            ))}
+          </>
         ) : (
           <>
             <Text style={styles.answerText}>
-              Correct Answer: {currentQuestionObj.correctAnswer}
+              Correct Answer: {questions[currentQuestion].correctAnswer.join(' and ')}
             </Text>
             <Image
-              source={currentQuestionObj.image}
+              source={questions[currentQuestion].image}
               style={styles.answerImage}
               resizeMode="contain"
             />
@@ -104,6 +129,7 @@ const Lesson4: React.FC = () => {
     </LinearGradient>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -137,6 +163,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
+  answerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginBottom: 20,
+  },
+  selectedText: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#000',
+    textAlign: 'center',
+    width: '45%', // Adjust to fit two spaces side by side
+  },
   optionButton: {
     padding: 15,
     marginVertical: 10,
@@ -151,6 +190,9 @@ const styles = StyleSheet.create({
   },
   selectedOption: {
     backgroundColor: 'orange',
+  },
+  incorrectOption: {
+    backgroundColor: 'red', // Red color for incorrect answers
   },
   answerText: {
     fontSize: 20,

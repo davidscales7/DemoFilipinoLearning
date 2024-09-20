@@ -58,11 +58,11 @@ const AppHeader = () => {
 };
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    // backgroundColor: '#F0F4F8',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
+    
+      flex: 1,               // Ensures the container takes full available space
+      justifyContent: 'center',  // Centers content vertically
+      alignItems: 'center',      // Centers content horizontally
+     
   },
   clickableGif: {
     width: 100,

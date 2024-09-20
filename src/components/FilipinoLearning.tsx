@@ -273,6 +273,7 @@ const FilipinoLearning: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex:1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
@@ -291,46 +292,49 @@ const styles = StyleSheet.create({
   categoriesText: {
     fontSize: 20,
     marginVertical: 10,
-    color: '#fff',
+    color: '#333',
+    textAlign: 'center',
+  },
+  image: {
+    width: 70,
+    height: 70,
+    marginLeft: 10,
+    resizeMode: 'contain',  // This will ensure images fit within their container
+  },
+  imageBackground: {
+    flex: 1,             // Makes sure it takes the full height and width of the screen
+    width: '100%',        // Ensures the background fills the width of the screen
+    height: '100%',       // Ensures the background fills the height of the screen
+    justifyContent: 'center',  // Centers content vertically
+    alignItems: 'center',      // Centers content horizontally
   },
   gridContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    marginBottom: 20,
   },
   gridItem: {
-    width: '45%',
-    margin: '2.5%',
+    width: '40%',
     alignItems: 'center',
+    marginBottom: 20,
+  },
+  flashcardsContainer: {
+    alignItems: 'center',
+  },
+  box: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 10,
+    padding: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    elevation: 5,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 10,
-  },
-  image: {
-    width: 50,
-    height: 50,
-    marginLeft: 10,
-  },
-  imageBackground: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  box: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  flashcardsContainer: {
-    marginTop: 20,
-    width: '100%',
-    alignItems: 'center',
+    marginBottom: 10,
   },
 });
 
