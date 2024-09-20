@@ -26,6 +26,12 @@ const FilipinoLearning: React.FC = () => {
     navigation.navigate('FilipinoLessons');
   };
 
+  const handleNavigateToFilipinoNumbersBasicCards =() => {
+    navigation.navigate('FilipinoFlashNumbersBasic')
+  }
+
+
+
   const handleNavigateToAccoladesScreen = () => {
     navigation.navigate('FilipinoAccolades');
   };
@@ -33,6 +39,8 @@ const FilipinoLearning: React.FC = () => {
   const handleNavigateToBodyParts = () => {
     navigation.navigate('FilipinoBodyParts');
   };
+
+
 
   const handleNavigateToNewTopic = () => {
     navigation.navigate('FilipinoNewTopic');
@@ -186,6 +194,18 @@ const FilipinoLearning: React.FC = () => {
                   style={styles.image}
                 />
               </TouchableOpacity>
+
+              <TouchableOpacity 
+                style={[styles.row, styles.box]} 
+                onPress={handleNavigateToFilipinoNumbersBasicCards}
+              >
+                <Text style={styles.categoriesText}>Basic Number cards</Text>
+                <Image 
+                  source={require('../../assets/images/number1.jpg')}
+                  style={styles.image}
+                />
+              </TouchableOpacity>
+
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 

@@ -23,12 +23,11 @@ import FilipinoLessons from '../components/FilipinoLessons/FilipinoLessons';
 import FilipinoAccolades from '../components/FilipinoAccolades/FilipinoAccolades';
 import FilipinoQuizzes from '../components/FilipinoQuizzes/FiliipinoQuizzes';
 import FilipinoFlashHome from '../components/FilipinoFlash/FilipinoFlashHome';
-
+import FilipinoFlashNumbersBasic from '../components/FilipinoFlash/FilipinoFlashNumbersBasic'
 
 import Lesson1 from '../components/FilipinoLessons/Lesson1';
 import Lesson2 from '../components/FilipinoLessons/Lesson2';
 import Lesson3 from '../components/FilipinoLessons/Lesson3';
-
 import Lesson4 from '../components/FilipinoLessons/Lesson4';
 
 
@@ -60,9 +59,8 @@ function AppNavigator() {
        <Stack.Screen name = "FilipinoQuizzes" component={FilipinoQuizzes}/>
        <Stack.Screen name = "FilipinoAccolades" component ={FilipinoAccolades}/>     
      
-
        <Stack.Screen name = "FilipinoFlashHome" component ={FilipinoFlashHome}/>
-       
+       <Stack.Screen name = "FilipinoFlashNumbersBasic" component = {FilipinoFlashNumbersBasic}/>
        <Stack.Screen name = "Lesson1" component ={Lesson1}/>
        <Stack.Screen name = "Lesson2" component ={Lesson2}/>
        <Stack.Screen name = "Lesson3" component ={Lesson3}/>
