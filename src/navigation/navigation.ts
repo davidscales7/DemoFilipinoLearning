@@ -1,4 +1,6 @@
 export type RootStackParamList = {
+  RegisterScreen:undefined;
+  Login:undefined;
     Home: undefined;
     Ukrainian: undefined;
     Filipino: undefined;
@@ -17,7 +19,7 @@ export type RootStackParamList = {
     FilipinoAnimals: undefined;
     FilipinoLessons: undefined;
     FilipinoAccolades: undefined;
-    FilipinoQuizzes: undefined;
+    FilipinoLessonQuiz: undefined;
     FilipinoFlashHome: undefined;
     FilipinoFlashNumbersBasic: undefined;
     FilipinoNumbersIntermediate: undefined;

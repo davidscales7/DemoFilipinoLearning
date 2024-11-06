@@ -44,14 +44,17 @@ const AppHeader = () => {
             />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={handleNavigateToUkrainianScreen}>
+ {/* <TouchableOpacity onPress={handleNavigateToUkrainianScreen}>
             <Image
               source={require('../../assets/images/FlagUkraine.gif')}
               style={styles.reactLogo}
             />
           </TouchableOpacity>
-        </View>
-      )}
+  */}
+ 
+  </View>
+     
+     )}
     </View>
     // </ImageBackground>
   );

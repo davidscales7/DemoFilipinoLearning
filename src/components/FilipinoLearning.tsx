@@ -19,7 +19,7 @@ const FilipinoLearning: React.FC = () => {
   };
 
   const handleNavigateToQuizzesScreen = () => {
-    navigation.navigate('FilipinoQuizzes');
+    navigation.navigate('FilipinoLessonQuiz');
   };
 
   const handleNavigateToLessonsScreen = () => {

@@ -1,10 +1,11 @@
+// UkrainianLearning.tsx
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const FilipinoQuizzes: React.FC = () => {
+const FilipinoMatching: React.FC = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Filiipino Quizzes</Text>
+      <Text style={styles.text}>Filipino Matching</Text>
     </View>
   );
 };
@@ -12,15 +13,13 @@ const FilipinoQuizzes: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F0F4F8',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#f0f0f0',
   },
   text: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
   },
 });
 
-export default FilipinoQuizzes;
+export default FilipinoMatching;

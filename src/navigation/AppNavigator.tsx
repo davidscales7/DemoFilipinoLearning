@@ -3,7 +3,10 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { RootStackParamList } from './navigation';
+import RegisterScreen from '../components/RegisterScreen';
+import LoginScreen from '../components/LoginScreen'; 
 import AppHeader from '../components/AppHeader';
+
 import UkrainianScreen from '../components/UkrainianLearning';
 import FilipinoLearning from '../components/FilipinoLearning';
 import FilipinoGreetingsScreen from '../components/FilipinoFlash/FilipinoGreetings';
@@ -21,7 +24,7 @@ import FilipinoWeatherScreen from '../components/FilipinoFlash/FilipinoWeather';
 import FilipinoAnimalsScreen from '../components/FilipinoFlash/FilipinoAnimals';
 import FilipinoLessons from '../components/FilipinoLessons/FilipinoLessons';
 import FilipinoAccolades from '../components/FilipinoAccolades/FilipinoAccolades';
-import FilipinoQuizzes from '../components/FilipinoQuizzes/FiliipinoQuizzes';
+import FilipinoLessonQuizzes from '../components/FilipinoQuizzes/FilipinoLessonQuiz';
 import FilipinoFlashHome from '../components/FilipinoFlash/FilipinoFlashHome';
 import FilipinoFlashNumbersBasic from '../components/FilipinoFlash/FilipinoFlashNumbersBasic'
 
@@ -32,13 +35,18 @@ import Lesson4 from '../components/FilipinoLessons/Lesson4';
 
 
 
-
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+    
+
+    <Stack.Navigator initialRouteName="Login">  
+      
+    <Stack.Screen name="RegisterScreen" component={RegisterScreen} /> 
+ 
+      <Stack.Screen name="Login" component={LoginScreen} /> 
         <Stack.Screen name="Home" component={AppHeader} />
         <Stack.Screen name="Ukrainian" component={UkrainianScreen} />
         <Stack.Screen name="Filipino" component ={FilipinoLearning} />
@@ -56,7 +64,7 @@ function AppNavigator() {
        <Stack.Screen name = "FilipinoWeather" component={FilipinoWeatherScreen}/>
        <Stack.Screen name = "FilipinoAnimals" component={FilipinoAnimalsScreen}/>
        <Stack.Screen name = "FilipinoLessons" component={FilipinoLessons}/>
-       <Stack.Screen name = "FilipinoQuizzes" component={FilipinoQuizzes}/>
+       
        <Stack.Screen name = "FilipinoAccolades" component ={FilipinoAccolades}/>     
      
        <Stack.Screen name = "FilipinoFlashHome" component ={FilipinoFlashHome}/>
@@ -67,6 +75,7 @@ function AppNavigator() {
       
        <Stack.Screen name = "Lesson4" component ={Lesson4}/>
       
+       <Stack.Screen name = "FilipinoLessonQuiz" component={FilipinoLessonQuizzes}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

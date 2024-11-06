@@ -11,21 +11,81 @@ const FilipinoFlashHome: React.FC = () => {
     const [showFlashcards, ] = useState(true);
   
    
-  
-    const handleNavigateToTopic = (topic: keyof RootStackParamList) => {
-      navigation.navigate(topic);
-    };
-  
-   
+  const handleRegister = () => {
+    // Navigate to the Register screen (assuming you have a Register screen in your navigation)
+    navigation.navigate('RegisterScreen'); // Change 'Register' to the name of your Register screen in the navigation
+  };
 
- 
+  const handleNavigateToFlashFilipinoGreetings= () => {
+    navigation.navigate('FilipinoGreetings');
 
-  return (
+  }
+  
+  const handleNavigateToFlashBodyParts = () => {
+    navigation.navigate('FilipinoBodyParts');
+
+  }
+
+
+const  handleNavigateToFlashFilipinoColours = () => {
+    navigation.navigate('FilipinoColours');
+
+  }
+  
+
+ const handleNavigateToFlashFilipinoFoodAndDrink = () => {
+  navigation.navigate('FilipinoFoodAndDrink');
+
+}
+
+
+
+const handleNavigateToFlashFilipinoWeather = () => {
+  navigation.navigate('FilipinoWeather');
+
+}
+
+
+
+const  handleNavigateToFlashTransport = () => {
+  navigation.navigate('FilipinoTransports');
+
+}
+
+
+
+const  handleNavigateToFlashFamily = () => {
+  navigation.navigate('FilipinoFamily');
+
+}
+
+const  handleNavigateToFlashGeneralTopics = () => {
+  navigation.navigate('FilipinoGeneralTopics');
+
+}
+
+const   handleNavigateToFlashHouseItems = () => {
+  navigation.navigate('FilipinoGreetings');
+
+}
+
+const  handleNavigateToFlashAnimals = () => {
+  navigation.navigate('FilipinoAnimals');
+
+}
+
+
+
+
+return (
+
+      
     <ImageBackground
       source={require('../../../assets/images/PhilipinesBackground.jpg')}
       resizeMode="cover"
       style={styles.imageBackground}
     >
+                
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.container}>
           <Text style={styles.titleText}>Filipino Flashcards</Text>
@@ -40,7 +100,7 @@ const FilipinoFlashHome: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoGreetings')}
+                onPress={ handleNavigateToFlashFilipinoGreetings}
               >
                 <Text style={styles.categoriesText}>Greetings</Text>
                 <Image 
@@ -51,7 +111,7 @@ const FilipinoFlashHome: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoBodyparts')}
+                onPress={handleNavigateToFlashBodyParts}
               >
                 <Text style={styles.categoriesText}>Body Parts</Text>
                 <Image 
@@ -62,7 +122,7 @@ const FilipinoFlashHome: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoColours')}
+                onPress={handleNavigateToFlashFilipinoColours}
               >
                 <Text style={styles.categoriesText}>Colours</Text>
                 <Image 
@@ -73,7 +133,7 @@ const FilipinoFlashHome: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoFoodAndDrink')}
+                onPress={ handleNavigateToFlashFilipinoFoodAndDrink}
               >
                 <Text style={styles.categoriesText}>Food + drink</Text>
                 <Image 
@@ -84,7 +144,7 @@ const FilipinoFlashHome: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoWeather')}
+                onPress={ handleNavigateToFlashFilipinoWeather}
               >
                 <Text style={styles.categoriesText}>Weather</Text>
                 <Image 
@@ -95,18 +155,18 @@ const FilipinoFlashHome: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoTransports')}
+                onPress={ handleNavigateToFlashTransport}
               >
                 <Text style={styles.categoriesText}>Transports</Text>
                 <Image 
                   source={require('../../../assets/images/family.jpg')}
                   style={styles.image}
-                />
+                />handleNavigateToFlashFamily
               </TouchableOpacity>
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoFamily')}
+                onPress={ handleNavigateToFlashFamily}
               >
                 <Text style={styles.categoriesText}>Family</Text>
                 <Image 
@@ -117,7 +177,7 @@ const FilipinoFlashHome: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoGeneralTopics')}
+                onPress={ handleNavigateToFlashGeneralTopics}
               >
                 <Text style={styles.categoriesText}>General topics</Text>
                 <Image 
@@ -128,7 +188,7 @@ const FilipinoFlashHome: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoHouseItems')}
+                onPress={  handleNavigateToFlashHouseItems}
               >
                 <Text style={styles.categoriesText}>House Items</Text>
                 <Image 
@@ -139,7 +199,7 @@ const FilipinoFlashHome: React.FC = () => {
 
               <TouchableOpacity 
                 style={[styles.row, styles.box]} 
-                onPress={() => handleNavigateToTopic('FilipinoAnimals')}
+                onPress={handleNavigateToFlashAnimals}
               >
                 <Text style={styles.categoriesText}>Animals</Text>
                 <Image 
