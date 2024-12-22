@@ -32,6 +32,13 @@ import Lesson1 from '../components/FilipinoLessons/Lesson1';
 import Lesson2 from '../components/FilipinoLessons/Lesson2';
 import Lesson3 from '../components/FilipinoLessons/Lesson3';
 import Lesson4 from '../components/FilipinoLessons/Lesson4';
+import Lesson5 from '../components/FilipinoLessons/Lesson5';
+import Lesson6 from '../components/FilipinoLessons/Lesson6';
+import Lesson7 from '../components/FilipinoLessons/Lesson7';
+import Lesson8 from '../components/FilipinoLessons/Lesson8';
+//import Lesson9 from '../components/FilipinoLessons/Lesson9';
+//import Lesson10 from '../components/FilipinoLessons/Lesson10';
+
 
 
 
@@ -74,7 +81,13 @@ function AppNavigator() {
        <Stack.Screen name = "Lesson3" component ={Lesson3}/>
       
        <Stack.Screen name = "Lesson4" component ={Lesson4}/>
-      
+       <Stack.Screen name = "Lesson5" component ={Lesson5}/>
+       <Stack.Screen name = "Lesson6" component ={Lesson6}/>
+       <Stack.Screen name = "Lesson7" component ={Lesson7}/>
+       <Stack.Screen name = "Lesson8" component ={Lesson8}/>
+       {/*<Stack.Screen name = "Lesson9" component ={Lesson9}/>*/}
+       {/*<Stack.Screen name = "Lesson10" component ={Lesson10}/> */}
+
        <Stack.Screen name = "FilipinoLessonQuiz" component={FilipinoLessonQuizzes}/>
       </Stack.Navigator>
     </NavigationContainer>

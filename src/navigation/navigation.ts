@@ -28,6 +28,12 @@ export type RootStackParamList = {
     Lesson2: undefined;
     Lesson3: undefined;
     Lesson4: undefined;
+    Lesson5: undefined;
+    Lesson6: undefined;
+    Lesson7: undefined;
+    Lesson8: undefined;
+    Lesson9: undefined;
+    Lesson10: undefined;
     NotFound: undefined;
   };
   

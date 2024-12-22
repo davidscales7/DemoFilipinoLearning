@@ -1,6 +1,6 @@
-// FilipinoAccolades.tsx
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Lesson {
   question: string;
@@ -10,30 +10,87 @@ interface Lesson {
 }
 
 interface FilipinoAccoladesProps {
-  progress?: Record<string, number>;  // Made optional
-  lessons?: Record<string, Lesson[]>; // Made optional
+  progress?: Record<string, number>; // Optional
+  lessons?: Record<string, Lesson[]>; // Optional
 }
 
 const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
-  progress = {}, // Default to an empty object if undefined
-  lessons = {},  // Default to an empty object if undefined
+  progress = {}, // Default to empty object
+  lessons = {}, // Default to empty object
 }) => {
-  const hasProgress = Object.keys(progress).length > 0;
+  const [accolades, setAccolades] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAccolades = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          setError('User not logged in');
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch('http://localhost:3000/accolades', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch accolades');
+        }
+
+        const data = await response.json();
+        setAccolades(data.accolades || []);
+      } catch (err) {
+        setError(err.message || 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAccolades();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text style={styles.text}>Loading accolades...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Error: {error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Filipino Accolades</Text>
-      {hasProgress ? (
-        Object.keys(progress).map((lessonId) => (
-          <Text key={lessonId} style={styles.text}>
-            Lesson {lessonId}: {progress[lessonId]}/{lessons[lessonId]?.length || 0} completed
+      {accolades.length > 0 ? (
+        accolades.map((accolade, index) => (
+          <Text key={index} style={styles.accoladeText}>
+            {index + 1}. {accolade}
           </Text>
         ))
       ) : (
-        <Text style={styles.placeholderText}>
-          Clicking on Accolades works but nothing is working here yet
-        </Text>
+        <Text style={styles.placeholderText}>No accolades earned yet!</Text>
       )}
+      {Object.keys(progress).map((lessonId) => (
+        <Text key={lessonId} style={styles.progressText}>
+          Lesson {lessonId}: {progress[lessonId]}/{lessons[lessonId]?.length || 0} completed
+        </Text>
+      ))}
     </View>
   );
 };
@@ -44,17 +101,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#f0f0f0',
+    padding: 20,
   },
   text: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
+    marginBottom: 20,
+  },
+  accoladeText: {
+    fontSize: 18,
+    color: '#555',
+    marginVertical: 5,
   },
   placeholderText: {
     fontSize: 18,
     fontWeight: 'normal',
     color: '#666',
     marginTop: 20,
+  },
+  progressText: {
+    fontSize: 16,
+    color: '#333',
+    marginVertical: 5,
+  },
+  errorText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'red',
   },
 });
 
