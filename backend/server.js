@@ -29,6 +29,7 @@ const UserSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', UserSchema);
 
+
 // Register route with detailed error logging
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
@@ -104,19 +105,62 @@ app.get('/accolades', verifyToken, async (req, res) => {
     const user = await User.findById(req.userId);
     if (!user) {
         return res.status(404).json({ error: 'User not found' });
+
     }
 
     res.json({ accolades: user.accolades });
 });
 
+
+app.post('/addAccolade', verifyToken, async (req, res) => {
+    try {
+    const {accolade} = req.body
+    if (!accolade)
+    {
+        return res.status(400).json({error:'missing accolade'})
+            }
+    
+    
+    
+    const user = await User.findById(req.userId);
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+
+    }
+
+    if (user.accolades.includes(accolade)){
+        return res.status(409).json({ error: 'accolade already exists' });
+
+    }
+    user.accolades.push(accolade)
+
+
+  await user.save()
+    return res.status(201).json({
+    message: "Accolade added successfully",
+    accolades:user.accolades
+    })
+
+
+}catch(error){
+console.log("error in accolade")
+return res.status(500).json({ error: 'Failed to add accolade' });
+}
+    
+});
+
+
+
+
 // Middleware to verify JWT token
 function verifyToken(req, res, next) {
-    const token = req.headers['authorization'];
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
     if (!token) {
         return res.status(403).json({ error: 'No token provided' });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    jwt.verify(token, 'yourSecretKeyHere', (err, decoded) => {
         if (err) {
             return res.status(500).json({ error: 'Failed to authenticate token' });
         }
