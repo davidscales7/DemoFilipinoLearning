@@ -35,5 +35,6 @@ export type RootStackParamList = {
     Lesson9: undefined;
     Lesson10: undefined;
     NotFound: undefined;
+    Loading:undefined;
   };
   

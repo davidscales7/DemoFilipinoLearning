@@ -36,6 +36,7 @@ import Lesson5 from '../components/FilipinoLessons/Lesson5';
 import Lesson6 from '../components/FilipinoLessons/Lesson6';
 import Lesson7 from '../components/FilipinoLessons/Lesson7';
 import Lesson8 from '../components/FilipinoLessons/Lesson8';
+import Loading from './Loading';
 //import Lesson9 from '../components/FilipinoLessons/Lesson9';
 //import Lesson10 from '../components/FilipinoLessons/Lesson10';
 
@@ -49,11 +50,11 @@ function AppNavigator() {
     <NavigationContainer>
     
 
-    <Stack.Navigator initialRouteName="Login">  
+    <Stack.Navigator initialRouteName="Loading">  
       
     <Stack.Screen name="RegisterScreen" component={RegisterScreen} /> 
- 
-      <Stack.Screen name="Login" component={LoginScreen} /> 
+    <Stack.Screen name="Loading" component={Loading} /> 
+    <Stack.Screen name="Login" component={LoginScreen} /> 
         <Stack.Screen name="Home" component={AppHeader} />
         <Stack.Screen name="Ukrainian" component={UkrainianScreen} />
         <Stack.Screen name="Filipino" component ={FilipinoLearning} />
