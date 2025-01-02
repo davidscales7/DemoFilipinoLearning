@@ -1,166 +1,81 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-
-const Quiz1 = ({ onComplete }) => {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [correctCount, setCorrectCount] = useState(0);
+const Quiz1: React.FC = () => {
+  const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [userAnswer, setUserAnswer] = useState('');
   const [showAnswer, setShowAnswer] = useState(false);
 
   const questions = [
     {
-      question: "How do you say 'Good morning' in Filipino?",
-      type: 'multiple-choice',
-      options: ["Kamusta", "Magandang Umaga", "Mabuti", "Salamat"],
-      correctAnswer: "Magandang Umaga",
-      image: require('../../../assets/images/i.png'), // Update the path as per your folder structure
+      question: "What is the correct way to say Number 1?",
+      options: ["Apat", "Isa", "Dalawa", "Tatlo"],
+      correctAnswer: "Isa",
+      image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
     },
     {
-      question: "What does 'Mabuti' mean in English?",
-      type: 'multiple-choice',
-      options: ["Hello", "Good", "Weather", "Thank you"],
-      correctAnswer: "Good",
-      image: require('../../../assets/images/i.png'), // Updat
-      // e the path as per your folder structure
+      question: "What is the correct way to say Number 2?",
+      options: ["Dalawa", "Apat", "Lima", "Anim"],
+      correctAnswer: "Dalawa",
+      image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
     },
-    {
-      question: "Which of these images shows 'Kamusta' (Hello/How are you)?",
-      type: 'multiple-choice',
-      options: [
-        { image: require('../../../assets/images/tea.png'), label: "Handshake" },
-        { image: require('../../../assets/images/tea.png'), label: "Waving Hand" },
-        { image: require('../../../assets/images/tea.png'), label: "Thumbs Up" },
-        { image: require('../../../assets/images/tea.png'), label: "Writing" },
-      ],
-      correctAnswer: "Waving Hand",
-    },
-    {
-      question: "Translate to Filipino: 'How are you?'",
-      type: 'fill-in-the-blank',
-      correctAnswer: "Kamusta",
-    },
-    {
-      question: "Translate to Filipino: 'I am good.'",
-      type: 'fill-in-the-blank',
-      correctAnswer: "Mabuti",
-    },
-    {
-      question: "'Mabuti' means 'Bad' in Filipino.",
-      type: 'true-false',
-      correctAnswer: false,
-    },
-    {
-      question: "'Kamusta' is used to greet someone in Filipino.",
-      type: 'true-false',
-      correctAnswer: true,
-    },
+    // Add more hardcoded questions here as needed
   ];
 
-  const handleAnswer = (selectedOption: string | boolean) => {
-    const currentQuestion = questions[currentQuestionIndex];
-
-    if (currentQuestion.type === 'multiple-choice' && selectedOption === currentQuestion.correctAnswer) {
-      setCorrectCount(correctCount + 1);
-    }
-
-    if (
-      currentQuestion.type === 'fill-in-the-blank' &&
-      typeof userAnswer === 'string' && // Ensure it's a string
-      userAnswer.toLowerCase() === currentQuestion.correctAnswer
-    ) {
-      setCorrectCount(correctCount + 1);
-    }
-
-    if (
-      currentQuestion.type === 'true-false' &&
-      typeof selectedOption === 'boolean' && // Ensure it's a boolean
-      selectedOption === currentQuestion.correctAnswer
-    ) {
-      setCorrectCount(correctCount + 1);
-    }
-
-    // Move to the next question
-    setSelectedOption(null);
-    setUserAnswer('');
-    setShowAnswer(false);
-    if (currentQuestionIndex + 1 < questions.length) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+  const handleOptionPress = (option: string) => {
+    if (selectedOption === option) {
+      setShowAnswer(true);
+      setTimeout(() => {
+        setCurrentQuestion((prev) => prev + 1);
+        setSelectedOption(null);
+        setShowAnswer(false);
+      }, 3000); // 3 seconds delay before moving to the next question
     } else {
-      onComplete(correctCount + 1);
+      setSelectedOption(option);
     }
   };
 
-  const currentQuestion = questions[currentQuestionIndex];
+  if (currentQuestion >= questions.length) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.text}>You've completed the quiz!</Text>
+      </View>
+    );
+  }
 
   return (
     <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>
-          Question {currentQuestionIndex + 1} of {questions.length}
+          Question {currentQuestion + 1} of {questions.length}
         </Text>
       </View>
-
       <View style={styles.card}>
-        <Text style={styles.text}>{currentQuestion.question}</Text>
-
-        {currentQuestion.type === 'multiple-choice' && (
+        <Text style={styles.text}>{questions[currentQuestion].question}</Text>
+        {!showAnswer ? (
+          questions[currentQuestion].options.map((option) => (
+            <TouchableOpacity
+              key={option}
+              onPress={() => handleOptionPress(option)}
+              style={[
+                styles.optionButton,
+                selectedOption === option && styles.selectedOption,
+              ]}
+            >
+              <Text style={styles.optionText}>{option}</Text>
+            </TouchableOpacity>
+          ))
+        ) : (
           <>
-            {currentQuestion.image && (
-              <Image
-                source={currentQuestion.image}
-                style={styles.image}
-                resizeMode="contain"
-              />
-            )}
-            {currentQuestion.options.map((option, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => handleAnswer(option)}
-                style={[
-                  styles.optionButton,
-                  selectedOption === option && styles.selectedOption,
-                ]}
-              >
-                <Text style={styles.optionText}>{option}</Text>
-              </TouchableOpacity>
-            ))}
-          </>
-        )}
-
-        {currentQuestion.type === 'fill-in-the-blank' && (
-          <>
-            <TextInput
-              style={styles.textInput}
-              placeholder="Type your answer here..."
-              value={userAnswer}
-              onChangeText={(text) => setUserAnswer(text)}
+            <Text style={styles.answerText}>
+              Correct Answer: {questions[currentQuestion].correctAnswer}
+            </Text>
+            <Image
+              source={questions[currentQuestion].image}
+              style={styles.answerImage}
+              resizeMode="contain"
             />
-            <TouchableOpacity
-              onPress={() => handleAnswer(userAnswer)}
-              style={styles.submitButton}
-            >
-              <Text style={styles.submitButtonText}>Submit</Text>
-            </TouchableOpacity>
-          </>
-        )}
-
-        {currentQuestion.type === 'true-false' && (
-          <>
-            <TouchableOpacity
-              onPress={() => handleAnswer(true)}
-              style={styles.optionButton}
-            >
-              <Text style={styles.optionText}>True</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => handleAnswer(false)}
-              style={styles.optionButton}
-            >
-              <Text style={styles.optionText}>False</Text>
-            </TouchableOpacity>
           </>
         )}
       </View>
@@ -192,7 +107,7 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 2 },
     elevation: 5,
-    alignItems: 'center',
+    alignItems: 'center', // Center the content
   },
   text: {
     fontSize: 24,
@@ -206,7 +121,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderRadius: 5,
     backgroundColor: '#ddd',
-    width: '100%',
+    width: '100%', // Ensure the button width is full
     alignItems: 'center',
   },
   optionText: {
@@ -216,29 +131,16 @@ const styles = StyleSheet.create({
   selectedOption: {
     backgroundColor: 'orange',
   },
-  textInput: {
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    width: '100%',
-    padding: 10,
-    marginVertical: 10,
-  },
-  submitButton: {
-    backgroundColor: 'blue',
-    padding: 15,
-    borderRadius: 5,
-    alignItems: 'center',
-    width: '100%',
-  },
-  submitButtonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
-  image: {
-    width: 200,
-    height: 200,
+  answerText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: 'green',
+    textAlign: 'center',
     marginBottom: 20,
+  },
+  answerImage: {
+    width: '80%',
+    height: 200,
   },
 });
 

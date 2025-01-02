@@ -1,4 +1,11 @@
 {
-  "compilerOptions": {},
+  "compilerOptions": {
+    "jsx": "react-native", // Enable JSX for React Native
+          // Optional: Enforce strict type checking
+    "moduleResolution": "node", // Resolve modules in a Node.js style
+    "skipLibCheck": true,  // Optional: Skip type checking for declaration files
+    "esModuleInterop": true, // Allow default imports from CommonJS modules
+    "allowSyntheticDefaultImports": true // Allow default imports without warning
+  },
   "extends": "expo/tsconfig.base"
 }

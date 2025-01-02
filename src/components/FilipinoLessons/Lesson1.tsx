@@ -1,30 +1,33 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
+// Define slides as a JavaScript array of objects
 const slides = [
-  { number: "1", word: "One", translated: "Isa", image: require('../../../assets/images/number1.jpg') },
-  { number: "2", word: "Two", translated: "Dalawa", image: require('../../../assets/images/number2.jpg') },
-  
-  
-  
-  // Continue for numbers 3-10...
+  { number: "1", word: "Kamusta", translated: "Hello / how are you?", image: require('../../../assets/images/goat.png') },
+  { number: "2", word: "Mabuti", translated: "I'm Good", image: require('../../../assets/images/good.jpg') },
+  { number: "3", word: "Malongkot", translated: "I'm Sad", image: require('../../../assets/images/sad.jpg') },
+  { number: "4", word: "Masaya", translated: "I'm Happy", image: require('../../../assets/images/happy.jpg') },
+  { number: "5", word: "Magandang Umaga", translated: "Good Morning", image: require('../../../assets/images/morning.jpg') },
+  { number: "6", word: "Magadang Hapon", translated: "Good Afternoon", image: require('../../../assets/images/afternoon.jpg') },
+  { number: "7", word: "Magandang Gabi", translated: "Good Evening", image: require('../../../assets/images/evening.jpg') },
+  { number: "8", word: "Pa alam", translated: "Goodbye", image: require('../../../assets/images/goodbye.jpg') },
+  { number: "9", word: "Ikaw", translated: "You", image: require('../../../assets/images/you.jpg') },
 ];
 
+// Define questions as a JavaScript array of objects
 const questions = [
   {
-    question: "What is the correct way to say Number 1?",
-    options: ["Apat", "Isa", "Dalawa", "Tatlo"],
-    correctAnswer: "Isa",
-    image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
+    question: "What is the correct way to greet someone?",
+    options: ["Masaya", "Mabuti", "Malongkot", "Kamusta"],
+    correctAnswer: "Kamusta",
+    image: require('../../../assets/images/hand.jpg'),
   },
   {
-    question: "What is the correct way to say Number 2",
-    options: ["Dalawa", "Apat", "Lima", "Anim"],
-    correctAnswer: "Dalawa",
-    image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
+    question: "What is the correct way to say I'm sad?",
+    options: ["Pa alam", "Masaya", "Ikaw", "Malongkot"],
+    correctAnswer: "Malongkot",
+    image: require('../../../assets/images/sad.jpg'),
   },
-  // Add more questions as needed
 ];
 
 const Lesson1: React.FC = () => {

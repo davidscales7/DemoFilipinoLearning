@@ -1,32 +1,46 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/navigation';
-
-
-type Lesson3NavigationProp = StackNavigationProp<RootStackParamList, 'FilipinoLessons'>;
-
+// greetings along with basic responses
+const slides = [
+  { number: "1", word: "One", translated: "Isa", image: require('../../../assets/images/number1.jpg') },
+  { number: "2", word: "Two", translated: "Dalawa", image: require('../../../assets/images/number2.jpg') },
+  
+  
+  
+  // number "e.g 1" here just means what slide is it on admittdly it isn't the best thing .
+  //word meaining the english Word that We want to learn translated into Taga log
+];
 
 const questions = [
   {
-    question: "How are ____ today?",
-    options: ["you", "I", "me", "we"],
-    correctAnswer: "you",
-    image: require('../../../assets/images/correct.jpg'), // Replace with your image path
+    question: "What is the correct way to say Number 1?",
+    options: ["Apat", "Isa", "Dalawa", "Tatlo"],
+    correctAnswer: "Isa",
+    image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
   },
-
+  {
+    question: "What is the correct way to say Number 2",
+    options: ["Dalawa", "Apat", "Lima", "Anim"],
+    correctAnswer: "Dalawa",
+    image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
+  },
   // Add more questions as needed
 ];
 
 const Lesson3: React.FC = () => {
-const navigation = useNavigation<Lesson3NavigationProp>();
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentQuestion, setCurrentQuestion] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [showAnswer, setShowAnswer] = useState(false);
 
-const [currentQuestion, setCurrentQuestion] = useState(0);
-const [selectedOption, setSelectedOption] = useState<string | null>(null);
-
-const [showAnswer, setShowAnswer] = useState(false);
+  const handleNextSlide = () => {
+    if (currentSlide < slides.length - 1) {
+      setCurrentSlide((prev) => prev + 1);
+    } else {
+      setCurrentSlide(null); // Indicates that the intro slides are over
+    }
+  };
 
   const handleOptionPress = (option: string) => {
     if (selectedOption === option) {
@@ -41,22 +55,26 @@ const [showAnswer, setShowAnswer] = useState(false);
     }
   };
 
-
-  const handleNavigateToLessonsScreen = () => {
-    navigation.navigate('FilipinoLessons');
-  };
+  if (currentSlide !== null && currentSlide < slides.length) {
+    // Render intro slides
+    return (
+      <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
+        <View style={styles.card}>
+          <Text style={styles.text}>{slides[currentSlide].word}</Text>
+          <Image source={slides[currentSlide].image} style={styles.introImage} resizeMode="contain" />
+          <Text style={styles.text}>{slides[currentSlide].translated}</Text>
+        </View>
+        <TouchableOpacity onPress={handleNextSlide} style={styles.nextButton}>
+          <Text style={styles.optionText}>Next</Text>
+        </TouchableOpacity>
+      </LinearGradient>
+    );
+  }
 
   if (currentQuestion >= questions.length) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>You've completed the Third lesson</Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleNavigateToLessonsScreen}
-        >
-          <Text
-           style={styles.buttonText}>Back to Lessons</Text>
-        </TouchableOpacity>
+        <Text style={styles.text}>You've completed the First lesson</Text>
       </View>
     );
   }
@@ -91,12 +109,6 @@ const [showAnswer, setShowAnswer] = useState(false);
               style={styles.answerImage}
               resizeMode="contain"
             />
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleNavigateToLessonsScreen}
-            >
-              <Text style={styles.buttonText}>Back to Lessons</Text>
-            </TouchableOpacity>
           </>
         )}
       </View>
@@ -160,20 +172,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   answerImage: {
-    width: '80%', // Adjust the width to fit the card
-    height: 200, // Adjust the height as needed
+    width: '80%',
+    height: 200,
   },
-  button: {
-    marginTop: 20,
+  introImage: {
+    width: '80%',
+    height: 300,
+    marginBottom: 20,
+  },
+  nextButton: {
     padding: 15,
-    backgroundColor: 'blue',
+    marginTop: 20,
     borderRadius: 5,
-    width: '100%',
+    backgroundColor: 'blue',
     alignItems: 'center',
-  },
-  buttonText: {
-    fontSize: 18,
-    color: '#fff',
   },
 });
 

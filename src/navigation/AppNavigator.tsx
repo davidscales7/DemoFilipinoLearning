@@ -24,7 +24,7 @@ import FilipinoWeatherScreen from '../components/FilipinoFlash/FilipinoWeather';
 import FilipinoAnimalsScreen from '../components/FilipinoFlash/FilipinoAnimals';
 import FilipinoLessons from '../components/FilipinoLessons/FilipinoLessons';
 import FilipinoAccolades from '../components/FilipinoAccolades/FilipinoAccolades';
-import FilipinoLessonQuizzes from '../components/FilipinoQuizzes/FilipinoLessonQuiz';
+import FilipinoQuizzes from '../components/FilipinoQuizzes/FilipinoQuizzes';
 import FilipinoFlashHome from '../components/FilipinoFlash/FilipinoFlashHome';
 import FilipinoFlashNumbersBasic from '../components/FilipinoFlash/FilipinoFlashNumbersBasic'
 
@@ -37,6 +37,7 @@ import Lesson6 from '../components/FilipinoLessons/Lesson6';
 import Lesson7 from '../components/FilipinoLessons/Lesson7';
 import Lesson8 from '../components/FilipinoLessons/Lesson8';
 import Loading from './Loading';
+import Quiz1 from '../components/FilipinoQuizzes/Quiz1';
 //import Lesson9 from '../components/FilipinoLessons/Lesson9';
 //import Lesson10 from '../components/FilipinoLessons/Lesson10';
 
@@ -89,7 +90,9 @@ function AppNavigator() {
        {/*<Stack.Screen name = "Lesson9" component ={Lesson9}/>*/}
        {/*<Stack.Screen name = "Lesson10" component ={Lesson10}/> */}
 
-       <Stack.Screen name = "FilipinoLessonQuiz" component={FilipinoLessonQuizzes}/>
+       <Stack.Screen name = "FilipinoQuizzes" component={FilipinoQuizzes}/>
+       <Stack.Screen name = "Quiz1" component={Quiz1}/>
+      
       </Stack.Navigator>
     </NavigationContainer>
   );

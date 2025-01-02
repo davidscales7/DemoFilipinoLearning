@@ -19,7 +19,7 @@ export type RootStackParamList = {
     FilipinoAnimals: undefined;
     FilipinoLessons: undefined;
     FilipinoAccolades: undefined;
-    FilipinoLessonQuiz: undefined;
+    FilipinoQuizzes: undefined;
     FilipinoFlashHome: undefined;
     FilipinoFlashNumbersBasic: undefined;
     FilipinoNumbersIntermediate: undefined;
@@ -34,6 +34,10 @@ export type RootStackParamList = {
     Lesson8: undefined;
     Lesson9: undefined;
     Lesson10: undefined;
+    Quiz1: undefined;
+
+
+
     NotFound: undefined;
     Loading:undefined;
   };

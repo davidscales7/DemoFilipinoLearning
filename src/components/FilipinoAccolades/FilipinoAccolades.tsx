@@ -35,7 +35,7 @@ const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
         const response = await fetch('http://localhost:3000/accolades', {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/javascript',
             Authorization: `Bearer ${token}`,
           },
         });
