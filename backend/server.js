@@ -25,6 +25,7 @@ const UserSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     accolades: [{ type: String }], // To store accolades
+    quizAccolades:[{type:String}],// To store quiz accolades
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -109,6 +110,7 @@ app.get('/accolades', verifyToken, async (req, res) => {
     }
 
     res.json({ accolades: user.accolades });
+    res.json({ quizAccolades:user.quizAccolades})
 });
 
 
@@ -150,6 +152,52 @@ return res.status(500).json({ error: 'Failed to add accolade' });
 });
 
 
+
+app.post('/addAccoladeQuiz', verifyToken, async (req, res) => {
+    try {
+    const {quizAccolade} = req.body
+    if (!quizAccolade)
+    {
+        return res.status(400).json({error:'missing Quiz accolade'})
+            }
+    
+    
+    
+    const user = await User.findById(req.userId);
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+
+    }
+
+    if (user.quizAccolades.includes(quizAccolade)){
+        return res.status(409).json({ error: 'Quiz accolade already exists' });
+
+    }
+    user.quizAccolades.push(quizAccolade)
+
+
+  await user.save()
+    return res.status(201).json({
+    message: "Quiz accolade added successfully",
+    quizAccolades:user.quizAccolades
+    })
+
+
+}catch(error){
+console.log("error in accolade")
+return res.status(500).json({ error: 'Failed to add quiz accolade' });
+}
+    
+});
+app.get('/quizAccolades', verifyToken, async (req, res) => {
+    const user = await User.findById(req.userId);
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+
+    }
+
+    res.json({ quizAccolades: user.quizAccolades});
+});
 
 
 // Middleware to verify JWT token

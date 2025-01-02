@@ -9,16 +9,30 @@ interface Lesson {
   image: any;
 }
 
+
+interface Quiz {
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  image: any;
+}
+
+
+
 interface FilipinoAccoladesProps {
   progress?: Record<string, number>; // Optional
   lessons?: Record<string, Lesson[]>; // Optional
+  quizs?: Record<string,Quiz[]>;
 }
 
 const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
   progress = {}, // Default to empty object
   lessons = {}, // Default to empty object
+  quizs ={},
 }) => {
   const [accolades, setAccolades] = useState<string[]>([]);
+const [quizAccolades, setQuizAccolades] = useState<string[]>([]);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,10 +46,12 @@ const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
           return;
         }
 
+
+
         const response = await fetch('http://localhost:3000/accolades', {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/javascript',
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
         });
@@ -47,14 +63,48 @@ const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
 
         const data = await response.json();
         setAccolades(data.accolades || []);
+        
       } catch (err) {
         setError(err.message || 'An error occurred');
       } finally {
         setLoading(false);
       }
     };
+const fetchQuizAccolades = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          setError('User not logged in');
+          setLoading(false);
+          return;
+        }
 
+
+
+        const response = await fetch('http://localhost:3000/quizAccolades', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch accolades');
+        }
+
+        const data = await response.json();
+        setQuizAccolades(data.quizAccolades || []);
+        
+      } catch (err) {
+        setError(err.message || 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
     fetchAccolades();
+    fetchQuizAccolades();
   }, []);
 
   if (loading) {
@@ -90,7 +140,22 @@ const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
         <Text key={lessonId} style={styles.progressText}>
           Lesson {lessonId}: {progress[lessonId]}/{lessons[lessonId]?.length || 0} completed
         </Text>
+
       ))}
+
+
+        {quizAccolades.map((quizAccolade, index) => (
+          <Text key={index} style={styles.accoladeText}>
+            {index + 1}. {quizAccolade}
+          </Text>
+        ))}
+
+      {Object.keys(progress).map((quizId) => (
+        <Text key={quizId} style={styles.progressText}>
+          Quiz {quizId}: {progress[quizId]}/{quizs[quizId]?.length || 0} completed
+        </Text>
+
+         ))}
     </View>
   );
 };

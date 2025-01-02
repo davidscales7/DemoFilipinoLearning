@@ -148,7 +148,7 @@ const Lesson5: React.FC = () => {
     const token = await AsyncStorage.getItem('token')
     fetch('http://localhost:3000/addAccolade', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/javascript','Authorization': `Bearer ${token}`},
+      headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${token}`},
       body: JSON.stringify({accolade:"LessonTestLesson5.3"})
   })
   .then(response => response.json())

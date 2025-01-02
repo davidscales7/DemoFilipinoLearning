@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Quiz1: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -43,6 +44,27 @@ const Quiz1: React.FC = () => {
       </View>
     );
   }
+
+  async function finishedQuizForAccoladePosting(){
+    
+
+
+
+
+
+    const token = await AsyncStorage.getItem('token')
+    fetch('http://localhost:3000/addAccoladeQuiz', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${token}`},
+      body: JSON.stringify({quizAccolade:"Quiz 1"})
+  })
+  .then(response => response.json())
+  .then(data => { 
+  console.log("quiz accoladedata",data);
+  })
+  
+    }
+    finishedQuizForAccoladePosting()
 
   return (
     <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
