@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Button } from 'react-native';
 import Flashcard from '../Flashcard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const animals: React.FC = () => {
+const Animals: React.FC = () => {
   const flashcards = [
     {
       front: 'Cat',
@@ -86,23 +87,61 @@ const animals: React.FC = () => {
       soundSrc: require('../../../assets/Voice/kambing.mp3'),
     },
 
+    
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [reset, setReset] = useState(false);
+  const [finished, setFinished] = useState(false);
 
   const handleCorrect = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
-    setReset(true);
+    if (currentIndex + 1 === flashcards.length) {
+      setFinished(true); // Set finished to true if it's the last card
+      finishedFlashCardTopicForAccoladePosting();
+    } else {
+      setCurrentIndex((prevIndex) => prevIndex + 1);
+      setReset(true);
+    }
   };
 
   const handleIncorrect = () => {
-    setReset(true);
+    setReset(true); // Allow resetting even if incorrect
   };
 
   const handleResetComplete = () => {
     setReset(false);
   };
+
+  async function finishedFlashCardTopicForAccoladePosting() {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await fetch('http://localhost:3000/addflashCardAccolades', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ flashCardAccolade: 'Flash Card 1.3' }),
+      });
+      const data = await response.json();
+      console.log('Flashcard accolade data:', data);
+    } catch (error) {
+      console.error('Failed to post flashcard accolade:', error);
+    }
+  }
+
+  if (finished) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>🎉 Congratulations! 🎉</Text>
+        <Text style={styles.message}>You have completed the animal flashcards!</Text>
+        <Button
+          title="Restart"
+          onPress={() => {
+            setCurrentIndex(0);
+            setFinished(false);
+          }}
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -130,10 +169,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F4F8',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 20,
   },
   title: {
     fontSize: 24,
-    margin: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  message: {
+    fontSize: 18,
+    color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -143,4 +190,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default animals;
+export default Animals;

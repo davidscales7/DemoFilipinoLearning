@@ -26,6 +26,7 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     accolades: [{ type: String }], // To store accolades
     quizAccolades:[{type:String}],// To store quiz accolades
+    flashCardAccolades:[{type: String}],// To store flashcard accolades
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -103,14 +104,22 @@ app.post('/login', async (req, res) => {
 
 // Protected route to fetch accolades
 app.get('/accolades', verifyToken, async (req, res) => {
-    const user = await User.findById(req.userId);
-    if (!user) {
-        return res.status(404).json({ error: 'User not found' });
+    try {
+        const user = await User.findById(req.userId);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
 
+        // Combine all accolades into a single response
+        res.json({
+            accolades: user.accolades,
+            quizAccolades: user.quizAccolades,
+            flashCardAccolades: user.flashCardAccolades,
+        });
+    } catch (error) {
+        console.error('Error fetching accolades:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-
-    res.json({ accolades: user.accolades });
-    res.json({ quizAccolades:user.quizAccolades})
 });
 
 
@@ -184,7 +193,7 @@ app.post('/addAccoladeQuiz', verifyToken, async (req, res) => {
 
 
 }catch(error){
-console.log("error in accolade")
+console.log("error in quiz accolade")
 return res.status(500).json({ error: 'Failed to add quiz accolade' });
 }
     
@@ -197,6 +206,46 @@ app.get('/quizAccolades', verifyToken, async (req, res) => {
     }
 
     res.json({ quizAccolades: user.quizAccolades});
+});
+
+app.post('/addflashCardAccolades', verifyToken, async (req, res) => {
+    try {
+      const { flashCardAccolade } = req.body;
+      if (!flashCardAccolade) {
+        return res.status(400).json({ error: 'missing Flash Card accolade' });
+      }
+  
+      const user = await User.findById(req.userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      if (user.flashCardAccolades.includes(flashCardAccolade)) {
+        return res.status(409).json({ error: 'Quiz accolade already exists' });
+      }
+  
+      user.flashCardAccolades.push(flashCardAccolade);
+  
+      await user.save();
+      return res.status(201).json({
+        message: 'Flashcard accolade added successfully',
+        flashCardAccolades: user.flashCardAccolades,
+      });
+    } catch (error) {
+      console.log('Error in flash card accolade:', error);
+      return res.status(500).json({ error: 'Failed to add flash card accolade' });
+    }
+  });
+  
+
+app.get('/flashCardAccolades', verifyToken, async (req, res) => {
+    const user = await User.findById(req.userId);
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+
+    }
+
+    res.json({ flashCardAccolades: user.flashCardAccolades});
 });
 
 

@@ -18,21 +18,36 @@ interface Quiz {
 }
 
 
+interface FlashCard {
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  image: any;
+}
+
+
+
 
 interface FilipinoAccoladesProps {
   progress?: Record<string, number>; // Optional
   lessons?: Record<string, Lesson[]>; // Optional
   quizs?: Record<string,Quiz[]>;
+  flashCards?: Record<string,FlashCard[]>;
 }
 
 const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
   progress = {}, // Default to empty object
-  lessons = {}, // Default to empty object
-  quizs ={},
+  lessons = {},
+  quizs={},
+  flashCards={}, 
+
 }) => {
   const [accolades, setAccolades] = useState<string[]>([]);
-const [quizAccolades, setQuizAccolades] = useState<string[]>([]);
-  
+  const [quizAccolades, setQuizAccolades] = useState<string[]>([]);
+  const [flashCardAccolades, setFlashCardAccolades]= useState<string[]>([]);
+
+
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -70,6 +85,8 @@ const [quizAccolades, setQuizAccolades] = useState<string[]>([]);
         setLoading(false);
       }
     };
+
+    
 const fetchQuizAccolades = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
@@ -102,10 +119,49 @@ const fetchQuizAccolades = async () => {
       } finally {
         setLoading(false);
       }
+    }
+
+  
+      const fetchFlashCardAccolades = async () => {
+        try {
+          const token = await AsyncStorage.getItem('token');
+          if (!token) {
+            setError('User not logged in');
+            setLoading(false);
+            return;
+          }
+  
+  
+  
+          const response = await fetch('http://localhost:3000/flashCardAccolades', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to fetch accolades');
+          }
+  
+          const data = await response.json();
+          setFlashCardAccolades(data.flashCardAccolades || []);
+          
+        } catch (err) {
+          setError(err.message || 'An error occurred');
+        } finally {
+          setLoading(false);
+        }
+  
+  
+
     };
     fetchAccolades();
     fetchQuizAccolades();
-  }, []);
+    fetchFlashCardAccolades();
+  }, []); 
 
   if (loading) {
     return (
@@ -126,16 +182,18 @@ const fetchQuizAccolades = async () => {
 
   return (
     <View style={styles.container}>
+
       <Text style={styles.text}>Filipino Accolades</Text>
       {accolades.length > 0 ? (
         accolades.map((accolade, index) => (
           <Text key={index} style={styles.accoladeText}>
-            {index + 1}. {accolade}
+          {accolade}
           </Text>
         ))
       ) : (
         <Text style={styles.placeholderText}>No accolades earned yet!</Text>
       )}
+      
       {Object.keys(progress).map((lessonId) => (
         <Text key={lessonId} style={styles.progressText}>
           Lesson {lessonId}: {progress[lessonId]}/{lessons[lessonId]?.length || 0} completed
@@ -146,7 +204,7 @@ const fetchQuizAccolades = async () => {
 
         {quizAccolades.map((quizAccolade, index) => (
           <Text key={index} style={styles.accoladeText}>
-            {index + 1}. {quizAccolade}
+          {quizAccolade}
           </Text>
         ))}
 
@@ -156,6 +214,23 @@ const fetchQuizAccolades = async () => {
         </Text>
 
          ))}
+
+      
+
+         {flashCardAccolades.map((flashCardAccolade, index) => (
+          <Text key={index} style={styles.accoladeText}>
+           {flashCardAccolade}
+          </Text>
+        ))}
+
+      {Object.keys(progress).map((flashCardId) => (
+        <Text key={flashCardId} style={styles.progressText}>
+          Quiz {flashCardId}: {progress[flashCardId]}/{flashCards[flashCardId]?.length || 0} completed
+        </Text>
+
+         ))}
+
+
     </View>
   );
 };
