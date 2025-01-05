@@ -118,12 +118,12 @@ const Animals: React.FC = () => {
       const response = await fetch('http://localhost:3000/addflashCardAccolades', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ flashCardAccolade: 'Flash Card 1.3' }),
+        body: JSON.stringify({ flashCardAccolade: 'Animal Flash Cards' }),
       });
       const data = await response.json();
       console.log('Flashcard accolade data:', data);
     } catch (error) {
-      console.error('Failed to post flashcard accolade:', error);
+      console.error('Failed to post animal flashcard accolade:', error);
     }
   }
 

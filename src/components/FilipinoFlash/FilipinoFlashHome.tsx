@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './../../navigation/navigation';
@@ -11,10 +11,7 @@ const FilipinoFlashHome: React.FC = () => {
     const [showFlashcards, ] = useState(true);
   
    
-  const handleRegister = () => {
-    // Navigate to the Register screen (assuming you have a Register screen in your navigation)
-    navigation.navigate('RegisterScreen'); // Change 'Register' to the name of your Register screen in the navigation
-  };
+
 
   const handleNavigateToFlashFilipinoGreetings= () => {
     navigation.navigate('FilipinoGreetings');
@@ -80,13 +77,9 @@ const  handleNavigateToFlashAnimals = () => {
 return (
 
       
-    <ImageBackground
-      source={require('../../../assets/images/PhilipinesBackground.jpg')}
-      resizeMode="cover"
-      style={styles.imageBackground}
-    >
-                
-      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+ 
+              <View style={styles.background}>
+      <ScrollView style={styles.scrollViewContent}>
         <View style={styles.container}>
           <Text style={styles.titleText}>Filipino Flashcards</Text>
 
@@ -161,7 +154,7 @@ return (
                 <Image 
                   source={require('../../../assets/images/family.jpg')}
                   style={styles.image}
-                />handleNavigateToFlashFamily
+                />
               </TouchableOpacity>
 
               <TouchableOpacity 
@@ -211,7 +204,7 @@ return (
           )}
         
       </ScrollView>
-    </ImageBackground>
+      </View>
   );
 };
 
@@ -221,11 +214,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 20,
   },
-  scrollViewContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+ scrollViewContent: {
+  flexGrow: 1,
+    // Aligns content to the right
+},
+
   titleText: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -258,12 +251,10 @@ const styles = StyleSheet.create({
     height: 50,
     marginLeft: 10,
   },
-  imageBackground: {
+  background: {
     flex: 1,
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#6489bd', // Light Grey or any other chosen color
+ 
   },
   box: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

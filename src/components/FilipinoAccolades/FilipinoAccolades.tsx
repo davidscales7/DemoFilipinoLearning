@@ -183,7 +183,7 @@ const fetchQuizAccolades = async () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.text}>Filipino Accolades</Text>
+        <Text style={styles.text}>Accolades</Text>
 
         {accolades.length > 0
           ? accolades.map((accolade, index) => (
