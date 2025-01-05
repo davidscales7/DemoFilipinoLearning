@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { ScrollView } from 'react-native';
 interface Lesson {
   question: string;
   options: string[];
@@ -182,55 +182,53 @@ const fetchQuizAccolades = async () => {
 
   return (
     <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.text}>Filipino Accolades</Text>
 
-      <Text style={styles.text}>Filipino Accolades</Text>
-      {accolades.length > 0 ? (
-        accolades.map((accolade, index) => (
-          <Text key={index} style={styles.accoladeText}>
-          {accolade}
-          </Text>
-        ))
-      ) : (
-        <Text style={styles.placeholderText}>No accolades earned yet!</Text>
-      )}
-      
-      {Object.keys(progress).map((lessonId) => (
-        <Text key={lessonId} style={styles.progressText}>
-          Lesson {lessonId}: {progress[lessonId]}/{lessons[lessonId]?.length || 0} completed
-        </Text>
-
-      ))}
-
+        {accolades.length > 0
+          ? accolades.map((accolade, index) => (
+              <View key={index} style={[styles.accoladeBox, styles.lessonBox]}>
+                <Text style={styles.accoladeText}>{accolade}</Text>
+              </View>
+            ))
+          : null}
 
         {quizAccolades.map((quizAccolade, index) => (
-          <Text key={index} style={styles.accoladeText}>
-          {quizAccolade}
-          </Text>
+          <View key={index} style={[styles.accoladeBox, styles.quizBox]}>
+            <Text style={styles.accoladeText}>{quizAccolade}</Text>
+          </View>
         ))}
 
-      {Object.keys(progress).map((quizId) => (
-        <Text key={quizId} style={styles.progressText}>
-          Quiz {quizId}: {progress[quizId]}/{quizs[quizId]?.length || 0} completed
-        </Text>
-
-         ))}
-
-      
-
-         {flashCardAccolades.map((flashCardAccolade, index) => (
-          <Text key={index} style={styles.accoladeText}>
-           {flashCardAccolade}
-          </Text>
+        {flashCardAccolades.map((flashCardAccolade, index) => (
+          <View key={index} style={[styles.accoladeBox, styles.flashCardBox]}>
+            <Text style={styles.accoladeText}>{flashCardAccolade}</Text>
+          </View>
         ))}
 
-      {Object.keys(progress).map((flashCardId) => (
-        <Text key={flashCardId} style={styles.progressText}>
-          Quiz {flashCardId}: {progress[flashCardId]}/{flashCards[flashCardId]?.length || 0} completed
-        </Text>
+        {Object.keys(progress).map((lessonId) => (
+          <View key={lessonId} style={[styles.accoladeBox, styles.lessonBox]}>
+            <Text style={styles.progressText}>
+              Lesson {lessonId}: {progress[lessonId]}/{lessons[lessonId]?.length || 0} completed
+            </Text>
+          </View>
+        ))}
 
-         ))}
+        {Object.keys(progress).map((quizId) => (
+          <View key={quizId} style={[styles.accoladeBox, styles.quizBox]}>
+            <Text style={styles.progressText}>
+              Quiz {quizId}: {progress[quizId]}/{quizs[quizId]?.length || 0} completed
+            </Text>
+          </View>
+        ))}
 
-
+        {Object.keys(progress).map((flashCardId) => (
+          <View key={flashCardId} style={[styles.accoladeBox, styles.flashCardBox]}>
+            <Text style={styles.progressText}>
+              Flash Card {flashCardId}: {progress[flashCardId]}/{flashCards[flashCardId]?.length || 0} completed
+            </Text>
+          </View>
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -238,32 +236,48 @@ const fetchQuizAccolades = async () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#f0f0f0',
     padding: 20,
+  },
+  scrollContainer: {
+    alignItems: 'center',
   },
   text: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 20,
+    textAlign: 'center',
+  },
+  accoladeBox: {
+    width: '90%',
+    marginVertical: 10,
+    borderRadius: 10,
+    padding: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  lessonBox: {
+    backgroundColor: '#d1e7dd', // Greenish for lessons
+  },
+  quizBox: {
+    backgroundColor: '#f8d7da', // Reddish for quizzes
+  },
+  flashCardBox: {
+    backgroundColor: '#cff4fc', // Blueish for flashcards
   },
   accoladeText: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#555',
-    marginVertical: 5,
-  },
-  placeholderText: {
-    fontSize: 18,
-    fontWeight: 'normal',
-    color: '#666',
-    marginTop: 20,
+    textAlign: 'center',
   },
   progressText: {
     fontSize: 16,
     color: '#333',
-    marginVertical: 5,
+    textAlign: 'center',
   },
   errorText: {
     fontSize: 18,
