@@ -76,7 +76,7 @@ function AppNavigator() {
        
        <Stack.Screen name = "FilipinoAccolades" component ={FilipinoAccolades}/>     
      
-       <Stack.Screen name = "FilipinoFlashHome" component ={FilipinoFlashHome}/>
+       <Stack.Screen name = "FilipinoFlashHome" component ={FilipinoFlashHome}options={{ headerShown: false }}/>
        <Stack.Screen name = "FilipinoFlashNumbersBasic" component = {FilipinoFlashNumbersBasic}/>
        <Stack.Screen name = "Lesson1" component ={Lesson1}/>
        <Stack.Screen name = "Lesson2" component ={Lesson2}/>

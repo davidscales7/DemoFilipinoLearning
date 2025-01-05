@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -7,206 +7,128 @@ import { RootStackParamList } from './../../navigation/navigation';
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 const FilipinoFlashHome: React.FC = () => {
-    const navigation = useNavigation<HomeScreenNavigationProp>();
-    const [showFlashcards, ] = useState(true);
+  const navigation = useNavigation<HomeScreenNavigationProp>();
+  const [showFlashcards] = useState(true);
+
+  // Customize or remove the header title
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={{ marginLeft: 10, color: '#007AFF', fontSize: 18 }}>Back</Text>
+        </TouchableOpacity>
+      ),
+      headerTitle: '', // Keep the title empty
+    });
+  }, [navigation]);
   
-   
 
-
-  const handleNavigateToFlashFilipinoGreetings= () => {
+  const handleNavigateToFlashFilipinoGreetings = () => {
     navigation.navigate('FilipinoGreetings');
+  };
 
-  }
-  
   const handleNavigateToFlashBodyParts = () => {
     navigation.navigate('FilipinoBodyParts');
+  };
 
-  }
-
-
-const  handleNavigateToFlashFilipinoColours = () => {
+  const handleNavigateToFlashFilipinoColours = () => {
     navigation.navigate('FilipinoColours');
+  };
 
-  }
-  
+  const handleNavigateToFlashFilipinoFoodAndDrink = () => {
+    navigation.navigate('FilipinoFoodAndDrink');
+  };
 
- const handleNavigateToFlashFilipinoFoodAndDrink = () => {
-  navigation.navigate('FilipinoFoodAndDrink');
+  const handleNavigateToFlashFilipinoWeather = () => {
+    navigation.navigate('FilipinoWeather');
+  };
 
-}
+  const handleNavigateToFlashTransport = () => {
+    navigation.navigate('FilipinoTransports');
+  };
 
+  const handleNavigateToFlashFamily = () => {
+    navigation.navigate('FilipinoFamily');
+  };
 
+  const handleNavigateToFlashGeneralTopics = () => {
+    navigation.navigate('FilipinoGeneralTopics');
+  };
 
-const handleNavigateToFlashFilipinoWeather = () => {
-  navigation.navigate('FilipinoWeather');
+  const handleNavigateToFlashHouseItems = () => {
+    navigation.navigate('FilipinoGreetings');
+  };
 
-}
+  const handleNavigateToFlashAnimals = () => {
+    navigation.navigate('FilipinoAnimals');
+  };
 
-
-
-const  handleNavigateToFlashTransport = () => {
-  navigation.navigate('FilipinoTransports');
-
-}
-
-
-
-const  handleNavigateToFlashFamily = () => {
-  navigation.navigate('FilipinoFamily');
-
-}
-
-const  handleNavigateToFlashGeneralTopics = () => {
-  navigation.navigate('FilipinoGeneralTopics');
-
-}
-
-const   handleNavigateToFlashHouseItems = () => {
-  navigation.navigate('FilipinoGreetings');
-
-}
-
-const  handleNavigateToFlashAnimals = () => {
-  navigation.navigate('FilipinoAnimals');
-
-}
-
-
-
-
-return (
-
-      
- 
-              <View style={styles.background}>
+  return (
+    <View style={styles.background}>
       <ScrollView style={styles.scrollViewContent}>
         <View style={styles.container}>
           <Text style={styles.titleText}>Filipino Flashcards</Text>
+        </View>
 
-        
+        {showFlashcards && (
+          <View style={styles.flashcardsContainer}>
+            <TouchableOpacity style={[styles.row, styles.box]} onPress={handleNavigateToFlashFilipinoGreetings}>
+              <Text style={styles.categoriesText}>Greetings</Text>
+              <Image source={require('../../../assets/images/GreetingImg.jpg')} style={styles.image} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.row, styles.box]} onPress={handleNavigateToFlashBodyParts}>
+              <Text style={styles.categoriesText}>Body Parts</Text>
+              <Image source={require('../../../assets/images/bodyPartsImg.jpg')} style={styles.image} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.row, styles.box]} onPress={handleNavigateToFlashFilipinoColours}>
+              <Text style={styles.categoriesText}>Colours</Text>
+              <Image source={require('../../../assets/images/Colours.jpg')} style={styles.image} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.row, styles.box]} onPress={handleNavigateToFlashFilipinoFoodAndDrink}>
+              <Text style={styles.categoriesText}>Food + drink</Text>
+              <Image source={require('../../../assets/images/FoodAndDrink.jpg')} style={styles.image} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.row, styles.box]} onPress={handleNavigateToFlashFilipinoWeather}>
+              <Text style={styles.categoriesText}>Weather</Text>
+              <Image source={require('../../../assets/images/Weather.jpg')} style={styles.image} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.row, styles.box]} onPress={handleNavigateToFlashTransport}>
+              <Text style={styles.categoriesText}>Transports</Text>
+              <Image source={require('../../../assets/images/family.jpg')} style={styles.image} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.row, styles.box]} onPress={handleNavigateToFlashFamily}>
+              <Text style={styles.categoriesText}>Family</Text>
+              <Image source={require('../../../assets/images/family.jpg')} style={styles.image} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.row, styles.box]} onPress={handleNavigateToFlashGeneralTopics}>
+              <Text style={styles.categoriesText}>General topics</Text>
+              <Image source={require('../../../assets/images/GeneralTopics.jpg')} style={styles.image} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.row, styles.box]} onPress={handleNavigateToFlashHouseItems}>
+              <Text style={styles.categoriesText}>House Items</Text>
+              <Image source={require('../../../assets/images/transports.jpg')} style={styles.image} />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={[styles.row, styles.box]} onPress={handleNavigateToFlashAnimals}>
+              <Text style={styles.categoriesText}>Animals</Text>
+              <Image source={require('../../../assets/images/Animals.jpg')} style={styles.image} />
+            </TouchableOpacity>
           </View>
-
-          {showFlashcards && (
-            <View style={styles.flashcardsContainer}>
-             
-
-
-              <TouchableOpacity 
-                style={[styles.row, styles.box]} 
-                onPress={ handleNavigateToFlashFilipinoGreetings}
-              >
-                <Text style={styles.categoriesText}>Greetings</Text>
-                <Image 
-                  source={require('../../../assets/images/GreetingImg.jpg')}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={[styles.row, styles.box]} 
-                onPress={handleNavigateToFlashBodyParts}
-              >
-                <Text style={styles.categoriesText}>Body Parts</Text>
-                <Image 
-                  source={require('../../../assets/images/bodyPartsImg.jpg')}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={[styles.row, styles.box]} 
-                onPress={handleNavigateToFlashFilipinoColours}
-              >
-                <Text style={styles.categoriesText}>Colours</Text>
-                <Image 
-                  source={require('../../../assets/images/Colours.jpg')}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={[styles.row, styles.box]} 
-                onPress={ handleNavigateToFlashFilipinoFoodAndDrink}
-              >
-                <Text style={styles.categoriesText}>Food + drink</Text>
-                <Image 
-                  source={require('../../../assets/images/FoodAndDrink.jpg')}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={[styles.row, styles.box]} 
-                onPress={ handleNavigateToFlashFilipinoWeather}
-              >
-                <Text style={styles.categoriesText}>Weather</Text>
-                <Image 
-                  source={require('../../../assets/images/Weather.jpg')}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={[styles.row, styles.box]} 
-                onPress={ handleNavigateToFlashTransport}
-              >
-                <Text style={styles.categoriesText}>Transports</Text>
-                <Image 
-                  source={require('../../../assets/images/family.jpg')}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={[styles.row, styles.box]} 
-                onPress={ handleNavigateToFlashFamily}
-              >
-                <Text style={styles.categoriesText}>Family</Text>
-                <Image 
-                  source={require('../../../assets/images/family.jpg')}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={[styles.row, styles.box]} 
-                onPress={ handleNavigateToFlashGeneralTopics}
-              >
-                <Text style={styles.categoriesText}>General topics</Text>
-                <Image 
-                  source={require('../../../assets/images/GeneralTopics.jpg')}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={[styles.row, styles.box]} 
-                onPress={  handleNavigateToFlashHouseItems}
-              >
-                <Text style={styles.categoriesText}>House Items</Text>
-                <Image 
-                  source={require('../../../assets/images/transports.jpg')}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity 
-                style={[styles.row, styles.box]} 
-                onPress={handleNavigateToFlashAnimals}
-              >
-                <Text style={styles.categoriesText}>Animals</Text>
-                <Image 
-                  source={require('../../../assets/images/Animals.jpg')}
-                  style={styles.image}
-                />
-              </TouchableOpacity>
-            </View>
-          )}
-        
+        )}
       </ScrollView>
-      </View>
+    </View>
   );
 };
+
+
 
 const styles = StyleSheet.create({
   container: {

@@ -129,6 +129,7 @@ const Animals: React.FC = () => {
 
   if (finished) {
     return (
+      
       <View style={styles.container}>
         <Text style={styles.title}>🎉 Congratulations! 🎉</Text>
         <Text style={styles.message}>You have completed the animal flashcards!</Text>
@@ -160,13 +161,14 @@ const Animals: React.FC = () => {
         <Button title="Incorrect" onPress={handleIncorrect} color="red" />
       </View>
     </View>
+  
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0F4F8',
+    backgroundColor: '#6489bd',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -188,6 +190,7 @@ const styles = StyleSheet.create({
     width: '60%',
     marginTop: 20,
   },
+ 
 });
 
 export default Animals;

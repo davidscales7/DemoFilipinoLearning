@@ -4,7 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 const FilipinoDailyLesson: React.FC = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Daily Lesson</Text>
+      <Text style={styles.text}>Daily flashcards</Text>
     </View>
   );
 };
