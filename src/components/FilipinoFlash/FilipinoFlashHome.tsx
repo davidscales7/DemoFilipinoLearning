@@ -14,7 +14,7 @@ const FilipinoFlashHome: React.FC = () => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.navigate('Filipino')}>
           <Text style={{ marginLeft: 10, color: '#007AFF', fontSize: 18 }}>Back</Text>
         </TouchableOpacity>
       ),
@@ -65,6 +65,14 @@ const FilipinoFlashHome: React.FC = () => {
 
   return (
     <View style={styles.background}>
+        
+    {/* Back Button */}
+    <TouchableOpacity
+      style={styles.backButton}
+      onPress={() => navigation.navigate('Filipino')} // Navigate to 'Filipino'
+    >
+      <Text style={styles.backButtonText}>Back</Text>
+    </TouchableOpacity>
       <ScrollView style={styles.scrollViewContent}>
         <View style={styles.container}>
           <Text style={styles.titleText}>Filipino Flashcards</Text>
@@ -175,7 +183,7 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    backgroundColor: '#6489bd', // Light Grey or any other chosen color
+    // Light Grey or any other chosen color
  
   },
   box: {
@@ -188,6 +196,20 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: '100%',
     alignItems: 'center',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 20, // Adjust for where your button should appear
+    left: 10,
+    padding: 10,
+    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+    borderRadius: 5,
+    zIndex: 10, // Ensure it appears above everything
+  },
+  backButtonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

@@ -4,6 +4,7 @@ export type RootStackParamList = {
     Home: undefined;
     Ukrainian: undefined;
     Filipino: undefined;
+    FilipinoLearning:undefined;
     FilipinoGreetings: undefined;
     FilipinoBodyParts: undefined;
     FilipinoNewTopic: undefined;
