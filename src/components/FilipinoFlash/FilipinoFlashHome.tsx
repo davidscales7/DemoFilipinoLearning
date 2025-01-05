@@ -143,6 +143,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
+    backgroundColor:'#6489bd'
   },
  scrollViewContent: {
   flexGrow: 1,
@@ -183,7 +184,8 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    // Light Grey or any other chosen color
+    
+    backgroundColor:'#6489bd'// Light Grey or any other chosen color
  
   },
   box: {

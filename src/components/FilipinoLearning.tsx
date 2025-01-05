@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, ImageBackground, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -8,9 +8,8 @@ type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 const FilipinoLearning: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const [showFlashcards, setShowFlashcards] = useState(false);
 
- 
+
 
   const handleNavigateToFlashCardsScreen = () => {
     navigation.navigate('FilipinoFlashHome');

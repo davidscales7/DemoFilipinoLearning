@@ -58,7 +58,7 @@ function AppNavigator() {
     <Stack.Screen name="Login" component={LoginScreen} /> 
         <Stack.Screen name="Home" component={AppHeader} />
         <Stack.Screen name="Ukrainian" component={UkrainianScreen} />
-        <Stack.Screen name="Filipino" component ={FilipinoLearning} />
+        <Stack.Screen name="Filipino" component ={FilipinoLearning}options={{ headerShown: false }} />
         <Stack.Screen name="FilipinoGreetings" component={FilipinoGreetingsScreen} /> 
        <Stack.Screen name = "FilipinoBodyParts" component={FilipinoBodyParts}/>
        <Stack.Screen name = "FilipinoNewTopic" component={FilipinoNewTopic}/>

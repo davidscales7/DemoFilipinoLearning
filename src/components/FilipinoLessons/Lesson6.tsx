@@ -11,7 +11,7 @@ const questions = [
   {
     question: "How are ____ and ____ today?",
     options: ["you", "I", "me", "we"],
-    correctAnswer: ["you", "we"], //  correct answers
+    correctAnswer: ["you", "me"], //  correct answers
     image: require('../../../assets/images/correct.jpg'), // Replace with your image path
   },
   // Add more questions as needed
