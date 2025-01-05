@@ -3,30 +3,75 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 // greetings along with basic responses
 const slides = [
-  { number: "1", word: "One", translated: "Isa", image: require('../../../assets/images/number1.jpg') },
-  { number: "2", word: "Two", translated: "Dalawa", image: require('../../../assets/images/number2.jpg') },
-  
-  
-  
-  // number "e.g 1" here just means what slide is it on admittdly it isn't the best thing .
-  //word meaining the english Word that We want to learn translated into Taga log
+  { word: "Father", translated: "Ama", image: require('../../../assets/images/father.png') },
+  { word: "Mother", translated: "Ina", image: require('../../../assets/images/mother.png') },
+  { word: "Brother", translated: "Kapatid na Lalaki", image: require('../../../assets/images/brother.png') },
+  { word: "Sister", translated: "Kapatid na Babae", image: require('../../../assets/images/sister.png') },
+  { word: "Grandfather", translated: "Lolo", image: require('../../../assets/images/grandad.png') },
+  { word: "Grandmother", translated: "Lola", image: require('../../../assets/images/grandma.png') },
+  { word: "Uncle", translated: "Tiyo", image: require('../../../assets/images/uncle.jpg') },
+  { word: "Aunt", translated: "Tiya", image: require('../../../assets/images/aunt.jpg') },
+  { word: "Cousin", translated: "Pinsan", image: require('../../../assets/images/cousin.png') },
 ];
+
 
 const questions = [
   {
-    question: "What is the correct way to say Number 1?",
-    options: ["Apat", "Isa", "Dalawa", "Tatlo"],
-    correctAnswer: "Isa",
-    image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
+    question: "What is the correct way to say 'Father' in Tagalog?",
+    options: ["Ama", "Ina", "Lolo", "Pinsan"],
+    correctAnswer: "Ama",
+    image: require('../../../assets/images/father.png'), // Update with the correct image path
   },
   {
-    question: "What is the correct way to say Number 2",
-    options: ["Dalawa", "Apat", "Lima", "Anim"],
-    correctAnswer: "Dalawa",
-    image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
+    question: "What is the correct way to say 'Mother' in Tagalog?",
+    options: ["Kapatid na Babae", "Ina", "Tiya", "Lola"],
+    correctAnswer: "Ina",
+    image: require('../../../assets/images/mother.png'), // Update with the correct image path
   },
-  // Add more questions as needed
+  {
+    question: "What is the correct way to say 'Brother' in Tagalog?",
+    options: ["Kapatid na Lalaki", "Ama", "Tiyo", "Pinsan"],
+    correctAnswer: "Kapatid na Lalaki",
+    image: require('../../../assets/images/brother.png'), // Update with the correct image path
+  },
+  {
+    question: "What is the correct way to say 'Sister' in Tagalog?",
+    options: ["Lolo", "Kapatid na Babae", "Ina", "Lola"],
+    correctAnswer: "Kapatid na Babae",
+    image: require('../../../assets/images/sister.png'), // Update with the correct image path
+  },
+  {
+    question: "What is the correct way to say 'Grandfather' in Tagalog?",
+    options: ["Lolo", "Tiyo", "Ama", "Tiya"],
+    correctAnswer: "Lolo",
+    image: require('../../../assets/images/grandad.png'), // Update with the correct image path
+  },
+  {
+    question: "What is the correct way to say 'Grandmother' in Tagalog?",
+    options: ["Lola", "Ina", "Pinsan", "Tiya"],
+    correctAnswer: "Lola",
+    image: require('../../../assets/images/grandma.png'), // Update with the correct image path
+  },
+  {
+    question: "What is the correct way to say 'Uncle' in Tagalog?",
+    options: ["Tiyo", "Kapatid na Lalaki", "Lolo", "Ama"],
+    correctAnswer: "Tiyo",
+    image: require('../../../assets/images/uncle.jpg'), // Update with the correct image path
+  },
+  {
+    question: "What is the correct way to say 'Aunt' in Tagalog?",
+    options: ["Tiya", "Lola", "Ina", "Pinsan"],
+    correctAnswer: "Tiya",
+    image: require('../../../assets/images/aunt.jpg'), // Update with the correct image path
+  },
+  {
+    question: "What is the correct way to say 'Cousin' in Tagalog?",
+    options: ["Pinsan", "Ama", "Kapatid na Babae", "Lolo"],
+    correctAnswer: "Pinsan",
+    image: require('../../../assets/images/cousin.png'), // Update with the correct image path
+  },
 ];
+
 
 const Lesson3: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);

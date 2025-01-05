@@ -36,10 +36,11 @@ import Lesson5 from '../components/FilipinoLessons/Lesson5';
 import Lesson6 from '../components/FilipinoLessons/Lesson6';
 import Lesson7 from '../components/FilipinoLessons/Lesson7';
 import Lesson8 from '../components/FilipinoLessons/Lesson8';
-import Loading from './Loading';
-import Quiz1 from '../components/FilipinoQuizzes/Quiz1';
+
 //import Lesson9 from '../components/FilipinoLessons/Lesson9';
 //import Lesson10 from '../components/FilipinoLessons/Lesson10';
+import Loading from './Loading';
+import Quiz1 from '../components/FilipinoQuizzes/Quiz1';
 
 
 
