@@ -5,12 +5,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 const slides = [
   { number: "1", word: "One", translated: "Isa", image: require('../../../assets/images/number1.jpg') },
   { number: "2", word: "Two", translated: "Dalawa", image: require('../../../assets/images/number2.jpg') },
-  
-  
-  
-  // number "e.g 1" here just means what slide is it on admittdly it isn't the best thing .
-  //word meaining the english Word that We want to learn translated into Taga log
+  { number: "3", word: "Three", translated: "Tatlo", image: require('../../../assets/images/number3.png') },
+  { number: "4", word: "Four", translated: "Apat", image: require('../../../assets/images/number4.png') },
+  { number: "5", word: "Five", translated: "Lima", image: require('../../../assets/images/number5.png') },
+  { number: "6", word: "Six", translated: "Anim", image: require('../../../assets/images/number6.png') },
+  { number: "7", word: "Seven", translated: "Pito", image: require('../../../assets/images/number7.png') },
+  { number: "8", word: "Eight", translated: "Walo", image: require('../../../assets/images/number8.png') },
+  { number: "9", word: "Nine", translated: "Siyam", image: require('../../../assets/images/number9.png') },
+  { number: "10", word: "Ten", translated: "Sampu", image: require('../../../assets/images/number10.png') },
 ];
+
+// number "e.g 1" here just means what slide is it on admittdly it isn't the best thing .
+  //word meaining the english Word that We want to learn translated into Taga log
 
 const questions = [
   {
@@ -20,10 +26,10 @@ const questions = [
     image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
   },
   {
-    question: "What is the correct way to say Number 2",
-    options: ["Dalawa", "Apat", "Lima", "Anim"],
+    question: "What is the correct way to say Number 9",
+    options: ["Dalawa", "Apat", "Lima", "Siyam"],
     correctAnswer: "Dalawa",
-    image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
+    image: require('../../../assets/images/number9.png'),
   },
   // Add more questions as needed
 ];

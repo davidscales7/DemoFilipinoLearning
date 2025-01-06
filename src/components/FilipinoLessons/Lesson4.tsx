@@ -1,75 +1,132 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/navigation';
-
-type Lesson3NavigationProp = StackNavigationProp<RootStackParamList, 'FilipinoLessons'>;
+// greetings along with basic responses
+const slides = [
+  { word: "Red", translated: "Pula", image: require('../../../assets/images/red.jpg') },
+  { word: "Blue", translated: "Asul", image: require('../../../assets/images/blue.png') },
+  { word: "Green", translated: "Berde", image: require('../../../assets/images/green.png') },
+  { word: "Yellow", translated: "Dilaw", image: require('../../../assets/images/yellow.png') },
+  { word: "Black", translated: "Itim", image: require('../../../assets/images/black.png') },
+  { word: "White", translated: "Puti", image: require('../../../assets/images/white.png') },
+  { word: "Orange", translated: "Kahel", image: require('../../../assets/images/orange.png') },
+  { word: "Pink", translated: "Rosas", image: require('../../../assets/images/pink.jpg') },
+  { word: "Purple", translated: "Lila", image: require('../../../assets/images/purple.jpg') },
+  { word: "Brown", translated: "Kayumanggi", image: require('../../../assets/images/brown.png') },
+];
 
 const questions = [
   {
-    question: "How are ____ and ____ today?",
-    options: ["you", "I", "me", "we"],
-    correctAnswer: ["you", "we"], // Two correct answers
-    image: require('../../../assets/images/correct.jpg'), // Replace with your image path
+    question: "What is the correct way to say 'Red' in Tagalog?",
+    options: ["Pula", "Asul", "Dilaw", "Lila"],
+    correctAnswer: "Pula",
+    image: require('../../../assets/images/red.jpg'),
   },
-  // Add more questions as needed
+  {
+    question: "What is the correct way to say 'Blue' in Tagalog?",
+    options: ["Itim", "Puti", "Asul", "Kayumanggi"],
+    correctAnswer: "Asul",
+    image: require('../../../assets/images/blue.png'),
+  },
+  {
+    question: "What is the correct way to say 'Green' in Tagalog?",
+    options: ["Berde", "Kahel", "Dilaw", "Rosas"],
+    correctAnswer: "Berde",
+    image: require('../../../assets/images/green.png'),
+  },
+  {
+    question: "What is the correct way to say 'Yellow' in Tagalog?",
+    options: ["Dilaw", "Pula", "Lila", "Puti"],
+    correctAnswer: "Dilaw",
+    image: require('../../../assets/images/yellow.png'),
+  },
+  {
+    question: "What is the correct way to say 'Black' in Tagalog?",
+    options: ["Asul", "Puti", "Dilaw", "Itim"],
+    correctAnswer: "Itim",
+    image: require('../../../assets/images/black.png'),
+  },
+  {
+    question: "What is the correct way to say 'White' in Tagalog?",
+    options: ["Pula", "Puti", "Kahel", "Berde"],
+    correctAnswer: "Puti",
+    image: require('../../../assets/images/white.png'),
+  },
+  {
+    question: "What is the correct way to say 'Orange' in Tagalog?",
+    options: ["Kayumanggi", "Kahel", "Dilaw", "Lila"],
+    correctAnswer: "Kahel",
+    image: require('../../../assets/images/orange.png'),
+  },
+  {
+    question: "What is the correct way to say 'Pink' in Tagalog?",
+    options: ["Rosas", "Asul", "Itim", "Pula"],
+    correctAnswer: "Rosas",
+    image: require('../../../assets/images/pink.jpg'),
+  },
+  {
+    question: "What is the correct way to say 'Purple' in Tagalog?",
+    options: ["Dilaw", "Lila", "Berde", "Puti"],
+    correctAnswer: "Lila",
+    image: require('../../../assets/images/purple.jpg'),
+  },
+  {
+    question: "What is the correct way to say 'Brown' in Tagalog?",
+    options: ["Kayumanggi", "Kahel", "Pula", "Rosas"],
+    correctAnswer: "Kayumanggi",
+    image: require('../../../assets/images/brown.png'),
+  },
 ];
 
+
+
 const Lesson4: React.FC = () => {
-  const navigation = useNavigation<Lesson3NavigationProp>();
-
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]); // Store two selected options
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
-  const [isIncorrect, setIsIncorrect] = useState(false); // To track incorrect answers
 
-  const handleOptionPress = (option: string) => {
-    // If two options have already been selected, ignore further presses
-    if (selectedOptions.length >= 2) return;
-
-    // Update selected options
-    const updatedSelectedOptions = [...selectedOptions, option];
-    setSelectedOptions(updatedSelectedOptions);
-
-    // Check if both answers are selected and compare with correct answers
-    if (updatedSelectedOptions.length === 2) {
-      if (
-        updatedSelectedOptions[0] === questions[currentQuestion].correctAnswer[0] &&
-        updatedSelectedOptions[1] === questions[currentQuestion].correctAnswer[1]
-      ) {
-        setShowAnswer(true);
-        setIsIncorrect(false);
-        setTimeout(() => {
-          setCurrentQuestion((prev) => prev + 1);
-          setSelectedOptions([]);
-          setShowAnswer(false);
-        }, 3000); // 3 seconds delay before moving to the next question
-      } else {
-        setIsIncorrect(true); // Mark as incorrect
-        setTimeout(() => {
-          setSelectedOptions([]); // Reset options after 2 seconds
-          setIsIncorrect(false); // Reset incorrect state
-        }, 2000);
-      }
+  const handleNextSlide = () => {
+    if (currentSlide < slides.length - 1) {
+      setCurrentSlide((prev) => prev + 1);
+    } else {
+      setCurrentSlide(null); // Indicates that the intro slides are over
     }
   };
 
-  const handleNavigateToLessonsScreen = () => {
-    navigation.navigate('FilipinoLessons');
+  const handleOptionPress = (option: string) => {
+    if (selectedOption === option) {
+      setShowAnswer(true);
+      setTimeout(() => {
+        setCurrentQuestion((prev) => prev + 1);
+        setSelectedOption(null);
+        setShowAnswer(false);
+      }, 3000); // 3 seconds delay before moving to the next question
+    } else {
+      setSelectedOption(option);
+    }
   };
+
+  if (currentSlide !== null && currentSlide < slides.length) {
+    // Render intro slides
+    return (
+      <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
+        <View style={styles.card}>
+          <Text style={styles.text}>{slides[currentSlide].word}</Text>
+          <Image source={slides[currentSlide].image} style={styles.introImage} resizeMode="contain" />
+          <Text style={styles.text}>{slides[currentSlide].translated}</Text>
+        </View>
+        <TouchableOpacity onPress={handleNextSlide} style={styles.nextButton}>
+          <Text style={styles.optionText}>Next</Text>
+        </TouchableOpacity>
+      </LinearGradient>
+    );
+  }
 
   if (currentQuestion >= questions.length) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>You've completed the Fouth lesson</Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleNavigateToLessonsScreen}
-        >
-          <Text style={styles.buttonText}>Back to Lessons</Text>
-        </TouchableOpacity>
+        <Text style={styles.text}>You've completed the First lesson</Text>
       </View>
     );
   }
@@ -82,47 +139,28 @@ const Lesson4: React.FC = () => {
       <View style={styles.card}>
         <Text style={styles.text}>{questions[currentQuestion].question}</Text>
         {!showAnswer ? (
-          <>
-            <View style={styles.answerContainer}>
-              {/* Display selected options or underscores if not selected */}
-              <Text style={styles.selectedText}>
-                {selectedOptions[0] || '____'}
-              </Text>
-              <Text style={styles.selectedText}>
-                {selectedOptions[1] || '____'}
-              </Text>
-            </View>
-            {/* Display option buttons */}
-            {questions[currentQuestion].options.map((option) => (
-              <TouchableOpacity
-                key={option}
-                onPress={() => handleOptionPress(option)}
-                style={[
-                  styles.optionButton,
-                  selectedOptions.includes(option) && styles.selectedOption, // Highlight selected option
-                  isIncorrect && selectedOptions.includes(option) && styles.incorrectOption, // Highlight incorrect answer
-                ]}
-              >
-                <Text style={styles.optionText}>{option}</Text>
-              </TouchableOpacity>
-            ))}
-          </>
+          questions[currentQuestion].options.map((option) => (
+            <TouchableOpacity
+              key={option}
+              onPress={() => handleOptionPress(option)}
+              style={[
+                styles.optionButton,
+                selectedOption === option && styles.selectedOption,
+              ]}
+            >
+              <Text style={styles.optionText}>{option}</Text>
+            </TouchableOpacity>
+          ))
         ) : (
           <>
             <Text style={styles.answerText}>
-              Correct Answer: {questions[currentQuestion].correctAnswer.join(' and ')}
+              Correct Answer: {questions[currentQuestion].correctAnswer}
             </Text>
             <Image
               source={questions[currentQuestion].image}
               style={styles.answerImage}
               resizeMode="contain"
             />
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleNavigateToLessonsScreen}
-            >
-              <Text style={styles.buttonText}>Back to Lessons</Text>
-            </TouchableOpacity>
           </>
         )}
       </View>
@@ -163,19 +201,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  answerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginBottom: 20,
-  },
-  selectedText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#000',
-    textAlign: 'center',
-    width: '45%', // Adjust to fit two spaces side by side
-  },
   optionButton: {
     padding: 15,
     marginVertical: 10,
@@ -191,9 +216,6 @@ const styles = StyleSheet.create({
   selectedOption: {
     backgroundColor: 'orange',
   },
-  incorrectOption: {
-    backgroundColor: 'red', // Red color for incorrect answers
-  },
   answerText: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -202,20 +224,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   answerImage: {
-    width: '80%', // Adjust the width to fit the card
-    height: 200, // Adjust the height as needed
+    width: '80%',
+    height: 200,
   },
-  button: {
-    marginTop: 20,
+  introImage: {
+    width: '80%',
+    height: 300,
+    marginBottom: 20,
+  },
+  nextButton: {
     padding: 15,
-    backgroundColor: 'blue',
+    marginTop: 20,
     borderRadius: 5,
-    width: '100%',
+    backgroundColor: 'blue',
     alignItems: 'center',
-  },
-  buttonText: {
-    fontSize: 18,
-    color: '#fff',
   },
 });
 

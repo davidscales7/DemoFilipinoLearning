@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 // Define slides as a JavaScript array of objects
 const slides = [
-  { number: "1", word: "Kamusta", translated: "Hello / how are you?", image: require('../../../assets/images/goat.png') },
+  { number: "1", word: "Kamusta", translated: "Hello / how are you?", image: require('../../../assets/images/hello.png') },
   { number: "2", word: "Mabuti", translated: "I'm Good", image: require('../../../assets/images/good.jpg') },
   { number: "3", word: "Malongkot", translated: "I'm Sad", image: require('../../../assets/images/sad.jpg') },
   { number: "4", word: "Masaya", translated: "I'm Happy", image: require('../../../assets/images/happy.jpg') },

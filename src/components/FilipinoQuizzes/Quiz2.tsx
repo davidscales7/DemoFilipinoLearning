@@ -1,43 +1,42 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Quiz1: React.FC = () => {
+const Quiz2: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
 
   const questions = [
     {
-      question: "What is the correct translation for 'Kamusta'?",
-      options: ["Goodbye", "Hello / How are you?", "Good Morning", "I'm Sad"],
-      correctAnswer: "Hello / How are you?",
-      image: require('../../../assets/images/hello.png'),
+      question: "What is the correct way to say Number 1?",
+      options: ["Isa", "Dalawa", "Tatlo", "Apat"],
+      correctAnswer: "Isa",
+      image: require('../../../assets/images/number1.jpg'),
     },
     {
-      question: "What word means 'I'm Happy'?",
-      options: ["Masaya", "Malongkot", "Mabuti", "Pa alam"],
-      correctAnswer: "Masaya",
-      image: require('../../../assets/images/happy.jpg'),
+      question: "What is the correct way to say Number 2?",
+      options: ["Tatlo", "Dalawa", "Apat", "Lima"],
+      correctAnswer: "Dalawa",
+      image: require('../../../assets/images/number2.jpg'),
     },
     {
-      question: "What is the correct phrase for 'Good Morning'?",
-      options: ["Magandang Umaga", "Magandang Gabi", "Masaya", "Malongkot"],
-      correctAnswer: "Magandang Umaga",
-      image: require('../../../assets/images/morning.jpg'),
+      question: "Complete the sentence: 'I have ____ apples' (Dalawa)",
+      options: ["Isa", "Tatlo", "Dalawa", "Apat"],
+      correctAnswer: "Dalawa",
+      image: require('../../../assets/images/twoApples.jpg'),
     },
     {
-      question: "Match the image with the correct word. (Hint: I'm Sad)",
-      options: ["Malongkot", "Ikaw", "Pa alam", "Mabuti"],
-      correctAnswer: "Malongkot",
-      image: require('../../../assets/images/sad.jpg'),
+      question: "What does 'Apat' mean?",
+      options: ["Three", "Four", "Two", "One"],
+      correctAnswer: "Four",
+      image: require('../../../assets/images/number4.png'),
     },
     {
-      question: "Fill in the blank: '_____ means I'm Good.'",
-      options: ["Malongkot", "Mabuti", "Masaya", "Ikaw"],
-      correctAnswer: "Mabuti",
-      image: require('../../../assets/images/good.jpg'),
+      question: "How do you say 'Five chairs' in Filipino?",
+      options: ["Isa upuan", "Anim na upuan", "Tatlo upuan", "Apat upuan"],
+      correctAnswer: "Anim na upuan",
+      image: require('../../../assets/images/sixChairs.jpg'),
     },
   ];
 
@@ -48,35 +47,16 @@ const Quiz1: React.FC = () => {
         setCurrentQuestion((prev) => prev + 1);
         setSelectedOption(null);
         setShowAnswer(false);
-      }, 2000); // 2-second delay before moving to the next question
+      }, 2000); // 2 seconds delay before moving to the next question
     } else {
       setSelectedOption(option);
     }
   };
 
   if (currentQuestion >= questions.length) {
-    // Accolade posting when quiz is completed
-    const finishedQuizForAccoladePosting = async () => {
-      const token = await AsyncStorage.getItem('token');
-      fetch('http://localhost:3000/addAccoladeQuiz', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ quizAccolade: "Quiz 1" }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('Accolade data:', data);
-        });
-    };
-
-    finishedQuizForAccoladePosting();
-
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>Congratulations! You've completed Quiz 1!</Text>
+        <Text style={styles.text}>Congratulations! You've completed Quiz 2!</Text>
       </View>
     );
   }
@@ -180,4 +160,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Quiz1;
+export default Quiz2;

@@ -75,7 +75,7 @@ const Lesson5: React.FC = () => {
 
       const firstIndex = flippedIndices[0];
       const secondIndex = index;
-      const delay = 1000; // 1 second delay
+      const delay = 500; // 1 second delay
 
       // Check if cards match
       const isMatch =

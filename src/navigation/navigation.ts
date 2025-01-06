@@ -36,7 +36,15 @@ export type RootStackParamList = {
     Lesson9: undefined;
     Lesson10: undefined;
     Quiz1: undefined;
-
+    Quiz2: undefined,
+    Quiz3: undefined,
+    Quiz4: undefined,
+    Quiz5: undefined,
+    Quiz6: undefined,
+    Quiz7: undefined,
+    Quiz8: undefined,
+    Quiz9: undefined,
+    Quiz10: undefined,
 
 
     NotFound: undefined;

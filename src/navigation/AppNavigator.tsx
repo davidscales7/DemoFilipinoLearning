@@ -36,12 +36,22 @@ import Lesson5 from '../components/FilipinoLessons/Lesson5';
 import Lesson6 from '../components/FilipinoLessons/Lesson6';
 import Lesson7 from '../components/FilipinoLessons/Lesson7';
 import Lesson8 from '../components/FilipinoLessons/Lesson8';
+import Lesson9 from '../components/FilipinoLessons/Lesson9';
+import Lesson10 from '../components/FilipinoLessons/Lesson10';
 
-//import Lesson9 from '../components/FilipinoLessons/Lesson9';
-//import Lesson10 from '../components/FilipinoLessons/Lesson10';
+
 import Loading from './Loading';
 import Quiz1 from '../components/FilipinoQuizzes/Quiz1';
 
+import Quiz2 from '../components/FilipinoQuizzes/Quiz2';
+import Quiz3 from '../components/FilipinoQuizzes/Quiz3';
+import Quiz4 from '../components/FilipinoQuizzes/Quiz4';
+import Quiz5 from '../components/FilipinoQuizzes/Quiz5';
+import Quiz6 from '../components/FilipinoQuizzes/Quiz6';
+import Quiz7 from '../components/FilipinoQuizzes/Quiz7';
+import Quiz8 from '../components/FilipinoQuizzes/Quiz8';
+import Quiz9 from '../components/FilipinoQuizzes/Quiz9';
+import Quiz10 from '../components/FilipinoQuizzes/Quiz10';
 
 
 
@@ -88,11 +98,21 @@ function AppNavigator() {
        <Stack.Screen name = "Lesson6" component ={Lesson6}/>
        <Stack.Screen name = "Lesson7" component ={Lesson7}/>
        <Stack.Screen name = "Lesson8" component ={Lesson8}/>
-       {/*<Stack.Screen name = "Lesson9" component ={Lesson9}/>*/}
-       {/*<Stack.Screen name = "Lesson10" component ={Lesson10}/> */}
+       <Stack.Screen name = "Lesson9" component ={Lesson9}/>
+       <Stack.Screen name = "Lesson10" component ={Lesson10}/> 
 
        <Stack.Screen name = "FilipinoQuizzes" component={FilipinoQuizzes}/>
-       <Stack.Screen name = "Quiz1" component={Quiz1}/>
+       <Stack.Screen name="Quiz1" component={Quiz1} />
+<Stack.Screen name="Quiz2" component={Quiz2} />
+<Stack.Screen name="Quiz3" component={Quiz3} />
+<Stack.Screen name="Quiz4" component={Quiz4} />
+<Stack.Screen name="Quiz5" component={Quiz5} />
+<Stack.Screen name="Quiz6" component={Quiz6} />
+<Stack.Screen name="Quiz7" component={Quiz7} />
+<Stack.Screen name="Quiz8" component={Quiz8} />
+<Stack.Screen name="Quiz9" component={Quiz9} />
+<Stack.Screen name="Quiz10" component={Quiz10} />
+
       
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,106 +1,136 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/navigation';
-
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-
-// this is for lesson 7 as it is for sentences for missing words
-
-type Lesson7NavigationProp = StackNavigationProp<RootStackParamList, 'FilipinoLessons'>;
+// greetings along with basic responses
+const slides = [
+  { word: "Red Shirt", translated: "Pulang Kamiseta", image: require('../../../assets/images/red_shirt.jpg') },
+  { word: "Blue Pants", translated: "Asul na Pantalon", image: require('../../../assets/images/blue_pants.jpg') },
+  { word: "Green Dress", translated: "Berdeng Damit", image: require('../../../assets/images/green_dress.jpg') },
+  { word: "Yellow Hat", translated: "Dilaw na Sombrero", image: require('../../../assets/images/yellow_hat.jpg') },
+  { word: "Black Shoes", translated: "Itim na Sapatos", image: require('../../../assets/images/black_shoes.jpg') },
+  { word: "White Socks", translated: "Puting Medyas", image: require('../../../assets/images/white_socks.jpg') },
+  { word: "Orange Scarf", translated: "Kahel na Scarf", image: require('../../../assets/images/orange_scarf.jpg') },
+  { word: "Pink Gloves", translated: "Rosang Gwantes", image: require('../../../assets/images/pink_gloves.jpg') },
+  { word: "Purple Jacket", translated: "Lilang Dyaket", image: require('../../../assets/images/purple_jacket.jpg') },
+  { word: "Brown Belt", translated: "Kayumangging Sinturon", image: require('../../../assets/images/brown_belt.jpg') },
+];
 
 const questions = [
   {
-    question: "How are ____ and ____ today?",
-    options: ["you", "I", "me", "we"],
-    correctAnswer: ["you", "we"], //  correct answers
-    image: require('../../../assets/images/correct.jpg'), // Replace with your image path
+    question: "What is the correct way to say 'Red Shirt' in Tagalog?",
+    options: ["Pulang Kamiseta", "Asul na Kamiseta", "Dilaw na Kamiseta", "Lilamg Kamiseta"],
+    correctAnswer: "Pulang Kamiseta",
+    image: require('../../../assets/images/red_shirt.jpg'),
   },
-  // Add more questions as needed
+  {
+    question: "What is the correct way to say 'Blue Pants' in Tagalog?",
+    options: ["Asul na Pantalon", "Berdeng Pantalon", "Puting Pantalon", "Kahel na Pantalon"],
+    correctAnswer: "Asul na Pantalon",
+    image: require('../../../assets/images/blue_pants.jpg'),
+  },
+  {
+    question: "What is the correct way to say 'Green Dress' in Tagalog?",
+    options: ["Berdeng Damit", "Rosang Damit", "Kayumangging Damit", "Dilaw na Damit"],
+    correctAnswer: "Berdeng Damit",
+    image: require('../../../assets/images/green_dress.jpg'),
+  },
+  {
+    question: "What is the correct way to say 'Yellow Hat' in Tagalog?",
+    options: ["Dilaw na Sombrero", "Puting Sombrero", "Itim na Sombrero", "Asul na Sombrero"],
+    correctAnswer: "Dilaw na Sombrero",
+    image: require('../../../assets/images/yellow_hat.jpg'),
+  },
+  {
+    question: "What is the correct way to say 'Black Shoes' in Tagalog?",
+    options: ["Itim na Sapatos", "Berdeng Sapatos", "Kahel na Sapatos", "Lilamg Sapatos"],
+    correctAnswer: "Itim na Sapatos",
+    image: require('../../../assets/images/black_shoes.jpg'),
+  },
+  {
+    question: "What is the correct way to say 'White Socks' in Tagalog?",
+    options: ["Puting Medyas", "Asul na Medyas", "Dilaw na Medyas", "Kayumangging Medyas"],
+    correctAnswer: "Puting Medyas",
+    image: require('../../../assets/images/white_socks.jpg'),
+  },
+  {
+    question: "What is the correct way to say 'Orange Scarf' in Tagalog?",
+    options: ["Kahel na Scarf", "Rosang Scarf", "Berdeng Scarf", "Puting Scarf"],
+    correctAnswer: "Kahel na Scarf",
+    image: require('../../../assets/images/orange_scarf.jpg'),
+  },
+  {
+    question: "What is the correct way to say 'Pink Gloves' in Tagalog?",
+    options: ["Rosang Gwantes", "Berdeng Gwantes", "Kayumangging Gwantes", "Lilamg Gwantes"],
+    correctAnswer: "Rosang Gwantes",
+    image: require('../../../assets/images/pink_gloves.jpg'),
+  },
+  {
+    question: "What is the correct way to say 'Purple Jacket' in Tagalog?",
+    options: ["Lilamg Dyaket", "Dilaw na Dyaket", "Asul na Dyaket", "Kahel na Dyaket"],
+    correctAnswer: "Lilamg Dyaket",
+    image: require('../../../assets/images/purple_jacket.jpg'),
+  },
+  {
+    question: "What is the correct way to say 'Brown Belt' in Tagalog?",
+    options: ["Kayumangging Sinturon", "Puting Sinturon", "Pulang Sinturon", "Asul na Sinturon"],
+    correctAnswer: "Kayumangging Sinturon",
+    image: require('../../../assets/images/brown_belt.jpg'),
+  },
 ];
 
+
+
 const Lesson7: React.FC = () => {
-  const navigation = useNavigation<Lesson7NavigationProp>();
-
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]); // Store two selected options
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
-  const [isIncorrect, setIsIncorrect] = useState(false); // To track incorrect answers
 
-  const handleOptionPress = (option: string) => {
-    // If two options have already been selected, ignore further presses
-    if (selectedOptions.length >= 2) return;
-
-    // Update selected options
-    const updatedSelectedOptions = [...selectedOptions, option];
-    setSelectedOptions(updatedSelectedOptions);
-
-    // Check if both answers are selected and compare with correct answers
-    if (updatedSelectedOptions.length === 2) {
-      if (
-        updatedSelectedOptions[0] === questions[currentQuestion].correctAnswer[0] &&
-        updatedSelectedOptions[1] === questions[currentQuestion].correctAnswer[1]
-      ) {
-        setShowAnswer(true);
-        setIsIncorrect(false);
-        setTimeout(() => {
-          setCurrentQuestion((prev) => prev + 1);
-          setSelectedOptions([]);
-          setShowAnswer(false);
-        }, 3000); // 3 seconds delay before moving to the next question
-      } else {
-        setIsIncorrect(true); // Mark as incorrect
-        setTimeout(() => {
-          setSelectedOptions([]); // Reset options after 2 seconds
-          setIsIncorrect(false); // Reset incorrect state
-        }, 2000);
-      }
+  const handleNextSlide = () => {
+    if (currentSlide < slides.length - 1) {
+      setCurrentSlide((prev) => prev + 1);
+    } else {
+      setCurrentSlide(null); // Indicates that the intro slides are over
     }
   };
 
-  const handleNavigateToLessonsScreen = () => {
-    navigation.navigate('FilipinoLessons');
+  const handleOptionPress = (option: string) => {
+    if (selectedOption === option) {
+      setShowAnswer(true);
+      setTimeout(() => {
+        setCurrentQuestion((prev) => prev + 1);
+        setSelectedOption(null);
+        setShowAnswer(false);
+      }, 3000); // 3 seconds delay before moving to the next question
+    } else {
+      setSelectedOption(option);
+    }
   };
+
+  if (currentSlide !== null && currentSlide < slides.length) {
+    // Render intro slides
+    return (
+      <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
+        <View style={styles.card}>
+          <Text style={styles.text}>{slides[currentSlide].word}</Text>
+          <Image source={slides[currentSlide].image} style={styles.introImage} resizeMode="contain" />
+          <Text style={styles.text}>{slides[currentSlide].translated}</Text>
+        </View>
+        <TouchableOpacity onPress={handleNextSlide} style={styles.nextButton}>
+          <Text style={styles.optionText}>Next</Text>
+        </TouchableOpacity>
+      </LinearGradient>
+    );
+  }
 
   if (currentQuestion >= questions.length) {
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>You've completed the 7th lesson</Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleNavigateToLessonsScreen}
-        >
-          <Text style={styles.buttonText}>Back to Lessons</Text>
-        </TouchableOpacity>
+        <Text style={styles.text}>You've completed lesson 7</Text>
       </View>
     );
   }
-  async function finishedLessonForAccoladePosting(){
-    
 
-
-
-
-
-
-
-
-    const token = await AsyncStorage.getItem('token')
-    fetch('http://localhost:3000/addAccolade', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${token}`},
-      body: JSON.stringify({accolade:"LessonTestLesson7"})
-  })
-  .then(response => response.json())
-  .then(data => {
-  
-  })
-  
-    }
-    finishedLessonForAccoladePosting()
   return (
     <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
       <View style={styles.header}>
@@ -109,47 +139,28 @@ const Lesson7: React.FC = () => {
       <View style={styles.card}>
         <Text style={styles.text}>{questions[currentQuestion].question}</Text>
         {!showAnswer ? (
-          <>
-            <View style={styles.answerContainer}>
-              {/* Display selected options or underscores if not selected */}
-              <Text style={styles.selectedText}>
-                {selectedOptions[0] || '____'}
-              </Text>
-              <Text style={styles.selectedText}>
-                {selectedOptions[1] || '____'}
-              </Text>
-            </View>
-            {/* Display option buttons */}
-            {questions[currentQuestion].options.map((option) => (
-              <TouchableOpacity
-                key={option}
-                onPress={() => handleOptionPress(option)}
-                style={[
-                  styles.optionButton,
-                  selectedOptions.includes(option) && styles.selectedOption, // Highlight selected option
-                  isIncorrect && selectedOptions.includes(option) && styles.incorrectOption, // Highlight incorrect answer
-                ]}
-              >
-                <Text style={styles.optionText}>{option}</Text>
-              </TouchableOpacity>
-            ))}
-          </>
+          questions[currentQuestion].options.map((option) => (
+            <TouchableOpacity
+              key={option}
+              onPress={() => handleOptionPress(option)}
+              style={[
+                styles.optionButton,
+                selectedOption === option && styles.selectedOption,
+              ]}
+            >
+              <Text style={styles.optionText}>{option}</Text>
+            </TouchableOpacity>
+          ))
         ) : (
           <>
             <Text style={styles.answerText}>
-              Correct Answer: {questions[currentQuestion].correctAnswer.join(' and ')}
+              Correct Answer: {questions[currentQuestion].correctAnswer}
             </Text>
             <Image
               source={questions[currentQuestion].image}
               style={styles.answerImage}
               resizeMode="contain"
             />
-            <TouchableOpacity
-              style={styles.button}
-              onPress={handleNavigateToLessonsScreen}
-            >
-              <Text style={styles.buttonText}>Back to Lessons</Text>
-            </TouchableOpacity>
           </>
         )}
       </View>
@@ -190,19 +201,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  answerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-    marginBottom: 20,
-  },
-  selectedText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#000',
-    textAlign: 'center',
-    width: '45%', // Adjust to fit two spaces side by side
-  },
   optionButton: {
     padding: 15,
     marginVertical: 10,
@@ -218,9 +216,6 @@ const styles = StyleSheet.create({
   selectedOption: {
     backgroundColor: 'orange',
   },
-  incorrectOption: {
-    backgroundColor: 'red', // Red color for incorrect answers
-  },
   answerText: {
     fontSize: 20,
     fontWeight: 'bold',
@@ -229,20 +224,20 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   answerImage: {
-    width: '80%', // Adjust the width to fit the card
-    height: 200, // Adjust the height as needed
+    width: '80%',
+    height: 200,
   },
-  button: {
-    marginTop: 20,
+  introImage: {
+    width: '80%',
+    height: 300,
+    marginBottom: 20,
+  },
+  nextButton: {
     padding: 15,
-    backgroundColor: 'blue',
+    marginTop: 20,
     borderRadius: 5,
-    width: '100%',
+    backgroundColor: 'blue',
     alignItems: 'center',
-  },
-  buttonText: {
-    fontSize: 18,
-    color: '#fff',
   },
 });
 

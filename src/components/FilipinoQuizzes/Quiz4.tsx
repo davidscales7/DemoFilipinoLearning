@@ -1,43 +1,72 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Quiz1: React.FC = () => {
+const Quiz4: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
 
   const questions = [
     {
-      question: "What is the correct translation for 'Kamusta'?",
-      options: ["Goodbye", "Hello / How are you?", "Good Morning", "I'm Sad"],
-      correctAnswer: "Hello / How are you?",
-      image: require('../../../assets/images/hello.png'),
+      question: "What is the correct way to say 'Red' in Tagalog?",
+      options: ["Pula", "Asul", "Dilaw", "Lila"],
+      correctAnswer: "Pula",
+      image: require('../../../assets/images/red.jpg'),
     },
     {
-      question: "What word means 'I'm Happy'?",
-      options: ["Masaya", "Malongkot", "Mabuti", "Pa alam"],
-      correctAnswer: "Masaya",
-      image: require('../../../assets/images/happy.jpg'),
+      question: "What is the correct way to say 'Mother' in Tagalog?",
+      options: ["Ama", "Ina", "Tiya", "Lolo"],
+      correctAnswer: "Ina",
+      image: require('../../../assets/images/mother.png'),
     },
     {
-      question: "What is the correct phrase for 'Good Morning'?",
-      options: ["Magandang Umaga", "Magandang Gabi", "Masaya", "Malongkot"],
-      correctAnswer: "Magandang Umaga",
-      image: require('../../../assets/images/morning.jpg'),
+      question: "Complete the sentence: 'I have ____ apples.' (Dalawa)",
+      options: ["Isa", "Dalawa", "Tatlo", "Apat"],
+      correctAnswer: "Dalawa",
+      image: require('../../../assets/images/twoApples.jpg'),
     },
     {
-      question: "Match the image with the correct word. (Hint: I'm Sad)",
-      options: ["Malongkot", "Ikaw", "Pa alam", "Mabuti"],
-      correctAnswer: "Malongkot",
-      image: require('../../../assets/images/sad.jpg'),
+      question: "What is the correct way to say 'Blue' in Tagalog?",
+      options: ["Puti", "Dilaw", "Asul", "Kayumanggi"],
+      correctAnswer: "Asul",
+      image: require('../../../assets/images/blue.png'),
     },
     {
-      question: "Fill in the blank: '_____ means I'm Good.'",
-      options: ["Malongkot", "Mabuti", "Masaya", "Ikaw"],
-      correctAnswer: "Mabuti",
-      image: require('../../../assets/images/good.jpg'),
+      question: "What is the correct way to say 'Grandfather' in Tagalog?",
+      options: ["Lolo", "Pinsan", "Ama", "Tiyo"],
+      correctAnswer: "Lolo",
+      image: require('../../../assets/images/grandad.png'),
+    },
+    {
+      question: "What is the correct way to say 'Green' in Tagalog?",
+      options: ["Berde", "Kahel", "Rosas", "Dilaw"],
+      correctAnswer: "Berde",
+      image: require('../../../assets/images/green.png'),
+    },
+    {
+      question: "What is the correct way to say 'Five' in Tagalog?",
+      options: ["Isa", "Dalawa", "Lima", "Apat"],
+      correctAnswer: "Lima",
+      image: require('../../../assets/images/number5.png'),
+    },
+    {
+      question: "What is the correct way to say 'Pink' in Tagalog?",
+      options: ["Lila", "Rosas", "Itim", "Kahel"],
+      correctAnswer: "Rosas",
+      image: require('../../../assets/images/pink.jpg'),
+    },
+    {
+      question: "What is the correct way to say 'Cousin' in Tagalog?",
+      options: ["Ama", "Ina", "Pinsan", "Lolo"],
+      correctAnswer: "Pinsan",
+      image: require('../../../assets/images/cousin.png'),
+    },
+    {
+      question: "What is the correct way to say 'Yellow' in Tagalog?",
+      options: ["Dilaw", "Pula", "Kayumanggi", "Asul"],
+      correctAnswer: "Dilaw",
+      image: require('../../../assets/images/yellow.png'),
     },
   ];
 
@@ -48,35 +77,16 @@ const Quiz1: React.FC = () => {
         setCurrentQuestion((prev) => prev + 1);
         setSelectedOption(null);
         setShowAnswer(false);
-      }, 2000); // 2-second delay before moving to the next question
+      }, 2000); // 2 seconds delay before moving to the next question
     } else {
       setSelectedOption(option);
     }
   };
 
   if (currentQuestion >= questions.length) {
-    // Accolade posting when quiz is completed
-    const finishedQuizForAccoladePosting = async () => {
-      const token = await AsyncStorage.getItem('token');
-      fetch('http://localhost:3000/addAccoladeQuiz', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ quizAccolade: "Quiz 1" }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log('Accolade data:', data);
-        });
-    };
-
-    finishedQuizForAccoladePosting();
-
     return (
       <View style={styles.container}>
-        <Text style={styles.text}>Congratulations! You've completed Quiz 1!</Text>
+        <Text style={styles.text}>Congratulations! You've completed Quiz 4!</Text>
       </View>
     );
   }
@@ -180,4 +190,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Quiz1;
+export default Quiz4;

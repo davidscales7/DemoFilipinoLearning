@@ -1,227 +1,181 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, useWindowDimensions, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/navigation';
-// animals 
-type Card = {
-  id: number;
-  content: string;
-  isFlipped: boolean;
-  isMatched: boolean;
-  opacity: Animated.Value;
-};
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
-type Lesson2NavigationProp = StackNavigationProp<RootStackParamList, 'FilipinoLessons'>;
+const Lesson10: React.FC = () => {
+  const [currentActivity, setCurrentActivity] = useState(0);
+  const [userStory, setUserStory] = useState('');
+  const [futurePlans, setFuturePlans] = useState('');
+  const [scrambledSentence, setScrambledSentence] = useState(['blue', 'am', 'shirt', 'wearing', 'I']);
+  const [userUnscrambled, setUserUnscrambled] = useState('');
 
-const cardData: Card[] = [
-  { id: 1, content: 'Pusa', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Cat
-  { id: 2, content: '🐱', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 3, content: 'Aso', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Dog
-  { id: 4, content: '🐶', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 5, content: 'Ibon', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Bird
-  { id: 6, content: '🐦', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 7, content: 'Unggoy', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Monkey
-  { id: 8, content: '🐵', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 9, content: 'Tigre', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Tiger
-  { id: 10, content: '🐯', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 11, content: 'Isda', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Fish
-  { id: 12, content: '🐟', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 13, content: 'Leon', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Lion
-  { id: 14, content: '🦁', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 15, content: 'Ahas', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Snake
-  { id: 16, content: '🐍', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 17, content: 'Manok', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Chicken
-  { id: 18, content: '🐔', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 19, content: 'Baka', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Cow
-  { id: 20, content: '🐄', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 21, content: 'Kambing', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Goat
-  { id: 22, content: '🐐', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 23, content: 'Baboy', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Pig
-  { id: 24, content: '🐖', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-];
+  const activities = [
+    {
+      title: "Activity 1: Create a Story",
+      description: "Write a short story using words you've learned. Describe what the character is wearing and their hobbies.",
+      example: "The boy wore a red shirt and played soccer in the park.",
+    },
+    {
+      title: "Activity 2: Daily Routine",
+      description: "Describe a daily routine. Use sentences like 'I wake up at 7 AM. I wear my green dress. I like reading.'",
+    },
+    {
+      title: "Activity 3: Sentence Race",
+      description: "Unscramble the words to form a correct sentence. For example: 'blue / am / shirt / wearing / I'.",
+      scrambled: scrambledSentence.join(' / '),
+      answer: "I am wearing a blue shirt.",
+    },
+    {
+      title: "Activity 4: Future Plans",
+      description: "Write a sentence about your future plans using 'I will'. For example: 'I will wear my red dress tomorrow.'",
+    },
+  ];
 
-const Lesson2: React.FC = () => {
-  const navigation = useNavigation<Lesson2NavigationProp>();
-
-  const { width, height } = useWindowDimensions(); // Get the screen dimensions
-
-  const isLandscape = width > height;
-
-  // Adjust the number of columns and rows to fit the screen
-  const numColumns = isLandscape ? 6 : 4;
-  const numRows = Math.ceil(cardData.length / numColumns);
-
-  // Calculate card size based on the number of columns
-  const cardSize = width / numColumns - 10; // Adjust the margin as needed
-
-  const [cards, setCards] = useState<Card[]>(cardData);
-  const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
-  const [isCheckingMatch, setIsCheckingMatch] = useState(false);
-
-  const handleCardClick = (index: number) => {
-    if (isCheckingMatch || cards[index].isFlipped || flippedIndices.length === 2) {
-      return;
-    }
-
-    const newCards = [...cards];
-    newCards[index].isFlipped = true;
-    setCards(newCards);
-    setFlippedIndices([...flippedIndices, index]);
-
-    if (flippedIndices.length === 1) {
-      setIsCheckingMatch(true);
-
-      const firstIndex = flippedIndices[0];
-      const secondIndex = index;
-      const delay = 1000; // 1 second delay
-
-      // Check if cards match
-      const isMatch =
-        (newCards[firstIndex].content === 'Pusa' && newCards[secondIndex].content === '🐱') ||
-        (newCards[firstIndex].content === '🐱' && newCards[secondIndex].content === 'Pusa') ||
-        (newCards[firstIndex].content === 'Aso' && newCards[secondIndex].content === '🐶') ||
-        (newCards[firstIndex].content === '🐶' && newCards[secondIndex].content === 'Aso') ||
-        (newCards[firstIndex].content === 'Ibon' && newCards[secondIndex].content === '🐦') ||
-        (newCards[firstIndex].content === '🐦' && newCards[secondIndex].content === 'Ibon') ||
-        (newCards[firstIndex].content === 'Unggoy' && newCards[secondIndex].content === '🐵') ||
-        (newCards[firstIndex].content === '🐵' && newCards[secondIndex].content === 'Unggoy') ||
-        (newCards[firstIndex].content === 'Tigre' && newCards[secondIndex].content === '🐯') ||
-        (newCards[firstIndex].content === '🐯' && newCards[secondIndex].content === 'Tigre') ||
-        (newCards[firstIndex].content === 'Isda' && newCards[secondIndex].content === '🐟') ||
-        (newCards[firstIndex].content === '🐟' && newCards[secondIndex].content === 'Isda') ||
-        (newCards[firstIndex].content === 'Leon' && newCards[secondIndex].content === '🦁') ||
-        (newCards[firstIndex].content === '🦁' && newCards[secondIndex].content === 'Leon') ||
-        (newCards[firstIndex].content === 'Ahas' && newCards[secondIndex].content === '🐍') ||
-        (newCards[firstIndex].content === '🐍' && newCards[secondIndex].content === 'Ahas') ||
-        (newCards[firstIndex].content === 'Manok' && newCards[secondIndex].content === '🐔') ||
-        (newCards[firstIndex].content === '🐔' && newCards[secondIndex].content === 'Manok') ||
-        (newCards[firstIndex].content === 'Baka' && newCards[secondIndex].content === '🐄') ||
-        (newCards[firstIndex].content === '🐄' && newCards[secondIndex].content === 'Baka') ||
-        (newCards[firstIndex].content === 'Kambing' && newCards[secondIndex].content === '🐐') ||
-        (newCards[firstIndex].content === '🐐' && newCards[secondIndex].content === 'Kambing') ||
-        (newCards[firstIndex].content === 'Baboy' && newCards[secondIndex].content === '🐖') ||
-        (newCards[firstIndex].content === '🐖' && newCards[secondIndex].content === 'Baboy');
-
-      if (isMatch) {
-        setTimeout(() => {
-          newCards[firstIndex].isMatched = true;
-          newCards[secondIndex].isMatched = true;
-          newCards[firstIndex].opacity.setValue(0);
-          newCards[secondIndex].opacity.setValue(0);
-          setCards(newCards);
-          setFlippedIndices([]);
-          setIsCheckingMatch(false);
-        }, delay);
-      } else {
-        setTimeout(() => {
-          newCards[firstIndex].isFlipped = false;
-          newCards[secondIndex].isFlipped = false;
-          setCards(newCards);
-          setFlippedIndices([]);
-          setIsCheckingMatch(false);
-        }, delay);
-      }
+  const handleNextActivity = () => {
+    if (currentActivity < activities.length - 1) {
+      // Clear text inputs when moving to the next activity
+      setUserStory('');
+      setFuturePlans('');
+      setUserUnscrambled('');
+      setCurrentActivity((prev) => prev + 1);
+    } else {
+      alert("You've completed the Final Basic Lesson! Great job!");
     }
   };
 
-  const handleReset = () => {
-    setCards(cardData.map(card => ({ ...card, isFlipped: false, isMatched: false, opacity: new Animated.Value(1) })));
-    setFlippedIndices([]);
-    setIsCheckingMatch(false);
-  };
-
-  const handleNavigateToLessonsScreen = () => {
-    navigation.navigate('FilipinoLessons');
+  const handleUnscrambleCheck = () => {
+    if (userUnscrambled.trim() === activities[2].answer) {
+      alert("Correct! Great job!");
+    } else {
+      alert("Try again!");
+    }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollView}>
-      <View style={[styles.container, { padding: 5 }]}>
-        <Text style={styles.title}>Filipino Animal Matching Game</Text>
-        <View style={styles.grid}>
-          {cards.map((card, index) => (
-            <Animated.View key={card.id} style={{ opacity: card.opacity }}>
-              <TouchableOpacity
-                style={[
-                  styles.card,
-                  {
-                    width: cardSize,
-                    height: cardSize,
-                    backgroundColor: card.isFlipped || card.isMatched ? '#fff' : '#ccc',
-                    borderColor: card.isFlipped || card.isMatched ? '#000' : '#999',
-                  },
-                ]}
-                onPress={() => handleCardClick(index)}
-              >
-                <Text style={styles.cardText}>
-                  {card.isFlipped || card.isMatched ? card.content : '?'}
-                </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </View>
-        <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-          <Text style={styles.buttonText}>Reset Game</Text>
+    <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.title}>{activities[currentActivity].title}</Text>
+        <Text style={styles.description}>{activities[currentActivity].description}</Text>
+
+        {currentActivity === 0 && (
+          <>
+            <TextInput
+              style={styles.input}
+              placeholder="Write your story here..."
+              multiline
+              value={userStory}
+              onChangeText={setUserStory}
+            />
+            <Text style={styles.example}>Example: {activities[currentActivity].example}</Text>
+          </>
+        )}
+
+        {currentActivity === 1 && (
+          <TextInput
+            style={styles.input}
+            placeholder="Describe your daily routine..."
+            multiline
+            value={userStory}
+            onChangeText={setUserStory}
+          />
+        )}
+
+        {currentActivity === 2 && (
+          <>
+            <Text style={styles.scrambled}>{activities[currentActivity].scrambled}</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Unscramble the sentence..."
+              value={userUnscrambled}
+              onChangeText={setUserUnscrambled}
+            />
+            <TouchableOpacity onPress={handleUnscrambleCheck} style={styles.checkButton}>
+              <Text style={styles.buttonText}>Check Answer</Text>
+            </TouchableOpacity>
+          </>
+        )}
+
+        {currentActivity === 3 && (
+          <TextInput
+            style={styles.input}
+            placeholder="Write your future plans here..."
+            multiline
+            value={futurePlans}
+            onChangeText={setFuturePlans}
+          />
+        )}
+
+        <TouchableOpacity onPress={handleNextActivity} style={styles.nextButton}>
+          <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navigateButton} onPress={handleNavigateToLessonsScreen}>
-          <Text style={styles.buttonText}>Back to Lessons</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  scrollContainer: {
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+    alignItems: 'center',
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginVertical: 20,
+    color: '#333',
+    marginBottom: 15,
     textAlign: 'center',
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+  description: {
+    fontSize: 18,
+    color: '#555',
+    marginBottom: 20,
+    textAlign: 'center',
   },
-  card: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 5,
-    borderWidth: 2,
+  input: {
+    width: '100%',
+    height: 100,
+    backgroundColor: '#fff',
     borderRadius: 10,
+    padding: 10,
+    textAlignVertical: 'top',
+    marginBottom: 20,
   },
-  cardText: {
-    fontSize: 24,
+  scrambled: {
+    fontSize: 20,
     fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 20,
+    textAlign: 'center',
   },
-  resetButton: {
-    marginTop: 20,
-    padding: 10,
+  checkButton: {
     backgroundColor: '#4CAF50',
-    borderRadius: 5,
-  },
-  navigateButton: {
-    marginTop: 10,
     padding: 10,
-    backgroundColor: '#2196F3',
     borderRadius: 5,
+    marginBottom: 20,
+  },
+  nextButton: {
+    backgroundColor: '#007BFF',
+    padding: 15,
+    borderRadius: 5,
+    marginTop: 20,
   },
   buttonText: {
-    fontSize: 18,
     color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  example: {
+    fontSize: 16,
+    color: '#888',
+    marginTop: 10,
     textAlign: 'center',
   },
 });
 
-export default Lesson2;
+export default Lesson10;
