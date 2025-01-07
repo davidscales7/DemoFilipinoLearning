@@ -101,7 +101,7 @@ function AppNavigator() {
        <Stack.Screen name = "Lesson9" component ={Lesson9}/>
        <Stack.Screen name = "Lesson10" component ={Lesson10}/> 
 
-       <Stack.Screen name = "FilipinoQuizzes" component={FilipinoQuizzes}/>
+       <Stack.Screen name = "FilipinoQuizzes" component={FilipinoQuizzes}options={{ headerShown: false }}/>
        <Stack.Screen name="Quiz1" component={Quiz1} />
 <Stack.Screen name="Quiz2" component={Quiz2} />
 <Stack.Screen name="Quiz3" component={Quiz3} />
