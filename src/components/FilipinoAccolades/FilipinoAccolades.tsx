@@ -148,8 +148,7 @@ const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
         }
 
         const data = await response.json();
-        setFlashCardAccolades(data.flashCardAccolades || []);
-      } catch (err) {
+          } catch (err) {
         setError(err.message || 'An error occurred');
       } finally {
         setLoading(false);
