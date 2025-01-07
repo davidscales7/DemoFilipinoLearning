@@ -144,10 +144,12 @@ const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
 
         if (!response.ok) {
           const errorData = await response.json();
+
           throw new Error(errorData.error || 'Failed to fetch accolades');
         }
 
         const data = await response.json();
+        setFlashCardAccolades(data.flashCardAccolades || []);
           } catch (err) {
         setError(err.message || 'An error occurred');
       } finally {
@@ -195,11 +197,15 @@ const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
           </View>
         ))}
 
-        {flashCardAccolades.map((flashCardAccolade, index) => (
-          <View key={index} style={[styles.accoladeBox, styles.flashCardBox]}>
-            <Text style={styles.accoladeText}>{flashCardAccolade}</Text>
-          </View>
-        ))}
+{flashCardAccolades.length > 0 ? (
+  flashCardAccolades.map((flashCard, index) => (
+    <View key={index} style={[styles.accoladeBox, styles.flashCardBox]}>
+      <Text style={styles.accoladeText}>{flashCard}</Text>
+    </View>
+  ))
+) : (
+  <Text style={styles.accoladeText}>No flashcard accolades yet.</Text>
+)}
 
         {Object.keys(progress).map((lessonId) => (
           <View key={lessonId} style={[styles.accoladeBox, styles.lessonBox]}>

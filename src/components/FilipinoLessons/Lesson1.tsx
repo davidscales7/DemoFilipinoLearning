@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // Define slides as a JavaScript array of objects
 const slides = [
   { number: "1", word: "Kamusta", translated: "Hello / how are you?", image: require('../../../assets/images/hello.png') },
@@ -40,7 +42,7 @@ const Lesson1: React.FC = () => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide((prev) => prev + 1);
     } else {
-      setCurrentSlide(null); // Indicates that the intro slides are over
+      setCurrentSlide(slides.length); // Indicate that slides are complete
     }
   };
 
@@ -51,14 +53,13 @@ const Lesson1: React.FC = () => {
         setCurrentQuestion((prev) => prev + 1);
         setSelectedOption(null);
         setShowAnswer(false);
-      }, 3000); // 3 seconds delay before moving to the next question
+      }, 2000); // 2 seconds delay before moving to the next question
     } else {
       setSelectedOption(option);
     }
   };
 
-  if (currentSlide !== null && currentSlide < slides.length) {
-    // Render intro slides
+  if (currentSlide < slides.length) {
     return (
       <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
         <View style={styles.card}>
@@ -74,6 +75,18 @@ const Lesson1: React.FC = () => {
   }
 
   if (currentQuestion >= questions.length) {
+    async function finishedLessonForAccoladePosting() {
+      const token = await AsyncStorage.getItem('token');
+      fetch('http://localhost:3000/addAccolade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ accolade: "Lesson 1" })
+      })
+        .then(response => response.json())
+        .then(data => { });
+    }
+    finishedLessonForAccoladePosting();
+
     return (
       <View style={styles.container}>
         <Text style={styles.text}>You've completed the First lesson</Text>

@@ -149,7 +149,7 @@ const Lesson5: React.FC = () => {
     fetch('http://localhost:3000/addAccolade', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${token}`},
-      body: JSON.stringify({accolade:"LessonTestLesson5.3"})
+      body: JSON.stringify({accolade:"Lesson 5"})
   })
   .then(response => response.json())
   .then(data => {
@@ -158,6 +158,7 @@ const Lesson5: React.FC = () => {
   
     }
     finishedLessonForAccoladePosting()
+    
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>
       <View style={[styles.container, { padding: 5 }]}>

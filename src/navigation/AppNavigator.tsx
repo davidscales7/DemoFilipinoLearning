@@ -67,7 +67,7 @@ function AppNavigator() {
     <Stack.Screen name="RegisterScreen" component={RegisterScreen} /> 
     <Stack.Screen name="Loading" component={Loading} /> 
     <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }}/> 
-        <Stack.Screen name="Home" component={AppHeader} />
+        <Stack.Screen name="Home" component={FilipinoLearning} options={{ headerShown: false }}/>
         <Stack.Screen name="Ukrainian" component={UkrainianScreen} />
         <Stack.Screen name="Filipino" component ={FilipinoLearning}options={{ headerShown: false }} />
         <Stack.Screen name="FilipinoGreetings" component={FilipinoGreetingsScreen} /> 
@@ -83,7 +83,7 @@ function AppNavigator() {
        <Stack.Screen name = "FilipinoTransports" component={FilipinoTransportScreen}/>
        <Stack.Screen name = "FilipinoWeather" component={FilipinoWeatherScreen}/>
        <Stack.Screen name = "FilipinoAnimals" component={FilipinoAnimalsScreen}/>
-       <Stack.Screen name = "FilipinoLessons" component={FilipinoLessons}/>
+       <Stack.Screen name = "FilipinoLessons" component={FilipinoLessons}options={{ headerShown: false }}/>
        
        <Stack.Screen name = "FilipinoAccolades" component ={FilipinoAccolades}/>     
      
