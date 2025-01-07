@@ -1,4 +1,4 @@
-import React from 'react';
+import React , { useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -12,7 +12,16 @@ const FilipinoQuizzes: React.FC = () => {
   const handleNavigateToQuiz = (quiz: keyof RootStackParamList) => {
     navigation.navigate(quiz as any);
   };
-
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.navigate('Filipino')} style={styles.backButton}>
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
+      ),
+      headerTitle: '', // Keep the title empty
+    });
+  }, [navigation]);
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.titleText}>Filipino Quizzes</Text>
@@ -31,6 +40,18 @@ const FilipinoQuizzes: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  backButton: {
+    backgroundColor: 'rgba(255, 0, 0, 0.7)', // Red background
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginLeft: 10, // Position within the header
+  },
+  backButtonText: {
+    color: '#FFFFFF', // White text
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
   container: {
     flexGrow: 1,
     alignItems: 'center',

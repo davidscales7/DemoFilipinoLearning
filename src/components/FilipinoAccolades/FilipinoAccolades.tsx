@@ -1,14 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from './../../navigation/navigation';
+
+type NavigationProp = StackNavigationProp<RootStackParamList, 'FilipinoAccolades'>;
+
 interface Lesson {
   question: string;
   options: string[];
   correctAnswer: string;
   image: any;
 }
-
 
 interface Quiz {
   question: string;
@@ -17,7 +22,6 @@ interface Quiz {
   image: any;
 }
 
-
 interface FlashCard {
   question: string;
   options: string[];
@@ -25,29 +29,36 @@ interface FlashCard {
   image: any;
 }
 
-
-
-
 interface FilipinoAccoladesProps {
   progress?: Record<string, number>; // Optional
   lessons?: Record<string, Lesson[]>; // Optional
-  quizs?: Record<string,Quiz[]>;
-  flashCards?: Record<string,FlashCard[]>;
+  quizs?: Record<string, Quiz[]>;
+  flashCards?: Record<string, FlashCard[]>;
 }
 
 const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
   progress = {}, // Default to empty object
   lessons = {},
-  quizs={},
-  flashCards={}, 
-
+  quizs = {},
+  flashCards = {},
 }) => {
+  const navigation = useNavigation<NavigationProp>();
+
+  // Move useLayoutEffect inside the component
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.navigate('Filipino')} style={styles.backButton}>
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
+      ),
+      headerTitle: '', // Keep the title empty
+    });
+  }, [navigation]);
+
   const [accolades, setAccolades] = useState<string[]>([]);
   const [quizAccolades, setQuizAccolades] = useState<string[]>([]);
-  const [flashCardAccolades, setFlashCardAccolades]= useState<string[]>([]);
-
-
-
+  const [flashCardAccolades, setFlashCardAccolades] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,8 +71,6 @@ const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
           setLoading(false);
           return;
         }
-
-
 
         const response = await fetch('http://localhost:3000/accolades', {
           method: 'GET',
@@ -78,7 +87,6 @@ const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
 
         const data = await response.json();
         setAccolades(data.accolades || []);
-        
       } catch (err) {
         setError(err.message || 'An error occurred');
       } finally {
@@ -86,8 +94,7 @@ const FilipinoAccolades: React.FC<FilipinoAccoladesProps> = ({
       }
     };
 
-    
-const fetchQuizAccolades = async () => {
+    const fetchQuizAccolades = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
         if (!token) {
@@ -95,8 +102,6 @@ const fetchQuizAccolades = async () => {
           setLoading(false);
           return;
         }
-
-
 
         const response = await fetch('http://localhost:3000/quizAccolades', {
           method: 'GET',
@@ -113,55 +118,48 @@ const fetchQuizAccolades = async () => {
 
         const data = await response.json();
         setQuizAccolades(data.quizAccolades || []);
-        
       } catch (err) {
         setError(err.message || 'An error occurred');
       } finally {
         setLoading(false);
       }
-    }
-
-  
-      const fetchFlashCardAccolades = async () => {
-        try {
-          const token = await AsyncStorage.getItem('token');
-          if (!token) {
-            setError('User not logged in');
-            setLoading(false);
-            return;
-          }
-  
-  
-  
-          const response = await fetch('http://localhost:3000/flashCardAccolades', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          });
-  
-          if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to fetch accolades');
-          }
-  
-          const data = await response.json();
-          setFlashCardAccolades(data.flashCardAccolades || []);
-          
-        } catch (err) {
-          setError(err.message || 'An error occurred');
-        } finally {
-          setLoading(false);
-        }
-  
-  
-
     };
+
+    const fetchFlashCardAccolades = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          setError('User not logged in');
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch('http://localhost:3000/flashCardAccolades', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to fetch accolades');
+        }
+
+        const data = await response.json();
+        setFlashCardAccolades(data.flashCardAccolades || []);
+      } catch (err) {
+        setError(err.message || 'An error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchAccolades();
     fetchQuizAccolades();
     fetchFlashCardAccolades();
-  }, []); 
+  }, []);
 
   if (loading) {
     return (
@@ -185,13 +183,12 @@ const fetchQuizAccolades = async () => {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.text}>Accolades</Text>
 
-        {accolades.length > 0
-          ? accolades.map((accolade, index) => (
-              <View key={index} style={[styles.accoladeBox, styles.lessonBox]}>
-                <Text style={styles.accoladeText}>{accolade}</Text>
-              </View>
-            ))
-          : null}
+        {accolades.length > 0 &&
+          accolades.map((accolade, index) => (
+            <View key={index} style={[styles.accoladeBox, styles.lessonBox]}>
+              <Text style={styles.accoladeText}>{accolade}</Text>
+            </View>
+          ))}
 
         {quizAccolades.map((quizAccolade, index) => (
           <View key={index} style={[styles.accoladeBox, styles.quizBox]}>
@@ -234,6 +231,18 @@ const fetchQuizAccolades = async () => {
 };
 
 const styles = StyleSheet.create({
+  backButton: {
+    backgroundColor: 'rgba(255, 0, 0, 0.7)', // Red background
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    marginLeft: 10, // Position within the header
+  },
+  backButtonText: {
+    color: '#FFFFFF', // White text
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
