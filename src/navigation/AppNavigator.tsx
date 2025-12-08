@@ -62,7 +62,7 @@ function AppNavigator() {
     <NavigationContainer>
     
 
-    <Stack.Navigator initialRouteName="Loading">  
+    <Stack.Navigator initialRouteName="Home">  
       
     <Stack.Screen name="RegisterScreen" component={RegisterScreen} /> 
     <Stack.Screen name="Loading" component={Loading} /> 

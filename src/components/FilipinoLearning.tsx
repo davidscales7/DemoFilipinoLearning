@@ -1,87 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from './../navigation/navigation';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 const FilipinoLearning: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [accolades, setAccolades] = useState({
     lessons: [],
     quizzes: [],
     flashcards: [],
   });
 
-  // Fetch accolades and progress on mount
+  // Load LOCAL dummy accolades instead of API + token
   useEffect(() => {
-    const fetchAccolades = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        if (!token) {
-          setError('User not logged in');
-          setLoading(false);
-          return;
-        }
-
-        const response = await fetch('http://localhost:3000/accolades', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to fetch accolades');
-        }
-
-        const data = await response.json();
-        setAccolades({
-          lessons: data.accolades || [],
-          quizzes: data.quizAccolades || [],
-          flashcards: data.flashCardAccolades || [],
-        });
-      } catch (err) {
-        setError(err.message || 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAccolades();
+    setAccolades({
+      lessons: [{ id: 1 }, { id: 2 }],
+      quizzes: [{ id: 1 }],
+      flashcards: [{ id: 1 }, { id: 2 }, { id: 3 }],
+    });
   }, []);
-
-  const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem('token'); // Remove the stored token
-      navigation.navigate('Login'); // Redirect to the login screen
-    } catch (err) {
-      console.error('Failed to logout:', err);
-    }
-  };
-
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text style={styles.text}>Loading progress...</Text>
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Error: {error}</Text>
-      </View>
-    );
-  }
 
   const handleNavigate = (screen: keyof RootStackParamList) => {
     navigation.navigate(screen as any);
@@ -89,11 +29,6 @@ const FilipinoLearning: React.FC = () => {
 
   return (
     <View style={styles.background}>
-      {/* Logout Button */}
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
-
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.container}>
           <Text style={styles.titleText}>Filipino Learning</Text>
@@ -101,20 +36,23 @@ const FilipinoLearning: React.FC = () => {
           {/* Accolades Section */}
           <View style={styles.accoladesContainer}>
             <Text style={styles.accoladesTitle}>Your Progress:</Text>
-            
-            {/* Lessons Progress */}
+
             <View style={[styles.accoladeBox, styles.lessonBox]}>
-              <Text style={styles.accoladesText}>Lessons Completed: {accolades.lessons.length}</Text>
+              <Text style={styles.accoladesText}>
+                Lessons Completed: {accolades.lessons.length}
+              </Text>
             </View>
 
-            {/* Quizzes Progress */}
             <View style={[styles.accoladeBox, styles.quizBox]}>
-              <Text style={styles.accoladesText}>Quizzes Completed: {accolades.quizzes.length}</Text>
+              <Text style={styles.accoladesText}>
+                Quizzes Completed: {accolades.quizzes.length}
+              </Text>
             </View>
 
-            {/* Flashcards Progress */}
             <View style={[styles.accoladeBox, styles.flashcardBox]}>
-              <Text style={styles.accoladesText}>Flashcards Completed: {accolades.flashcards.length}</Text>
+              <Text style={styles.accoladesText}>
+                Flashcards Completed: {accolades.flashcards.length}
+              </Text>
             </View>
           </View>
 
@@ -183,12 +121,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#000',
-  },
-  text: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
@@ -266,24 +198,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     color: '#333',
     textAlign: 'center',
-  },
-  logoutButton: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    padding: 10,
-    backgroundColor: 'rgba(255, 0, 0, 0.7)', // Red background
-    borderRadius: 5,
-    zIndex: 10,
-  },
-  logoutText: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  errorText: {
-    fontSize: 18,
-    color: 'red',
   },
 });
 

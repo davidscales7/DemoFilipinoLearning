@@ -6,7 +6,7 @@ const FilipinoFoodAndDrink: React.FC = () => {
   const flashcards = [
     {
       front: 'Fried Chicken',
-      back: 'Prio na manok',
+      back: 'Prito na manok',
       frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
       backImageSrc: require('../../../assets/images/FriedChicken.png'),
       soundSrc: require('../../../assets/Voice/PrioNaManok.mp3'),
