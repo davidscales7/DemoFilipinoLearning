@@ -39,17 +39,6 @@ const ProfileHeader = ({ username = "DJ", streak = 3, progress = 65 }) => {
         </View>
       </View>
 
-      {/* PROGRESSION RING */}
-      <CircularProgress
-        value={progress}
-        radius={35}
-        activeStrokeWidth={8}
-        inActiveStrokeWidth={8}
-        activeStrokeColor={theme.colors.primary}
-        inActiveStrokeColor="#dfe4ea"
-        progressValueColor={theme.colors.textPrimary}
-        valueSuffix="%"
-      />
     </View>
   );
 };

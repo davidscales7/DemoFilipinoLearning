@@ -11,14 +11,20 @@ import Sidebar from "../components/Sidebar/Sidebar";
 import { Screen, AppCard } from "../theme/components";
 import { useTheme } from "../theme/ThemeProvider";
 
-// ⭐ ADD THIS IMPORT
+// PROFILE HEADER
 import ProfileHeader from "../components/ProfileHeader/ProfileHeader";
+
+// ⭐ TOP BAR (XP RING)
+import TopBar from "../components/Layout/TopBar";
 
 type Nav = StackNavigationProp<RootStackParamList, "FilipinoLearning">;
 
 const FilipinoLearning: React.FC = () => {
   const navigation = useNavigation<Nav>();
   const theme = useTheme();
+
+  // TEMP XP FOR TESTING — replace with real user XP later
+  const userXP =600000;
 
   const menuItems = [
     {
@@ -55,6 +61,9 @@ const FilipinoLearning: React.FC = () => {
       {/* MAIN CONTENT */}
       <Screen>
 
+        {/* ⭐ TOP BAR WITH XP RING */}
+        <TopBar title="Filipino Learning" xp={userXP} />
+
         {/* ⭐ PROFILE HEADER */}
         <ProfileHeader username="DJ" streak={3} />
 
@@ -85,45 +94,44 @@ const FilipinoLearning: React.FC = () => {
         </Text>
 
         {/* GRID OF CARDS */}
- {/* GRID OF CARDS */}
-<View
-  style={{
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: theme.spacing.md,
-  }}
->
-  {menuItems.map((item, index) => (
-    <TouchableOpacity
-      key={index}
-      onPress={() => navigation.navigate(item.screen as any)}
-      style={{ width: "45%" }}
-    >
-      <AppCard color={item.color}>
-        <Text
-          style={[
-            theme.typography.subtitle,
-            { textAlign: "center", marginBottom: theme.spacing.sm },
-          ]}
-        >
-          {item.title}
-        </Text>
-
-        <Image
-          source={item.image}
+        <View
           style={{
-            width: 60,
-            height: 60,
-            alignSelf: "center",
-            resizeMode: "contain",
-            marginTop: theme.spacing.sm,
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: theme.spacing.md,
           }}
-        />
-      </AppCard>
-    </TouchableOpacity>
-  ))}
-</View>
+        >
+          {menuItems.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => navigation.navigate(item.screen as any)}
+              style={{ width: "45%" }}
+            >
+              <AppCard color={item.color}>
+                <Text
+                  style={[
+                    theme.typography.subtitle,
+                    { textAlign: "center", marginBottom: theme.spacing.sm },
+                  ]}
+                >
+                  {item.title}
+                </Text>
+
+                <Image
+                  source={item.image}
+                  style={{
+                    width: 60,
+                    height: 60,
+                    alignSelf: "center",
+                    resizeMode: "contain",
+                    marginTop: theme.spacing.sm,
+                  }}
+                />
+              </AppCard>
+            </TouchableOpacity>
+          ))}
+        </View>
 
       </Screen>
     </View>
