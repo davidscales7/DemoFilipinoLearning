@@ -1,15 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import AppNavigator from './src/navigation/AppNavigator';
+import { XPProvider } from './src/context/XPContext';
 
 export default function App() {
   return (
-      <AppNavigator>
-        <StatusBar style="auto" />
-      </AppNavigator>
-    // </View>
+    <XPProvider>
+      <AppNavigator />
+      <StatusBar style="auto" />
+    </XPProvider>
   );
 }
 
-const styles = StyleSheet.create({
-});
+const styles = StyleSheet.create({});

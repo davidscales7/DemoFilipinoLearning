@@ -1,141 +1,101 @@
-import React, { useRef, useEffect } from "react";
-import { TouchableOpacity, View, Text, Animated } from "react-native";
+// ProgressRing.tsx
+import React from "react";
+import { TouchableOpacity, View, Text } from "react-native";
 import Svg, { Defs, LinearGradient, Stop, Circle } from "react-native-svg";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/navigation";
 import { useTheme } from "../../theme/ThemeProvider";
+import { useXP } from "../../context/XPContext";
+import { getProgressPercent } from "../../utils/levelSystem";
 
 type Nav = StackNavigationProp<RootStackParamList>;
 
-const SIZE = 70;
-const STROKE = 10;
-const RADIUS = (SIZE - STROKE) / 2;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
-/* ----------------------------------------------------
-   🎨 1. LEVEL-BASED RING SKINS  
----------------------------------------------------- */
-function getGradientForLevel(level: number) {
-  if (level >= 30) return "goldGradient";     // Mastery
-  if (level >= 20) return "purpleGradient";   // Advanced
-  if (level >= 10) return "greenGradient";    // Intermediate
-  return "blueGradient";                       // Beginner
+interface Props {
+  xpOverride?: number | any;   // Animated XP value OR static
+  size?: number;               // Allows bigger rings on summary screen
 }
 
-const ProgressRing = ({ percent, level }) => {
+const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
+  const { xp } = useXP();
 
-  /* ----------------------------------------------------
-     ✨ 2. LEVEL-UP ANIMATION (Pulse on Level Change)
-  ---------------------------------------------------- */
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  /* ----------------------------------------
+       SIZE-BASED DYNAMIC VALUES
+  ----------------------------------------- */
+  const STROKE = size * 0.15;               // Ring thickness scales with size
+  const RADIUS = (size - STROKE) / 2;
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-  useEffect(() => {
-    Animated.sequence([
-      Animated.timing(scaleAnim, {
-        toValue: 1.15,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scaleAnim, {
-        toValue: 1,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [level]);
+  /* ----------------------------------------
+       DETERMINE ACTIVE XP SOURCE
+  ----------------------------------------- */
+const activeXP = typeof xpOverride === "number" ? xpOverride : xpOverride ?? xp;
+
+
+  const { percent, level } = getProgressPercent(Number(activeXP));
 
   const strokeDashoffset =
     CIRCUMFERENCE - (CIRCUMFERENCE * percent) / 100;
-
-  const gradientId = getGradientForLevel(level);
 
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate("FilipinoAccolades")}
       style={{
-        width: SIZE,
-        height: SIZE,
+        width: size,
+        height: size,
         justifyContent: "center",
         alignItems: "center",
       }}
+      activeOpacity={0.8}
     >
-      <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-        <Svg width={SIZE} height={SIZE}>
-          <Defs>
-            {/* Blue (Beginner) */}
-            <LinearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <Stop offset="0%" stopColor="#4A90E2" />
-              <Stop offset="80%" stopColor="#A8D0F5" />
-            </LinearGradient>
+      <Svg width={size} height={size}>
+        <Defs>
+          <LinearGradient id="cleanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <Stop offset="0%" stopColor="#1E80FF" />
+            <Stop offset="100%" stopColor="#4AA8FF" />
+          </LinearGradient>
+        </Defs>
 
-            {/* Green (Intermediate) */}
-            <LinearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <Stop offset="0%" stopColor="#27ae60" />
-              <Stop offset="80%" stopColor="#7bed9f" />
-            </LinearGradient>
+        {/* Track background */}
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={RADIUS}
+          stroke="#A7C7ED"
+          strokeWidth={STROKE}
+          fill="none"
+          opacity={0.35}
+        />
 
-            {/* Purple (Advanced) */}
-            <LinearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <Stop offset="0%" stopColor="#8e44ad" />
-              <Stop offset="80%" stopColor="#d7bde2" />
-            </LinearGradient>
+        {/* Progress foreground */}
+        <Circle
+          cx={size / 2}
+          cy={size / 2}
+          r={RADIUS}
+          stroke="url(#cleanGradient)"
+          strokeWidth={STROKE}
+          strokeLinecap="round"
+          fill="none"
+          strokeDasharray={CIRCUMFERENCE}
+          strokeDashoffset={strokeDashoffset}
+          rotation="-90"
+          origin={`${size / 2}, ${size / 2}`}
+        />
+      </Svg>
 
-            {/* Gold (Mastery) */}
-            <LinearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <Stop offset="0%" stopColor="#C7A008" />
-              <Stop offset="50%" stopColor="#F5D76E" />
-              <Stop offset="100%" stopColor="#FFF2C2" />
-            </LinearGradient>
-
-            {/* Grey background */}
-            <LinearGradient id="trackGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <Stop offset="0%" stopColor="#cccccc" />
-              <Stop offset="100%" stopColor="#eeeeee" />
-            </LinearGradient>
-          </Defs>
-
-          {/* Background Track */}
-          <Circle
-            cx={SIZE / 2}
-            cy={SIZE / 2}
-            r={RADIUS}
-            stroke="url(#trackGradient)"
-            strokeWidth={STROKE}
-            fill="none"
-            opacity={0.4}
-          />
-
-          {/* XP Progress arc */}
-          <Circle
-            cx={SIZE / 2}
-            cy={SIZE / 2}
-            r={RADIUS}
-            stroke={`url(#${gradientId})`}
-            strokeWidth={STROKE}
-            strokeLinecap="round"
-            fill="none"
-            strokeDasharray={CIRCUMFERENCE}
-            strokeDashoffset={strokeDashoffset}
-            rotation="-90"
-            origin={`${SIZE / 2}, ${SIZE / 2}`}
-          />
-        </Svg>
-
-        {/* Level Text */}
-        <Text
-          style={{
-            position: "absolute",
-            fontSize: 16,
-            fontWeight: "700",
-            color: colors.textPrimary,
-          }}
-        >
-          {level}
-        </Text>
-      </Animated.View>
+      {/* Level number inside ring */}
+      <Text
+        style={{
+          position: "absolute",
+          fontSize: size * 0.28,
+          fontWeight: "700",
+          color: colors.textPrimary,
+        }}
+      >
+        {level}
+      </Text>
     </TouchableOpacity>
   );
 };

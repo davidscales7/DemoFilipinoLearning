@@ -2,12 +2,11 @@ import React from "react";
 import { View, Text } from "react-native";
 import { useTheme } from "../../theme/ThemeProvider";
 import ProgressRing from "../XP/ProgressRing";
-import { getProgressPercent } from "../../utils/levelSystem";
+import { useXP } from "../../context/XPContext";
 
-const TopBar = ({ title, xp }) => {
+const TopBar = ({ title }) => {
   const theme = useTheme();
-
-  const { percent, level } = getProgressPercent(xp);
+  const { xp } = useXP(); // ← FIXED IMPORT
 
   return (
     <View
@@ -24,9 +23,9 @@ const TopBar = ({ title, xp }) => {
         {title}
       </Text>
 
-      {/* XP Ring (top-right) */}
+      {/* XP Ring */}
       <View style={{ marginRight: theme.spacing.md }}>
-        <ProgressRing percent={percent} level={level} />
+        <ProgressRing /> {/* ← NO PROPS */}
       </View>
     </View>
   );

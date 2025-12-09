@@ -1,101 +1,73 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import Flashcard from '../Flashcard';
+import React, { useState } from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import { Screen } from "../../theme/components";
+import { useTheme } from "../../theme/ThemeProvider";
+import FlipCard from "./Flipcard";
 
-const FilipinoFlashNumbersBasic: React.FC = () => {
-  const flashcards = [
-    {
-      front: 'One',
-      back: 'Isa',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/number1.jpg'),
-      soundSrc: require('../../../assets/Voice/hagdanan.mp3'),
-    },
-    
-    {
-      front: 'Two',
-      back: 'Dalawa',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/number2.jpg'),
-     soundSrc: require('../../../assets/Voice/ilaw.mp3'),
-    },
-    {
-      front: 'Three',
-      back: 'Tatlo',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/number3.png'),
-      soundSrc: require('../../../assets/Voice/UpuanSilya.mp3'),
-    },
- 
-    {
-      front: 'Four',
-      back: 'Apat',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/number4.png'),
-      soundSrc: require('../../../assets/Voice/hagdanan.mp3'),
-    },
-    {
-      front: 'Five',
-      back: 'Lima ',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/number5.png'),
-     soundSrc: require('../../../assets/Voice/hagdanan.mp3'),
-    },
+const FilipinoFlashNumbersBasic = () => {
+  const theme = useTheme();
+
+  // ⭐ Flashcard data stored directly inside this page
+  const cards = [
+    { front: "Isa", back: "One" },
+    { front: "Dalawa", back: "Two" },
+    { front: "Tatlo", back: "Three" },
+    { front: "Apat", back: "Four" },
+    { front: "Lima", back: "Five" },
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [reset, setReset] = useState(false);
+  const [index, setIndex] = useState(0);
 
-  const handleCorrect = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
-    setReset(true);
-  };
-
-  const handleIncorrect = () => {
-    setReset(true);
-  };
-
-  const handleResetComplete = () => {
-    setReset(false);
+  const next = () => {
+    if (index < cards.length - 1) setIndex(index + 1);
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Filipino Home Objects</Text>
-      <Flashcard
-        frontText={flashcards[currentIndex].front}
-        backText={flashcards[currentIndex].back}
-        frontImageSrc={flashcards[currentIndex].frontImageSrc}
-        backImageSrc={flashcards[currentIndex].backImageSrc}
-        soundSrc={flashcards[currentIndex].soundSrc}
-        reset={reset}
-        onResetComplete={handleResetComplete}
-      />
-      <View style={styles.buttonContainer}>
-        <Button title="Correct" onPress={handleCorrect} color="green" />
-        <Button title="Incorrect" onPress={handleIncorrect} color="red" />
-      </View>
+    <View style={{ flex: 1, flexDirection: "row" }}>
+      <Sidebar />
+
+      <Screen>
+        <Text
+          style={[
+            theme.typography.title,
+            { textAlign: "center", marginBottom: theme.spacing.lg },
+          ]}
+        >
+          Flashcards — Numbers (Basic)
+        </Text>
+
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <FlipCard
+            front={cards[index].front}
+            back={cards[index].back}
+          />
+        </View>
+
+        {/* Next Button */}
+        <TouchableOpacity
+          onPress={next}
+          style={{
+            backgroundColor: theme.colors.primary,
+            padding: theme.spacing.md,
+            borderRadius: 12,
+            alignSelf: "center",
+            marginBottom: theme.spacing.xl,
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "700" }}>
+            Next →
+          </Text>
+        </TouchableOpacity>
+      </Screen>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#6489bd',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 24,
-    margin: 20,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '60%',
-    marginTop: 20,
-  },
-});
 
 export default FilipinoFlashNumbersBasic;

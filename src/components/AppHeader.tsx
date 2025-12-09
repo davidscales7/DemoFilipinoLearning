@@ -2,31 +2,26 @@
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground} from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { RootStackParamList } from '../navigation/navigation';
-type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+
+type HomeScreenNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  'Home'
+>;
 
 const AppHeader = () => {
   const [isClicked, setIsClicked] = useState(false);
   const navigation = useNavigation<HomeScreenNavigationProp>();
-
-  const handleNavigateToUkrainianScreen = () => {
-    navigation.navigate('Ukrainian');
-  };
 
   const handleNavigateToFilipinoScreen = () => {
     navigation.navigate('Filipino');
   };
 
   return (
-
-  //   <ImageBackground 
-  //   source={require('../../assets/images/PhilipinesBackground.jpg')} // Update this path to your actual image path
-  //   style={styles.backgroundImage}
-  // >
-
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Welcome</Text>
+
       {!isClicked ? (
         <TouchableOpacity onPress={() => setIsClicked(true)}>
           <Image
@@ -36,62 +31,48 @@ const AppHeader = () => {
         </TouchableOpacity>
       ) : (
         <View style={styles.header}>
-         
+          {/* Filipino Flag */}
           <TouchableOpacity onPress={handleNavigateToFilipinoScreen}>
             <Image
               source={require('../../assets/images/FlagPhil.gif')}
-              style={styles.reactLogo}
+              style={styles.flagImage}
             />
           </TouchableOpacity>
-
- {/* <TouchableOpacity onPress={handleNavigateToUkrainianScreen}>
-            <Image
-              source={require('../../assets/images/FlagUkraine.gif')}
-              style={styles.reactLogo}
-            />
-          </TouchableOpacity>
-  */}
- 
-  </View>
-     
-     )}
+        </View>
+      )}
     </View>
-    // </ImageBackground>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
-    
-      flex: 1,               // Ensures the container takes full available space
-      justifyContent: 'center',  // Centers content vertically
-      alignItems: 'center',      // Centers content horizontally
-     
-  },
-  clickableGif: {
-    width: 100,
-    height: 100,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 50,
   },
+
   welcomeText: {
     fontSize: 24,
     marginVertical: 20,
     textAlign: 'center',
   },
-  reactLogo: {
-    width: 100,
-    height: 50,
-    marginHorizontal: 20,
+
+  clickableGif: {
+    width: 120,
+    height: 120,
   },
-  backgroundImage: {
-    flex: 1,
-    resizeMode: 'cover',
+
+  header: {
+    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-  }
+    marginTop: 40,
+  },
+
+  flagImage: {
+    width: 120,
+    height: 70,
+    resizeMode: 'contain',
+  },
 });
+
 export default AppHeader;

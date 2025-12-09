@@ -61,8 +61,8 @@ const FilipinoLearning: React.FC = () => {
       {/* MAIN CONTENT */}
       <Screen>
 
-        {/* ⭐ TOP BAR WITH XP RING */}
-        <TopBar title="Filipino Learning" xp={userXP} />
+    <TopBar title="Filipino Learning" />
+
 
         {/* ⭐ PROFILE HEADER */}
         <ProfileHeader username="DJ" streak={3} />

@@ -9,6 +9,8 @@ import AppHeader from '../components/AppHeader';
 
 import UkrainianScreen from '../components/UkrainianLearning';
 import FilipinoLearning from '../components/FilipinoLearning';
+import FilipinoFlashHome from '../components/FilipinoFlashHome';
+
 import FilipinoGreetingsScreen from '../components/FilipinoFlash/FilipinoGreetings';
 import FilipinoBodyParts from '../components/FilipinoFlash/FilipinoBodyparts';
 import FilipinoNewTopic from '../components/FilipinoFlash/FilipinoNewTopic';
@@ -25,7 +27,6 @@ import FilipinoAnimalsScreen from '../components/FilipinoFlash/FilipinoAnimals';
 import FilipinoLessons from '../components/FilipinoLessons/FilipinoLessons';
 import FilipinoAccolades from '../components/FilipinoAccolades/FilipinoAccolades';
 import FilipinoQuizzes from '../components/FilipinoQuizzes/FilipinoQuizzes';
-import FilipinoFlashHome from '../components/FilipinoFlash/FilipinoFlashHome';
 import FilipinoFlashNumbersBasic from '../components/FilipinoFlash/FilipinoFlashNumbersBasic'
 
 import Lesson1 from '../components/FilipinoLessons/Lesson1';

@@ -1,206 +1,321 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState, useRef } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  Dimensions,
+  PanResponder,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// Define slides as a JavaScript array of objects
+import AppLayout from "../../components/Layout/AppLayout";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../../navigation/navigation";
+
+import { useXP } from "../../context/XPContext";
+import AnimatedXPBadge from "../../components/XP/AnimatedXPBadge";
+
+const { width } = Dimensions.get("window");
+type Nav = StackNavigationProp<RootStackParamList>;
+
+/* ----------------------------------------
+      SLIDES
+---------------------------------------- */
 const slides = [
-  { number: "1", word: "Kamusta", translated: "Hello / how are you?", image: require('../../../assets/images/hello.png') },
-  { number: "2", word: "Mabuti", translated: "I'm Good", image: require('../../../assets/images/good.jpg') },
-  { number: "3", word: "Malongkot", translated: "I'm Sad", image: require('../../../assets/images/sad.jpg') },
-  { number: "4", word: "Masaya", translated: "I'm Happy", image: require('../../../assets/images/happy.jpg') },
-  { number: "5", word: "Magandang Umaga", translated: "Good Morning", image: require('../../../assets/images/morning.jpg') },
-  { number: "6", word: "Magadang Hapon", translated: "Good Afternoon", image: require('../../../assets/images/afternoon.jpg') },
-  { number: "7", word: "Magandang Gabi", translated: "Good Evening", image: require('../../../assets/images/evening.jpg') },
-  { number: "8", word: "Pa alam", translated: "Goodbye", image: require('../../../assets/images/goodbye.jpg') },
-  { number: "9", word: "Ikaw", translated: "You", image: require('../../../assets/images/you.jpg') },
+  { word: "Kamusta", translated: "Hello / how are you?", image: require("../../../assets/images/hello.png") },
+  { word: "Mabuti", translated: "I'm Good", image: require("../../../assets/images/good.jpg") },
+  { word: "Malungkot", translated: "I'm Sad", image: require("../../../assets/images/sad.jpg") },
+  { word: "Masaya", translated: "I'm Happy", image: require("../../../assets/images/happy.jpg") },
+  { word: "Magandang Umaga", translated: "Good Morning", image: require("../../../assets/images/morning.jpg") },
+  { word: "Magandang Hapon", translated: "Good Afternoon", image: require("../../../assets/images/afternoon.jpg") },
+  { word: "Magandang Gabi", translated: "Good Evening", image: require("../../../assets/images/evening.jpg") },
+  { word: "Paalam", translated: "Goodbye", image: require("../../../assets/images/goodbye.jpg") },
+  { word: "Ikaw", translated: "You", image: require("../../../assets/images/you.jpg") },
 ];
 
-// Define questions as a JavaScript array of objects
+/* ----------------------------------------
+      QUIZ QUESTIONS
+---------------------------------------- */
 const questions = [
   {
     question: "What is the correct way to greet someone?",
-    options: ["Masaya", "Mabuti", "Malongkot", "Kamusta"],
-    correctAnswer: "Kamusta",
-    image: require('../../../assets/images/hand.jpg'),
+    options: ["Masaya", "Mabuti", "Malungkot", "Kamusta"],
+    correct: "Kamusta",
+    image: require("../../../assets/images/hand.jpg"),
   },
   {
-    question: "What is the correct way to say I'm sad?",
-    options: ["Pa alam", "Masaya", "Ikaw", "Malongkot"],
-    correctAnswer: "Malongkot",
-    image: require('../../../assets/images/sad.jpg'),
+    question: "How do you say 'I'm sad'?",
+    options: ["Paalam", "Masaya", "Ikaw", "Malungkot"],
+    correct: "Malungkot",
+    image: require("../../../assets/images/sad.jpg"),
   },
 ];
 
-const Lesson1: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [showAnswer, setShowAnswer] = useState(false);
+const Lesson1 = () => {
+  const navigation = useNavigation<Nav>();
+  const { xp, addXP } = useXP();
+
+  const [page, setPage] = useState<"slides" | "quiz" | "summary">("slides");
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [previousXP, setPreviousXP] = useState(0); // ⭐ NEW
+
+  const shakeAnim = useRef(new Animated.Value(0)).current;
+
+  const rewardXP = 15;
+
+  /* ----------------------------------------
+        SWIPE HANDLERS
+  ---------------------------------------- */
+  const panResponder = PanResponder.create({
+    onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 20,
+    onPanResponderRelease: (_, g) => {
+      if (g.dx < -100) handleNextSlide();
+    },
+  });
 
   const handleNextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide((prev) => prev + 1);
+    if (slideIndex < slides.length - 1) {
+      setSlideIndex(slideIndex + 1);
     } else {
-      setCurrentSlide(slides.length); // Indicate that slides are complete
+      setPage("quiz");
     }
   };
 
-  const handleOptionPress = (option: string) => {
-    if (selectedOption === option) {
-      setShowAnswer(true);
-      setTimeout(() => {
-        setCurrentQuestion((prev) => prev + 1);
-        setSelectedOption(null);
-        setShowAnswer(false);
-      }, 2000); // 2 seconds delay before moving to the next question
-    } else {
-      setSelectedOption(option);
+  /* ----------------------------------------
+        QUIZ ANSWER LOGIC
+  ---------------------------------------- */
+  const handleAnswer = (opt: string) => {
+    setSelected(opt);
+    const correct = questions[questionIndex].correct;
+
+    if (opt !== correct) {
+      Animated.sequence([
+        Animated.timing(shakeAnim, { toValue: 10, duration: 70, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: -10, duration: 70, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: 0, duration: 70, useNativeDriver: true }),
+      ]).start();
+      return;
     }
+
+    // If correct
+    setTimeout(() => {
+      setSelected(null);
+
+      if (questionIndex < questions.length - 1) {
+        setQuestionIndex(questionIndex + 1);
+      } else {
+        // ⭐ CAPTURE XP BEFORE UPDATING
+        const oldXP = xp;
+        setPreviousXP(oldXP);
+
+        // ⭐ GIVE XP
+        addXP(rewardXP);
+        sendAccolade();
+
+        // ⭐ SHOW SUMMARY INSIDE SAME COMPONENT
+        setPage("summary");
+      }
+    }, 600);
   };
 
-  if (currentSlide < slides.length) {
+  const sendAccolade = async () => {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) return;
+
+    fetch("http://localhost:3000/addAccolade", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ accolade: "Lesson 1" }),
+    });
+  };
+
+  /* ----------------------------------------
+        SUMMARY SCREEN
+  ---------------------------------------- */
+  if (page === "summary") {
     return (
-      <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-        <View style={styles.card}>
-          <Text style={styles.text}>{slides[currentSlide].word}</Text>
-          <Image source={slides[currentSlide].image} style={styles.introImage} resizeMode="contain" />
-          <Text style={styles.text}>{slides[currentSlide].translated}</Text>
-        </View>
-        <TouchableOpacity onPress={handleNextSlide} style={styles.nextButton}>
-          <Text style={styles.optionText}>Next</Text>
-        </TouchableOpacity>
-      </LinearGradient>
+      <AppLayout title="Lesson Complete">
+        <LinearGradient colors={["#C9E6FF", "#E8F7FF"]} style={styles.center}>
+          <Text style={styles.summaryTitle}>🎉 Lesson Complete!</Text>
+          <Text style={styles.summaryXP}>+{rewardXP} XP Earned</Text>
+
+          {/* ⭐ Animated XP Badge (correct old → new XP animation) */}
+          <View style={{ marginVertical: 30 }}>
+            <AnimatedXPBadge
+              startXP={previousXP}
+              endXP={previousXP + rewardXP}
+              size={140}
+            />
+          </View>
+
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.navigate("FilipinoLessons")}
+          >
+            <Text style={styles.backButtonText}>Back to Lessons</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </AppLayout>
     );
   }
 
-  if (currentQuestion >= questions.length) {
-    async function finishedLessonForAccoladePosting() {
-      const token = await AsyncStorage.getItem('token');
-      fetch('http://localhost:3000/addAccolade', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ accolade: "Lesson 1" })
-      })
-        .then(response => response.json())
-        .then(data => { });
-    }
-    finishedLessonForAccoladePosting();
+  /* ----------------------------------------
+        QUIZ UI
+  ---------------------------------------- */
+  if (page === "quiz") {
+    const q = questions[questionIndex];
 
     return (
-      <View style={styles.container}>
-        <Text style={styles.text}>You've completed the First lesson</Text>
-      </View>
+      <AppLayout title="Lesson 1 Quiz">
+        <LinearGradient colors={["#FFDEE9", "#B5FFFC"]} style={styles.center}>
+          <Text style={styles.quizQuestion}>{q.question}</Text>
+
+          <Image source={q.image} style={styles.quizImage} />
+
+          <Animated.View style={{ transform: [{ translateX: shakeAnim }] }}>
+            {q.options.map((opt) => (
+              <TouchableOpacity
+                key={opt}
+                style={[
+                  styles.optionButton,
+                  selected === opt && {
+                    backgroundColor: opt === q.correct ? "#7DDA8E" : "#FF6B6B",
+                  },
+                ]}
+                onPress={() => handleAnswer(opt)}
+              >
+                <Text style={styles.optionText}>{opt}</Text>
+              </TouchableOpacity>
+            ))}
+          </Animated.View>
+        </LinearGradient>
+      </AppLayout>
     );
   }
+
+  /* ----------------------------------------
+        SLIDES UI
+  ---------------------------------------- */
+  const slide = slides[slideIndex];
 
   return (
-    <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Question {currentQuestion + 1} of {questions.length}</Text>
-      </View>
-      <View style={styles.card}>
-        <Text style={styles.text}>{questions[currentQuestion].question}</Text>
-        {!showAnswer ? (
-          questions[currentQuestion].options.map((option) => (
-            <TouchableOpacity
-              key={option}
-              onPress={() => handleOptionPress(option)}
-              style={[
-                styles.optionButton,
-                selectedOption === option && styles.selectedOption,
-              ]}
-            >
-              <Text style={styles.optionText}>{option}</Text>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <>
-            <Text style={styles.answerText}>
-              Correct Answer: {questions[currentQuestion].correctAnswer}
-            </Text>
-            <Image
-              source={questions[currentQuestion].image}
-              style={styles.answerImage}
-              resizeMode="contain"
-            />
-          </>
-        )}
-      </View>
-    </LinearGradient>
+    <AppLayout title="Lesson 1">
+      <LinearGradient
+        colors={["#FFDEE9", "#B5FFFC"]}
+        style={styles.center}
+        {...panResponder.panHandlers}
+      >
+        <Text style={styles.wordText}>{slide.word}</Text>
+
+        <Image source={slide.image} style={styles.slideImage} />
+
+        <Text style={styles.translation}>{slide.translated}</Text>
+
+        <TouchableOpacity style={styles.nextBtn} onPress={handleNextSlide}>
+          <Text style={styles.nextText}>Next</Text>
+        </TouchableOpacity>
+      </LinearGradient>
+    </AppLayout>
   );
 };
 
+/* ----------------------------------------
+        STYLES
+---------------------------------------- */
 const styles = StyleSheet.create({
-  container: {
+  center: {
     flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-  header: {
-    marginBottom: 20,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: '#fff',
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 5,
-    alignItems: 'center', // Center the content
   },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+
+  /* SLIDES */
+  wordText: {
+    fontSize: 34,
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
+  },
+  slideImage: {
+    width: 260,
+    height: 260,
+    borderRadius: 12,
+    marginBottom: 20,
+  },
+  translation: {
+    fontSize: 20,
+    opacity: 0.8,
+    marginBottom: 40,
+  },
+
+  nextBtn: {
+    backgroundColor: "#4A90E2",
+    paddingHorizontal: 40,
+    paddingVertical: 15,
+    borderRadius: 12,
+  },
+  nextText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+
+  /* QUIZ */
+  quizQuestion: {
+    fontSize: 24,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  quizImage: {
+    width: 200,
+    height: 200,
+    marginBottom: 20,
   },
   optionButton: {
     padding: 15,
-    marginVertical: 10,
-    borderRadius: 5,
-    backgroundColor: '#ddd',
-    width: '100%', // Ensure the button width is full
-    alignItems: 'center',
+    backgroundColor: "#FFF",
+    width: width * 0.8,
+    marginVertical: 8,
+    borderRadius: 10,
+    alignSelf: "center",
   },
   optionText: {
     fontSize: 18,
-    color: '#333',
+    textAlign: "center",
   },
-  selectedOption: {
-    backgroundColor: 'orange',
+
+  /* SUMMARY */
+  summaryTitle: {
+    fontSize: 30,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
-  answerText: {
+  summaryXP: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: 'green',
-    textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 30,
   },
-  answerImage: {
-    width: '80%',
-    height: 200,
-  },
-  introImage: {
-    width: '80%',
-    height: 300,
-    marginBottom: 20,
-  },
-  nextButton: {
+  backButton: {
+    backgroundColor: "#4A90E2",
     padding: 15,
-    marginTop: 20,
-    borderRadius: 5,
-    backgroundColor: 'blue',
-    alignItems: 'center',
+    paddingHorizontal: 40,
+    borderRadius: 12,
+    marginTop: 30,
+  },
+  backButtonText: {
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 18,
   },
 });
 
