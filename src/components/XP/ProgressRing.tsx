@@ -1,89 +1,68 @@
-import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity, Text } from "react-native";
+import React, { useMemo } from "react";
+import { Text, Pressable } from "react-native";
 import Svg, { Defs, LinearGradient, Stop, Circle } from "react-native-svg";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../../navigation/navigation";
 
 import { useTheme } from "../../theme/ThemeProvider";
 import { useXPStore } from "../../store/useXPStore";
 import { getProgressPercent } from "../../utils/levelSystem";
+import { RootStackParamList } from "../../navigation/navigation";
 
 type Nav = StackNavigationProp<RootStackParamList>;
 
-interface Props {
-  xpOverride?: number; // animated XP input
+type Props = {
+  xpOverride?: number;
   size?: number;
-}
+};
 
 const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
 
-  // Zustand values
   const xp = useXPStore((s) => s.xp);
   const ready = useXPStore((s) => s.hasHydrated);
 
-  // ⭐ Fix for React Native Web hydration timing:
-  // Ensures the SVG renders AFTER hydration + layout
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    requestAnimationFrame(() => setMounted(true));
-  }, []);
+  if (!ready) return null;
 
-  // Prevent empty/incorrect ring before XP data + hydration are ready
-  if (!ready || !mounted) {
-    return (
-      <View
-        style={{
-          width: size,
-          height: size,
-          borderRadius: size / 2,
-          backgroundColor: "#d0d7e0", // placeholder ring
-        }}
-      />
-    );
-  }
-
-  // Choose animated XP or store XP
   const activeXP = typeof xpOverride === "number" ? xpOverride : xp;
 
-  // Debug
-  console.log("ProgressRing activeXP:", activeXP);
+  // ✅ Unique gradient id (prevents RN-web id collisions on navigation)
+  const gradientId = useMemo(
+    () => `cleanGradient-${Math.random().toString(36).slice(2)}`,
+    []
+  );
 
-  // Ring geometry
   const STROKE = size * 0.15;
   const RADIUS = (size - STROKE) / 2;
   const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
   const { percent, level } = getProgressPercent(activeXP);
 
-  const strokeDashoffset =
-    CIRCUMFERENCE - (CIRCUMFERENCE * percent) / 100;
+  // ✅ clamp + handle 0–1 or 0–100
+  const pctRaw = typeof percent === "number" ? percent : 0;
+  const pct = Math.max(0, Math.min(100, pctRaw <= 1 ? pctRaw * 100 : pctRaw));
 
-  // Debug the math
-  console.log("Level:", level, "Percent:", percent, "XP:", activeXP);
+  const strokeDashoffset = CIRCUMFERENCE - (CIRCUMFERENCE * pct) / 100;
 
   return (
-    <TouchableOpacity
-      onPress={() => navigation.navigate("FilipinoAccolades")}
+    <Pressable
+      onPress={() => navigation.navigate("FilipinoLearning")}
       style={{
         width: size,
         height: size,
         justifyContent: "center",
         alignItems: "center",
       }}
-      activeOpacity={0.7}
     >
       <Svg width={size} height={size}>
         <Defs>
-          <LinearGradient id="cleanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <LinearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
             <Stop offset="0%" stopColor="#1E80FF" />
             <Stop offset="100%" stopColor="#4AA8FF" />
           </LinearGradient>
         </Defs>
 
-        {/* Base circle */}
         <Circle
           cx={size / 2}
           cy={size / 2}
@@ -94,24 +73,21 @@ const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
           fill="none"
         />
 
-        {/* Progress circle */}
         <Circle
-          key={percent} // ⭐ Forces remount so SVG updates correctly
           cx={size / 2}
           cy={size / 2}
           r={RADIUS}
-          stroke="url(#cleanGradient)"
+          stroke={`url(#${gradientId})`}
           strokeWidth={STROKE}
           strokeLinecap="round"
           fill="none"
-          strokeDasharray={CIRCUMFERENCE}
+          strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
           strokeDashoffset={strokeDashoffset}
           rotation="-90"
           origin={`${size / 2}, ${size / 2}`}
         />
       </Svg>
 
-      {/* Level text */}
       <Text
         style={{
           position: "absolute",
@@ -122,7 +98,7 @@ const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
       >
         {level}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

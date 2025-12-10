@@ -3,6 +3,7 @@ import { View, Text } from "react-native";
 import { useTheme } from "../../theme/ThemeProvider";
 import ProgressRing from "../XP/ProgressRing";
 import AnimatedXPBadge from "../XP/AnimatedXPBadge";
+import { useXPStore } from "../../store/useXPStore";
 
 const TopBar = ({
   title,
@@ -11,10 +12,25 @@ const TopBar = ({
 }) => {
   const theme = useTheme();
 
+
+
+
+
+  // Current XP from store
+  const xp = useXPStore((s) => s.xp);
+
   const shouldAnimate =
     typeof animatedStartXP === "number" &&
     typeof animatedEndXP === "number";
-console.log("TopBar MOUNTED");
+
+  console.log("TopBar RENDERED — xp:", xp);
+
+ 
+React.useEffect(() => {
+  console.log("TopBar mounted");
+  return () => console.log("TopBar unmounted");
+}, []);
+
 
   return (
     <View
@@ -38,7 +54,8 @@ console.log("TopBar MOUNTED");
             size={70}
           />
         ) : (
-          <ProgressRing size={70} />
+          // ⭐ This guarantees the ring updates every time XP changes
+          <ProgressRing xpOverride={xp} size={70} />
         )}
       </View>
     </View>
