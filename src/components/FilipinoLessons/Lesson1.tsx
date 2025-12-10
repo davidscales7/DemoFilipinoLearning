@@ -17,7 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/navigation";
 
-import { useXP } from "../../context/XPContext";
+import { useXPStore } from "../../store/useXPStore";
 import AnimatedXPBadge from "../../components/XP/AnimatedXPBadge";
 
 const { width } = Dimensions.get("window");
@@ -56,22 +56,27 @@ const questions = [
   },
 ];
 
+/* ----------------------------------------
+      COMPONENT
+---------------------------------------- */
 const Lesson1 = () => {
   const navigation = useNavigation<Nav>();
-  const { xp, addXP } = useXP();
+
+  const xp = useXPStore((state) => state.xp);
+  const addXP = useXPStore((state) => state.addXP);
 
   const [page, setPage] = useState<"slides" | "quiz" | "summary">("slides");
   const [slideIndex, setSlideIndex] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selected, setSelected] = useState<string | null>(null);
-  const [previousXP, setPreviousXP] = useState(0); // ⭐ NEW
+  const [previousXP, setPreviousXP] = useState(0);
 
   const shakeAnim = useRef(new Animated.Value(0)).current;
-
   const rewardXP = 15;
+console.log("Lesson1 XP store value:", xp);
 
   /* ----------------------------------------
-        SWIPE HANDLERS
+      SWIPE HANDLERS
   ---------------------------------------- */
   const panResponder = PanResponder.create({
     onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 20,
@@ -89,7 +94,7 @@ const Lesson1 = () => {
   };
 
   /* ----------------------------------------
-        QUIZ ANSWER LOGIC
+      QUIZ ANSWER LOGIC
   ---------------------------------------- */
   const handleAnswer = (opt: string) => {
     setSelected(opt);
@@ -104,23 +109,21 @@ const Lesson1 = () => {
       return;
     }
 
-    // If correct
     setTimeout(() => {
       setSelected(null);
 
       if (questionIndex < questions.length - 1) {
         setQuestionIndex(questionIndex + 1);
       } else {
-        // ⭐ CAPTURE XP BEFORE UPDATING
         const oldXP = xp;
         setPreviousXP(oldXP);
 
-        // ⭐ GIVE XP
-        addXP(rewardXP);
-        sendAccolade();
-
-        // ⭐ SHOW SUMMARY INSIDE SAME COMPONENT
         setPage("summary");
+
+        setTimeout(() => {
+          addXP(rewardXP);
+          sendAccolade();
+        }, 1300);
       }
     }, 600);
   };
@@ -140,37 +143,35 @@ const Lesson1 = () => {
   };
 
   /* ----------------------------------------
-        SUMMARY SCREEN
+      SUMMARY SCREEN
   ---------------------------------------- */
   if (page === "summary") {
-    return (
-      <AppLayout title="Lesson Complete">
-        <LinearGradient colors={["#C9E6FF", "#E8F7FF"]} style={styles.center}>
-          <Text style={styles.summaryTitle}>🎉 Lesson Complete!</Text>
-          <Text style={styles.summaryXP}>+{rewardXP} XP Earned</Text>
+  return (
+    <AppLayout
+      title="Lesson Complete"
+      animatedStartXP={previousXP}
+      animatedEndXP={previousXP + rewardXP}
+    >
+      <LinearGradient colors={["#C9E6FF", "#E8F7FF"]} style={styles.center}>
+        <Text style={styles.summaryTitle}>🎉 Lesson Complete!</Text>
+        <Text style={styles.summaryXP}>+{rewardXP} XP Earned</Text>
 
-          {/* ⭐ Animated XP Badge (correct old → new XP animation) */}
-          <View style={{ marginVertical: 30 }}>
-            <AnimatedXPBadge
-              startXP={previousXP}
-              endXP={previousXP + rewardXP}
-              size={140}
-            />
-          </View>
+        <AnimatedXPBadge
+          startXP={previousXP}
+          endXP={previousXP + rewardXP}
+          size={140}
+        />
 
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => navigation.navigate("FilipinoLessons")}
-          >
-            <Text style={styles.backButtonText}>Back to Lessons</Text>
-          </TouchableOpacity>
-        </LinearGradient>
-      </AppLayout>
-    );
-  }
+        
+          <Text style={styles.backButtonText}>Back to Lessons</Text>
+      
+      </LinearGradient>
+    </AppLayout>
+  );
+}
 
   /* ----------------------------------------
-        QUIZ UI
+      QUIZ SCREEN
   ---------------------------------------- */
   if (page === "quiz") {
     const q = questions[questionIndex];
@@ -204,7 +205,7 @@ const Lesson1 = () => {
   }
 
   /* ----------------------------------------
-        SLIDES UI
+      SLIDES SCREEN
   ---------------------------------------- */
   const slide = slides[slideIndex];
 
@@ -216,9 +217,7 @@ const Lesson1 = () => {
         {...panResponder.panHandlers}
       >
         <Text style={styles.wordText}>{slide.word}</Text>
-
         <Image source={slide.image} style={styles.slideImage} />
-
         <Text style={styles.translation}>{slide.translated}</Text>
 
         <TouchableOpacity style={styles.nextBtn} onPress={handleNextSlide}>
@@ -230,81 +229,29 @@ const Lesson1 = () => {
 };
 
 /* ----------------------------------------
-        STYLES
+      STYLES
 ---------------------------------------- */
 const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
+  center: { flex: 1, justifyContent: "center", alignItems: "center", padding: 20 },
+  wordText: { fontSize: 34, fontWeight: "bold", marginBottom: 20 },
+  slideImage: { width: 260, height: 260, borderRadius: 12, marginBottom: 20 },
+  translation: { fontSize: 20, opacity: 0.8, marginBottom: 40 },
+  nextBtn: { backgroundColor: "#4A90E2", paddingHorizontal: 40, paddingVertical: 15, borderRadius: 12 },
+  nextText: { color: "white", fontSize: 18, fontWeight: "bold" },
 
-  /* SLIDES */
-  wordText: {
-    fontSize: 34,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  slideImage: {
-    width: 260,
-    height: 260,
-    borderRadius: 12,
-    marginBottom: 20,
-  },
-  translation: {
-    fontSize: 20,
-    opacity: 0.8,
-    marginBottom: 40,
-  },
-
-  nextBtn: {
-    backgroundColor: "#4A90E2",
-    paddingHorizontal: 40,
-    paddingVertical: 15,
-    borderRadius: 12,
-  },
-  nextText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
-  /* QUIZ */
-  quizQuestion: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
-  },
-  quizImage: {
-    width: 200,
-    height: 200,
-    marginBottom: 20,
-  },
+  quizQuestion: { fontSize: 24, fontWeight: "bold", textAlign: "center", marginBottom: 20 },
+  quizImage: { width: 200, height: 200, marginBottom: 20 },
   optionButton: {
     padding: 15,
     backgroundColor: "#FFF",
     width: width * 0.8,
     marginVertical: 8,
     borderRadius: 10,
-    alignSelf: "center",
   },
-  optionText: {
-    fontSize: 18,
-    textAlign: "center",
-  },
+  optionText: { fontSize: 18, textAlign: "center" },
 
-  /* SUMMARY */
-  summaryTitle: {
-    fontSize: 30,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  summaryXP: {
-    fontSize: 20,
-    marginBottom: 30,
-  },
+  summaryTitle: { fontSize: 30, fontWeight: "bold", marginBottom: 10 },
+  summaryXP: { fontSize: 20, marginBottom: 30 },
   backButton: {
     backgroundColor: "#4A90E2",
     padding: 15,
@@ -312,11 +259,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginTop: 30,
   },
-  backButtonText: {
-    color: "#FFF",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
+  backButtonText: { color: "white", fontWeight: "bold", fontSize: 18 },
 });
 
 export default Lesson1;

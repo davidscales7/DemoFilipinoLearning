@@ -5,6 +5,7 @@ import { useTheme } from "../../theme/ThemeProvider";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../../navigation/navigation";
+import AppLayout from "../Layout/AppLayout";
 
 type Nav = StackNavigationProp<RootStackParamList>;
 
@@ -28,9 +29,11 @@ const FilipinoLessons = () => {
   ];
 
   return (
-    <ScrollView>
-      <LessonPath lessons={lessons} />
-    </ScrollView>
+    <AppLayout title="Lessons">
+      <ScrollView>
+        <LessonPath lessons={lessons} />
+      </ScrollView>
+    </AppLayout>
   );
 };
 

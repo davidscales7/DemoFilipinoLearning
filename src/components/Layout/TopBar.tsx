@@ -2,11 +2,19 @@ import React from "react";
 import { View, Text } from "react-native";
 import { useTheme } from "../../theme/ThemeProvider";
 import ProgressRing from "../XP/ProgressRing";
-import { useXP } from "../../context/XPContext";
+import AnimatedXPBadge from "../XP/AnimatedXPBadge";
 
-const TopBar = ({ title }) => {
+const TopBar = ({
+  title,
+  animatedStartXP = null,
+  animatedEndXP = null,
+}) => {
   const theme = useTheme();
-  const { xp } = useXP(); // ← FIXED IMPORT
+
+  const shouldAnimate =
+    typeof animatedStartXP === "number" &&
+    typeof animatedEndXP === "number";
+console.log("TopBar MOUNTED");
 
   return (
     <View
@@ -18,14 +26,20 @@ const TopBar = ({ title }) => {
         paddingVertical: theme.spacing.md,
       }}
     >
-      {/* Title */}
       <Text style={[theme.typography.title, { marginLeft: theme.spacing.md }]}>
         {title}
       </Text>
 
-      {/* XP Ring */}
       <View style={{ marginRight: theme.spacing.md }}>
-        <ProgressRing /> {/* ← NO PROPS */}
+        {shouldAnimate ? (
+          <AnimatedXPBadge
+            startXP={animatedStartXP}
+            endXP={animatedEndXP}
+            size={70}
+          />
+        ) : (
+          <ProgressRing size={70} />
+        )}
       </View>
     </View>
   );

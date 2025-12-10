@@ -4,15 +4,27 @@ import Sidebar from "../Sidebar/Sidebar";
 import { Screen } from "../../theme/components";
 import TopBar from "./TopBar";
 
-const AppLayout = ({ title, children }) => {
+const AppLayout = ({
+  title,
+  children,
+  animatedStartXP = null,
+  animatedEndXP = null,
+}) => {
+
+console.log("APP LAYOUT MOUNTED");
+
+  console.log("Title passed to AppLayout:", title);
+
   return (
     <View style={{ flexDirection: "row", flex: 1 }}>
-      {/* Left Sidebar */}
       <Sidebar />
 
-      {/* Main Content */}
       <Screen>
-        <TopBar title={title} />
+        <TopBar
+          title={title}
+          animatedStartXP={animatedStartXP}
+          animatedEndXP={animatedEndXP}
+        />
 
         {children}
       </Screen>

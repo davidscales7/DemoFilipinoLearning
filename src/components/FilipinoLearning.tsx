@@ -1,30 +1,24 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../navigation/navigation";
-
-// Sidebar
 import Sidebar from "../components/Sidebar/Sidebar";
-
-// THEME COMPONENTS
 import { Screen, AppCard } from "../theme/components";
 import { useTheme } from "../theme/ThemeProvider";
-
-// PROFILE HEADER
 import ProfileHeader from "../components/ProfileHeader/ProfileHeader";
-
-// ⭐ TOP BAR (XP RING)
 import TopBar from "../components/Layout/TopBar";
 
 type Nav = StackNavigationProp<RootStackParamList, "FilipinoLearning">;
 
+
+
 const FilipinoLearning: React.FC = () => {
   const navigation = useNavigation<Nav>();
+  const route = useRoute();
+  const params: any = route.params || {};
   const theme = useTheme();
-
-  // TEMP XP FOR TESTING — replace with real user XP later
-  const userXP =600000;
+console.log("PARAMS RECEIVED:", route.params);
 
   const menuItems = [
     {
@@ -55,19 +49,18 @@ const FilipinoLearning: React.FC = () => {
 
   return (
     <View style={{ flex: 1, flexDirection: "row" }}>
-      {/* SIDEBAR */}
       <Sidebar />
 
-      {/* MAIN CONTENT */}
       <Screen>
 
-    <TopBar title="Filipino Learning" />
+        <TopBar
+          title="Filipino Learning"
+          animatedStartXP={params.animatedStartXP}
+          animatedEndXP={params.animatedEndXP}
+        />
 
-
-        {/* ⭐ PROFILE HEADER */}
         <ProfileHeader username="DJ" streak={3} />
 
-        {/* TITLE */}
         <Text
           style={[
             theme.typography.title,
@@ -77,7 +70,6 @@ const FilipinoLearning: React.FC = () => {
           Filipino Learning
         </Text>
 
-        {/* INTRO SECTION */}
         <Text
           style={[
             theme.typography.body,
@@ -89,11 +81,8 @@ const FilipinoLearning: React.FC = () => {
           ]}
         >
           👋 Welcome! Ready to continue your Filipino learning journey?
-          {"\n"}Choose an activity below to begin exploring new words,
-          improve your skills, and track your progress.
         </Text>
 
-        {/* GRID OF CARDS */}
         <View
           style={{
             flexDirection: "row",
@@ -125,14 +114,12 @@ const FilipinoLearning: React.FC = () => {
                     height: 60,
                     alignSelf: "center",
                     resizeMode: "contain",
-                    marginTop: theme.spacing.sm,
                   }}
                 />
               </AppCard>
             </TouchableOpacity>
           ))}
         </View>
-
       </Screen>
     </View>
   );

@@ -1,33 +1,39 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Animated } from "react-native";
 import ProgressRing from "./ProgressRing";
 
 interface Props {
-  startXP: number;   // BEFORE earning XP
-  endXP: number;     // AFTER earning XP
+  startXP: number;  // XP before gaining
+  endXP: number;    // XP after gaining
   size?: number;
 }
 
 const AnimatedXPBadge: React.FC<Props> = ({ startXP, endXP, size = 70 }) => {
   const anim = useRef(new Animated.Value(0)).current;
+  const [displayXP, setDisplayXP] = useState(startXP);
 
   useEffect(() => {
     anim.setValue(0);
+
+    const id = anim.addListener(({ value }) => {
+      const xp = startXP + (endXP - startXP) * value;
+      setDisplayXP(Math.round(xp));
+    });
+
     Animated.timing(anim, {
       toValue: 1,
       duration: 1200,
-      useNativeDriver: false,
-    }).start();
-  }, []);
+      useNativeDriver: false,  // required for SVG animation
+    }).start(() => anim.removeListener(id));
 
-  const animatedXP = anim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [startXP, endXP],
-  });
+  }, [startXP, endXP]);
+
+  // Debug log to confirm animation is moving
+  console.log("Animated XP:", displayXP);
 
   return (
     <View>
-      <ProgressRing xpOverride={animatedXP} size={size} />
+      <ProgressRing xpOverride={displayXP} size={size} />
     </View>
   );
 };
