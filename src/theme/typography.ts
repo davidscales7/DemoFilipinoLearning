@@ -2,19 +2,21 @@
 
 export const typography = {
   title: {
+    fontFamily: "Poppins_700Bold",
     fontSize: 28,
-    fontWeight: "700" as const,
+    letterSpacing: 0.3,
   },
   subtitle: {
+    fontFamily: "Poppins_600SemiBold",
     fontSize: 20,
-    fontWeight: "600" as const,
   },
   body: {
+    fontFamily: "Poppins_400Regular",
     fontSize: 16,
-    fontWeight: "400" as const,
+    lineHeight: 22,
   },
   small: {
+    fontFamily: "Poppins_400Regular",
     fontSize: 14,
-    fontWeight: "400" as const,
   },
 };

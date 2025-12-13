@@ -5,32 +5,25 @@ import ProgressRing from "../XP/ProgressRing";
 import AnimatedXPBadge from "../XP/AnimatedXPBadge";
 import { useXPStore } from "../../store/useXPStore";
 
-const TopBar = ({
+interface TopBarProps {
+  title?: string;
+  animatedStartXP?: number | null;
+  animatedEndXP?: number | null;
+  showXPBadge?: boolean; // 🔒 opt-in
+}
+
+const TopBar: React.FC<TopBarProps> = ({
   title,
   animatedStartXP = null,
   animatedEndXP = null,
+  showXPBadge = false, // ❗ default OFF
 }) => {
   const theme = useTheme();
-
-
-
-
-
-  // Current XP from store
   const xp = useXPStore((s) => s.xp);
 
   const shouldAnimate =
     typeof animatedStartXP === "number" &&
     typeof animatedEndXP === "number";
-
-  console.log("TopBar RENDERED — xp:", xp);
-
- 
-React.useEffect(() => {
-  console.log("TopBar mounted");
-  return () => console.log("TopBar unmounted");
-}, []);
-
 
   return (
     <View
@@ -42,22 +35,30 @@ React.useEffect(() => {
         paddingVertical: theme.spacing.md,
       }}
     >
-      <Text style={[theme.typography.title, { marginLeft: theme.spacing.md }]}>
-        {title}
-      </Text>
+      {!!title && (
+        <Text
+          style={[
+            theme.typography.title,
+            { marginLeft: theme.spacing.md },
+          ]}
+        >
+          {title}
+        </Text>
+      )}
 
-      <View style={{ marginRight: theme.spacing.md }}>
-        {shouldAnimate ? (
-          <AnimatedXPBadge
-            startXP={animatedStartXP}
-            endXP={animatedEndXP}
-            size={70}
-          />
-        ) : (
-          // ⭐ This guarantees the ring updates every time XP changes
-          <ProgressRing xpOverride={xp} size={70} />
-        )}
-      </View>
+      {showXPBadge && (
+        <View style={{ marginRight: theme.spacing.md }}>
+          {shouldAnimate ? (
+            <AnimatedXPBadge
+              startXP={animatedStartXP!}
+              endXP={animatedEndXP!}
+              size={70}
+            />
+          ) : (
+            <ProgressRing key={xp} xpOverride={xp} size={70} />
+          )}
+        </View>
+      )}
     </View>
   );
 };

@@ -1,107 +1,133 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import Flashcard from '../Flashcard';
+import React, { useMemo, useState } from "react";
+import { View, Text, Pressable } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-const Greetings: React.FC = () => {
-  const flashcards = [
-    {
-      front: 'Hello',
-      back: 'Kamusta',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      soundSrc: require('../../../assets/Voice/Kamusta.mp3'),
-    },
-    {
-      front: 'Good morning',
-      back: 'Magandang Umaga',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      soundSrc: require('../../../assets/Voice/MagandangUmaga.mp3'),
-    },
-    {
-      front: 'Good evening',
-      back: 'Magandang gabi',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      soundSrc: require('../../../assets/Voice/MagandangGabi.mp3'),
-    },
-    {
-      front: 'Good afternoon',
-      back: 'Magandang hapon',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      soundSrc: require('../../../assets/Voice/MagandangHapon.mp3'),
-    },
-    {
-      front: 'Goodbye',
-      back: 'Paalam',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      soundSrc: require('../../../assets/Voice/Paalam.mp3'),
-    },
-    {
-      front: 'You',
-      back: 'Ikaw',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      soundSrc: require('../../../assets/Voice/ikaw.mp3'),
-    },
-  ];
+import AppLayout from "../../components/Layout/AppLayout";
+import { useTheme } from "../../theme/ThemeProvider";
+import FlipCard from "./Flipcard"; // adjust path if needed
+import { useXPStore } from "../../store/useXPStore";
+import { RootStackParamList } from "../../navigation/navigation";
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [reset, setReset] = useState(false);
+type Nav = StackNavigationProp<RootStackParamList>;
 
-  const handleCorrect = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % flashcards.length);
-    setReset(true);
+const FilipinoGreetings: React.FC = () => {
+  const theme = useTheme();
+  const navigation = useNavigation<Nav>();
+
+  const addXP = useXPStore((s) => s.addXP);
+  const currentXP = useXPStore((s) => s.xp);
+
+  // ⭐ Deck data
+  const cards = useMemo(
+    () => [
+      { front: "Hello", back: "Kamusta" },
+      { front: "Good morning", back: "Magandang Umaga" },
+      { front: "Good evening", back: "Magandang gabi" },
+      { front: "Good afternoon", back: "Magandang hapon" },
+      { front: "Goodbye", back: "Paalam" },
+      { front: "You", back: "Ikaw" },
+    ],
+    []
+  );
+
+  const [index, setIndex] = useState(0);
+
+  // ✅ XP tuning
+  const XP_PER_CARD = 5;
+  const XP_DECK_BONUS = 15; // optional “finished deck” bonus
+
+  const next = () => {
+    const isLast = index >= cards.length - 1;
+
+    // award XP for completing this card
+    addXP(XP_PER_CARD);
+
+    if (!isLast) {
+      setIndex(index + 1);
+      return;
+    }
+
+    // finished the deck — bonus + animate back on FlashHome
+    const before = currentXP; // xp before any rewards this press
+    addXP(XP_DECK_BONUS);
+
+    const after = useXPStore.getState().xp;
+
+    navigation.navigate("FilipinoFlashHome", {
+      animatedStartXP: before,
+      animatedEndXP: after,
+    });
   };
 
-  const handleIncorrect = () => {
-    setReset(true);
-  };
-
-  const handleResetComplete = () => {
-    setReset(false);
+  const prev = () => {
+    if (index > 0) setIndex(index - 1);
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Filipino Greetings</Text>
-      <Flashcard
-        frontText={flashcards[currentIndex].front}
-        backText={flashcards[currentIndex].back}
-        frontImageSrc={flashcards[currentIndex].frontImageSrc}
-        backImageSrc={flashcards[currentIndex].backImageSrc}
-        soundSrc={flashcards[currentIndex].soundSrc}
-        reset={reset}
-        onResetComplete={handleResetComplete}
-      />
-      <View style={styles.buttonContainer}>
-        <Button title="Correct" onPress={handleCorrect} color="green" />
-        <Button title="Incorrect" onPress={handleIncorrect} color="red" />
+    <AppLayout title="Flashcards — Greetings">
+      <Text
+        style={[
+          theme.typography.body,
+          {
+            textAlign: "center",
+            marginBottom: theme.spacing.lg,
+            color: theme.colors.textSecondary,
+          },
+        ]}
+      >
+        Tap the card to flip. Hit Next when you’ve learned it.
+      </Text>
+
+      {/* Card */}
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <FlipCard front={cards[index].front} back={cards[index].back} />
       </View>
-    </View>
+
+      {/* Controls */}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          gap: theme.spacing.md,
+          marginBottom: theme.spacing.xl,
+        }}
+      >
+        <Pressable
+          onPress={prev}
+          disabled={index === 0}
+          style={{
+            paddingVertical: theme.spacing.md,
+            paddingHorizontal: theme.spacing.lg,
+            borderRadius: 12,
+            backgroundColor: index === 0 ? "#A7C7ED" : theme.colors.secondary,
+            opacity: index === 0 ? 0.6 : 1,
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "700" }}>← Back</Text>
+        </Pressable>
+
+        <Pressable
+          onPress={next}
+          style={{
+            paddingVertical: theme.spacing.md,
+            paddingHorizontal: theme.spacing.lg,
+            borderRadius: 12,
+            backgroundColor: theme.colors.primary,
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "700" }}>
+            {index === cards.length - 1 ? "Finish ✓" : "Next →"}
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* Progress */}
+      <Text style={{ textAlign: "center", color: theme.colors.textSecondary }}>
+        Card {index + 1} / {cards.length}
+      </Text>
+    </AppLayout>
   );
 };
 
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#6489bd',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 24,
-    margin: 20,
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '60%',
-    marginTop: 20,
-  },
-});
-
-export default Greetings;
+export default FilipinoGreetings;

@@ -27,7 +27,9 @@ export type RootStackParamList = {
   FilipinoAccolades: undefined;
 
   FilipinoQuizzes: undefined;
-  FilipinoFlashHome: undefined;
+  FilipinoFlashHome:
+    | { animatedStartXP?: number; animatedEndXP?: number }
+    | undefined;
   FilipinoFlashNumbersBasic: undefined;
   FilipinoNumbersIntermediate: undefined;
   FilipinoNumbersExpert: undefined;

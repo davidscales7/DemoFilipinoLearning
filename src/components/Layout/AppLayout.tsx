@@ -1,11 +1,19 @@
 import React from "react";
 import { View } from "react-native";
+import { useRoute } from "@react-navigation/native";
+
 import Sidebar from "../Sidebar/Sidebar";
 import { Screen } from "../../theme/components";
 import TopBar from "./TopBar";
-import { useRoute } from "@react-navigation/native";
 
-const AppLayout = ({
+interface AppLayoutProps {
+  title?: string;
+  children: React.ReactNode;
+  animatedStartXP?: number | null;
+  animatedEndXP?: number | null;
+}
+
+const AppLayout: React.FC<AppLayoutProps> = ({
   title,
   children,
   animatedStartXP = null,
@@ -15,37 +23,21 @@ const AppLayout = ({
 
   return (
     <View style={{ flexDirection: "row", flex: 1 }}>
-
       <Sidebar />
 
-      {/* Screen wrapper FIX */}
-      <View style={{ flex: 1, overflow: "visible" }}>
+      <View style={{ flex: 1 }}>
         <Screen>
+          <TopBar
+            key={route.name}
+            title={title}
+            animatedStartXP={animatedStartXP}
+            animatedEndXP={animatedEndXP}
+            showXPBadge={false} // 🔒 ALWAYS OFF here
+          />
 
-          {/* TopBar must NOT be clipped */}
-          <View
-            style={{
-              zIndex: 10,
-              paddingBottom: 10,
-              overflow: "visible",
-            }}
-          >
-            <TopBar
-              
-              title={title}
-              animatedStartXP={animatedStartXP}
-              animatedEndXP={animatedEndXP}
-            />
-          </View>
-
-          {/* page content */}
-          <View style={{ flex: 1, overflow: "visible" }}>
-            {children}
-          </View>
-
+          {children}
         </Screen>
       </View>
-
     </View>
   );
 };
