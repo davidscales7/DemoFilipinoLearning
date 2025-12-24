@@ -11,12 +11,13 @@ app.use(cors());
 
 
 // MongoDB connection
-mongoose.connect("mongodb+srv://davidscales7:ds@languagelearning.iba8z.mongodb.net/languageLearning?retryWrites=true&w=majority"
-
-, {
+mongoose.connect(
+  "mongodb+srv://davidscales7:ds@languagelearning.iba8z.mongodb.net/languageLearning?retryWrites=true&w=majority",
+  {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-})
+  }
+)
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.error('MongoDB connection error:', err));
 
@@ -257,7 +258,8 @@ function verifyToken(req, res, next) {
         return res.status(403).json({ error: 'No token provided' });
     }
 
-    jwt.verify(token, 'yourSecretKeyHere', (err, decoded) => {
+   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+
         if (err) {
             return res.status(500).json({ error: 'Failed to authenticate token' });
         }
@@ -269,5 +271,3 @@ function verifyToken(req, res, next) {
 app.listen(3000, () => {
     console.log('Server running on http://localhost:3000');
 });
-require('dotenv').config();
-console.log("Loaded environment variables:", process.env);

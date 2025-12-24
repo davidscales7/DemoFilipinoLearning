@@ -6,7 +6,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 
 import { useTheme } from "../../theme/ThemeProvider";
 import { useXPStore } from "../../store/useXPStore";
-import { getProgressPercent } from "../../utils/levelSystem";
 import { RootStackParamList } from "../../navigation/navigation";
 
 type Nav = StackNavigationProp<RootStackParamList>;
@@ -15,6 +14,11 @@ type Props = {
   xpOverride?: number;
   size?: number;
 };
+
+/**
+ * 🔒 XP RULES (single source of truth)
+ */
+const XP_PER_LEVEL = 100;
 
 const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
   const navigation = useNavigation<Nav>();
@@ -27,23 +31,30 @@ const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
 
   const activeXP = typeof xpOverride === "number" ? xpOverride : xp;
 
-  // ✅ Unique gradient id (prevents RN-web id collisions on navigation)
-  const gradientId = useMemo(
-    () => `cleanGradient-${Math.random().toString(36).slice(2)}`,
-    []
-  );
+  /**
+   * 🧠 LEVEL + PROGRESS (FIXED)
+   */
+  const level = Math.floor(activeXP / XP_PER_LEVEL) + 1;
+  const xpIntoLevel = activeXP % XP_PER_LEVEL;
+  const percent = (xpIntoLevel / XP_PER_LEVEL) * 100;
 
+  /**
+   * 🎨 SVG MATH
+   */
   const STROKE = size * 0.15;
   const RADIUS = (size - STROKE) / 2;
   const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-  const { percent, level } = getProgressPercent(activeXP);
+  const strokeDashoffset =
+    CIRCUMFERENCE - (CIRCUMFERENCE * percent) / 100;
 
-  // ✅ clamp + handle 0–1 or 0–100
-  const pctRaw = typeof percent === "number" ? percent : 0;
-  const pct = Math.max(0, Math.min(100, pctRaw <= 1 ? pctRaw * 100 : pctRaw));
-
-  const strokeDashoffset = CIRCUMFERENCE - (CIRCUMFERENCE * pct) / 100;
+  /**
+   * ✅ Unique gradient id (prevents RN-web collisions)
+   */
+  const gradientId = useMemo(
+    () => `xpGradient-${Math.random().toString(36).slice(2)}`,
+    []
+  );
 
   return (
     <Pressable
@@ -63,6 +74,7 @@ const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
           </LinearGradient>
         </Defs>
 
+        {/* Background ring */}
         <Circle
           cx={size / 2}
           cy={size / 2}
@@ -73,6 +85,7 @@ const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
           fill="none"
         />
 
+        {/* Progress ring */}
         <Circle
           cx={size / 2}
           cy={size / 2}
@@ -88,6 +101,7 @@ const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
         />
       </Svg>
 
+      {/* Level label */}
       <Text
         style={{
           position: "absolute",
