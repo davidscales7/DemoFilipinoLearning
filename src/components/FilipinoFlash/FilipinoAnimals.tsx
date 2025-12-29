@@ -1,196 +1,233 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button } from 'react-native';
-import Flashcard from '../Flashcard';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useMemo, useState, useEffect } from "react";
+import { View, Text, Pressable } from "react-native";
+import { Audio } from "expo-av";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-const Animals: React.FC = () => {
-  const flashcards = [
-    {
-      front: 'Cat',
-      back: 'Pusa',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/cat.png'),
-      soundSrc: require('../../../assets/Voice/pusa.mp3'),
-    },
-    {
-      front: 'Dog',
-      back: 'Aso',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/dog.png'),
-      soundSrc: require('../../../assets/Voice/aso.mp3'),
-    },
-    {
-      front: 'Bird',
-      back: 'ibon',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/bird.png'),
-      soundSrc: require('../../../assets/Voice/ibon.mp3'),
-    },
-    {
-      front: 'Monkey',
-      back: 'unggoy',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/monkey.png'),
-      soundSrc: require('../../../assets/Voice/unggoy.mp3'),
-    },
-    {
-      front: 'Tiger',
-      back: 'tigre',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/tiger.png'),
-      soundSrc: require('../../../assets/Voice/tigre.mp3'),
-    },
-    {
-      front: 'fish',
-      back: 'isda',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/fish.png'),
-      soundSrc: require('../../../assets/Voice/isda.mp3'),
-    },
-    
-    {
-      front: 'Lion',
-      back: 'leon',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/lion.png'),
-      soundSrc: require('../../../assets/Voice/leon.mp3'),
-    },
+import AppLayout from "../../components/Layout/AppLayout";
+import { useTheme } from "../../theme/ThemeProvider";
+import FlipCard from "./Flipcard";
+import { useXPStore } from "../../store/useXPStore";
+import { RootStackParamList } from "../../navigation/navigation";
 
-    {
-      front: 'Snake',
-      back: 'ahas',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/snake.png'),
-      soundSrc: require('../../../assets/Voice/ahas.mp3'),
-    },
+type Nav = StackNavigationProp<RootStackParamList>;
 
-    {
-      front: 'Cow',
-      back: 'Baka',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/beef.png'),
-      soundSrc: require('../../../assets/Voice/baka.mp3'),
-    },
-    {
-      front: 'Goat',
-      back: 'Kambing',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/goat.png'),
-      soundSrc: require('../../../assets/Voice/kambing.mp3'),
-    },
+const FilipinoAnimals: React.FC = () => {
+  const theme = useTheme();
+  const navigation = useNavigation<Nav>();
 
-    {
-      front: 'Pig',
-      back: 'baboy',
-      frontImageSrc: require('../../../assets/images/FlagPhilippines.png'),
-      backImageSrc: require('../../../assets/images/pig.png'),
-      soundSrc: require('../../../assets/Voice/kambing.mp3'),
-    },
+  const addXP = useXPStore((s) => s.addXP);
+  const currentXP = useXPStore((s) => s.xp);
 
-    
-  ];
+  const [index, setIndex] = useState(0);
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [reset, setReset] = useState(false);
-  const [finished, setFinished] = useState(false);
+  const XP_PER_CARD = 5;
+  const XP_DECK_BONUS = 15;
 
-  const handleCorrect = () => {
-    if (currentIndex + 1 === flashcards.length) {
-      setFinished(true); // Set finished to true if it's the last card
-      finishedFlashCardTopicForAccoladePosting();
-    } else {
-      setCurrentIndex((prevIndex) => prevIndex + 1);
-      setReset(true);
-    }
-  };
+  /* ----------------------------
+     FLASHCARD DATA
+  ---------------------------- */
+  const cards = useMemo(
+    () => [
+      {
+        front: "Cat",
+        back: "Pusa",
+        soundSrc: require("../../../assets/Voice/pusa.mp3"),
+      },
+      {
+        front: "Dog",
+        back: "Aso",
+        soundSrc: require("../../../assets/Voice/aso.mp3"),
+      },
+      {
+        front: "Bird",
+        back: "Ibon",
+        soundSrc: require("../../../assets/Voice/ibon.mp3"),
+      },
+      {
+        front: "Monkey",
+        back: "Unggoy",
+        soundSrc: require("../../../assets/Voice/unggoy.mp3"),
+      },
+      {
+        front: "Tiger",
+        back: "Tigre",
+        soundSrc: require("../../../assets/Voice/tigre.mp3"),
+      },
+      {
+        front: "Fish",
+        back: "Isda",
+        soundSrc: require("../../../assets/Voice/isda.mp3"),
+      },
+      {
+        front: "Lion",
+        back: "Leon",
+        soundSrc: require("../../../assets/Voice/leon.mp3"),
+      },
+      {
+        front: "Snake",
+        back: "Ahas",
+        soundSrc: require("../../../assets/Voice/ahas.mp3"),
+      },
+      {
+        front: "Cow",
+        back: "Baka",
+        soundSrc: require("../../../assets/Voice/baka.mp3"),
+      },
+      {
+        front: "Goat",
+        back: "Kambing",
+        soundSrc: require("../../../assets/Voice/kambing.mp3"),
+      },
+      {
+        front: "Pig",
+        back: "Baboy",
+        soundSrc: require("../../../assets/Voice/baboy.mp3"),
+      },
+    ],
+    []
+  );
 
-  const handleIncorrect = () => {
-    setReset(true); // Allow resetting even if incorrect
-  };
+  /* ----------------------------
+     AUDIO CLEANUP
+  ---------------------------- */
+  useEffect(() => {
+    return () => {
+      sound?.unloadAsync();
+    };
+  }, [sound]);
 
-  const handleResetComplete = () => {
-    setReset(false);
-  };
-
-  async function finishedFlashCardTopicForAccoladePosting() {
+  const playSound = async () => {
     try {
-      const token = await AsyncStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/addflashCardAccolades', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ flashCardAccolade: 'Animal Flash Cards' }),
-      });
-      const data = await response.json();
-      console.log('Flashcard accolade data:', data);
-    } catch (error) {
-      console.error('Failed to post animal flashcard accolade:', error);
+      sound?.unloadAsync();
+      const { sound: newSound } = await Audio.Sound.createAsync(
+        cards[index].soundSrc
+      );
+      setSound(newSound);
+      await newSound.playAsync();
+    } catch (e) {
+      console.warn("Audio error:", e);
     }
-  }
+  };
 
-  if (finished) {
-    return (
-      
-      <View style={styles.container}>
-        <Text style={styles.title}>🎉 Congratulations! 🎉</Text>
-        <Text style={styles.message}>You have completed the animal flashcards!</Text>
-        <Button
-          title="Restart"
-          onPress={() => {
-            setCurrentIndex(0);
-            setFinished(false);
-          }}
-        />
-      </View>
-    );
-  }
+  /* ----------------------------
+     NAVIGATION / XP
+  ---------------------------- */
+  const next = () => {
+    const isLast = index >= cards.length - 1;
+    addXP(XP_PER_CARD);
 
+    if (!isLast) {
+      setIndex(index + 1);
+      return;
+    }
+
+    const before = currentXP;
+    addXP(XP_DECK_BONUS);
+    const after = useXPStore.getState().xp;
+
+    navigation.navigate("FilipinoFlashHome", {
+      animatedStartXP: before,
+      animatedEndXP: after,
+    });
+  };
+
+  const prev = () => {
+    if (index > 0) setIndex(index - 1);
+  };
+
+  /* ----------------------------
+     RENDER
+  ---------------------------- */
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Filipino Greetings</Text>
-      <Flashcard
-        frontText={flashcards[currentIndex].front}
-        backText={flashcards[currentIndex].back}
-        frontImageSrc={flashcards[currentIndex].frontImageSrc}
-        backImageSrc={flashcards[currentIndex].backImageSrc}
-        soundSrc={flashcards[currentIndex].soundSrc}
-        reset={reset}
-        onResetComplete={handleResetComplete}
-      />
-      <View style={styles.buttonContainer}>
-        <Button title="Correct" onPress={handleCorrect} color="green" />
-        <Button title="Incorrect" onPress={handleIncorrect} color="red" />
+    <AppLayout title="Flashcards — Animals">
+      <Text
+        style={[
+          theme.typography.body,
+          {
+            textAlign: "center",
+            marginBottom: theme.spacing.lg,
+            color: theme.colors.textSecondary,
+          },
+        ]}
+      >
+        Tap the card to flip. Listen to the pronunciation, then move on.
+      </Text>
+
+      {/* CARD */}
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <FlipCard front={cards[index].front} back={cards[index].back} />
       </View>
-    </View>
-  
+
+      {/* 🔊 PRONUNCIATION BUTTON */}
+      <Pressable
+        onPress={playSound}
+        style={{
+          alignSelf: "center",
+          marginVertical: theme.spacing.lg,
+          paddingVertical: theme.spacing.md,
+          paddingHorizontal: theme.spacing.xl,
+          borderRadius: 999,
+          backgroundColor: theme.colors.primary,
+        }}
+      >
+        <Text style={{ color: "white", fontWeight: "700", fontSize: 16 }}>
+          🔊 Play pronunciation
+        </Text>
+      </Pressable>
+
+      {/* CONTROLS */}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          gap: theme.spacing.md,
+          marginBottom: theme.spacing.lg,
+        }}
+      >
+        <Pressable
+          onPress={prev}
+          disabled={index === 0}
+          style={{
+            paddingVertical: theme.spacing.md,
+            paddingHorizontal: theme.spacing.lg,
+            borderRadius: 12,
+            backgroundColor:
+              index === 0 ? "#A7C7ED" : theme.colors.secondary,
+            opacity: index === 0 ? 0.6 : 1,
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "700" }}>← Back</Text>
+        </Pressable>
+
+        <Pressable
+          onPress={next}
+          style={{
+            paddingVertical: theme.spacing.md,
+            paddingHorizontal: theme.spacing.lg,
+            borderRadius: 12,
+            backgroundColor: theme.colors.primary,
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "700" }}>
+            {index === cards.length - 1 ? "Finish ✓" : "Next →"}
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* PROGRESS */}
+      <Text
+        style={{
+          textAlign: "center",
+          marginBottom: theme.spacing.md,
+          color: theme.colors.textSecondary,
+        }}
+      >
+        Card {index + 1} / {cards.length}
+      </Text>
+    </AppLayout>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#6489bd',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  message: {
-    fontSize: 18,
-    color: '#333',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '60%',
-    marginTop: 20,
-  },
- 
-});
-
-export default Animals;
+export default FilipinoAnimals;
