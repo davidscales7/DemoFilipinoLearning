@@ -3,11 +3,19 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import AppLayout from "../Layout/AppLayout";
+import { useXPStore } from "../../store/useXPStore";
+
 const Quiz1: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [hasPostedAccolade, setHasPostedAccolade] = useState(false);
+
+  const addXP = useXPStore((s) => s.addXP);
+  const currentXP = useXPStore((s) => s.xp);
+
+  const QUIZ_XP_REWARD = 20;
 
   const questions = [
     {
@@ -49,7 +57,7 @@ const Quiz1: React.FC = () => {
         setCurrentQuestion((prev) => prev + 1);
         setSelectedOption(null);
         setShowAnswer(false);
-      }, 2000);
+      }, 900);
     } else {
       setSelectedOption(option);
     }
@@ -57,16 +65,22 @@ const Quiz1: React.FC = () => {
 
   const quizCompleted = currentQuestion >= questions.length;
 
-  // ✅ post accolade ONCE when quiz is completed
+  /* ----------------------------------------
+     POST ACCOLADE + XP (ONCE)
+  ---------------------------------------- */
   useEffect(() => {
     if (!quizCompleted || hasPostedAccolade) return;
+
+    const beforeXP = currentXP;
+
+    addXP(QUIZ_XP_REWARD);
 
     const postAccolade = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
         if (!token) return;
 
-        const res = await fetch("http://localhost:3000/addAccoladeQuiz", {
+        await fetch("http://localhost:3000/addAccoladeQuiz", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -74,9 +88,6 @@ const Quiz1: React.FC = () => {
           },
           body: JSON.stringify({ quizAccolade: "Quiz 1" }),
         });
-
-        const data = await res.json();
-        console.log("Accolade data:", data);
       } catch (err) {
         console.log("Failed to post quiz accolade:", err);
       } finally {
@@ -87,54 +98,67 @@ const Quiz1: React.FC = () => {
     postAccolade();
   }, [quizCompleted, hasPostedAccolade]);
 
+  /* ----------------------------------------
+     COMPLETION SCREEN
+  ---------------------------------------- */
   if (quizCompleted) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.text}>
-          Congratulations! You've completed Quiz 1!
-        </Text>
-      </View>
+      <AppLayout
+        title="Greetings Quiz"
+        animatedStartXP={currentXP}
+        animatedEndXP={currentXP + QUIZ_XP_REWARD}
+      >
+        <View style={styles.completedWrap}>
+          <Text style={styles.completedTitle}>Nice work 🎉</Text>
+          <Text style={styles.completedSub}>
+            You earned +{QUIZ_XP_REWARD} XP
+          </Text>
+        </View>
+      </AppLayout>
     );
   }
 
   const q = questions[currentQuestion];
 
   return (
-    <LinearGradient colors={["#FFDEE9", "#B5FFFC"]} style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>
-          Question {currentQuestion + 1} of {questions.length}
-        </Text>
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.text}>{q.question}</Text>
-        <Image
-          source={q.image}
-          style={styles.questionImage}
-          resizeMode="contain"
-        />
-
-        {!showAnswer ? (
-          q.options.map((option) => (
-            <TouchableOpacity
-              key={option}
-              onPress={() => handleOptionPress(option)}
-              style={[
-                styles.optionButton,
-                selectedOption === option && styles.selectedOption,
-              ]}
-            >
-              <Text style={styles.optionText}>{option}</Text>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <Text style={styles.answerText}>
-            Correct Answer: {q.correctAnswer}
+    <AppLayout title="Greetings Quiz">
+      <LinearGradient colors={["#FFDEE9", "#B5FFFC"]} style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerText}>
+            Question {currentQuestion + 1} of {questions.length}
           </Text>
-        )}
-      </View>
-    </LinearGradient>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.text}>{q.question}</Text>
+
+          <Image
+            source={q.image}
+            style={styles.questionImage}
+            resizeMode="contain"
+          />
+
+          {!showAnswer ? (
+            q.options.map((option) => (
+              <TouchableOpacity
+                key={option}
+                onPress={() => handleOptionPress(option)}
+                style={[
+                  styles.optionButton,
+                  selectedOption === option && styles.selectedOption,
+                ]}
+              >
+                <Text style={styles.optionText}>{option}</Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={styles.answerText}>
+              Correct Answer: {q.correctAnswer}
+            </Text>
+          )}
+        </View>
+      </LinearGradient>
+    </AppLayout>
   );
 };
 
@@ -144,59 +168,83 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 20,
   },
+
   header: {
     marginBottom: 20,
   },
   headerText: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: "700",
     color: "#333",
     textAlign: "center",
   },
+
   card: {
     backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 10,
+    padding: 22,
+    borderRadius: 14,
     shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 6 },
     elevation: 5,
     alignItems: "center",
   },
+
   text: {
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: 22,
+    fontWeight: "800",
     color: "#333",
-    marginBottom: 20,
+    marginBottom: 18,
     textAlign: "center",
   },
+
   questionImage: {
     width: "80%",
     height: 200,
-    marginBottom: 20,
+    marginBottom: 18,
   },
+
   optionButton: {
-    padding: 15,
-    marginVertical: 10,
-    borderRadius: 5,
-    backgroundColor: "#ddd",
+    padding: 14,
+    marginVertical: 8,
+    borderRadius: 10,
+    backgroundColor: "#E5E7EB",
     width: "100%",
     alignItems: "center",
   },
+
   optionText: {
-    fontSize: 18,
-    color: "#333",
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#111",
   },
+
   selectedOption: {
-    backgroundColor: "orange",
+    backgroundColor: "#F59E0B",
   },
+
   answerText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "green",
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#16A34A",
     textAlign: "center",
-    marginTop: 20,
+    marginTop: 16,
+  },
+
+  completedWrap: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  completedTitle: {
+    fontSize: 32,
+    fontWeight: "900",
+    marginBottom: 8,
+  },
+  completedSub: {
+    fontSize: 18,
+    opacity: 0.7,
   },
 });
 

@@ -1,197 +1,214 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-// greetings along with basic responses
+// Lesson2.tsx
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+
+import AppLayout from "../../components/Layout/AppLayout";
+import LessonLayout from "./LessonLayout";
+import { useProgressStore } from "../../store/useProgressStore";
+
+/* ----------------------------------------
+   SLIDES (NUMBERS)
+---------------------------------------- */
 const slides = [
-  { number: "1", word: "One", translated: "Isa", image: require('../../../assets/images/number1.jpg') },
-  { number: "2", word: "Two", translated: "Dalawa", image: require('../../../assets/images/number2.jpg') },
-  { number: "3", word: "Three", translated: "Tatlo", image: require('../../../assets/images/number3.png') },
-  { number: "4", word: "Four", translated: "Apat", image: require('../../../assets/images/number4.png') },
-  { number: "5", word: "Five", translated: "Lima", image: require('../../../assets/images/number5.png') },
-  { number: "6", word: "Six", translated: "Anim", image: require('../../../assets/images/number6.png') },
-  { number: "7", word: "Seven", translated: "Pito", image: require('../../../assets/images/number7.png') },
-  { number: "8", word: "Eight", translated: "Walo", image: require('../../../assets/images/number8.png') },
-  { number: "9", word: "Nine", translated: "Siyam", image: require('../../../assets/images/number9.png') },
-  { number: "10", word: "Ten", translated: "Sampu", image: require('../../../assets/images/number10.png') },
+  { word: "One", translated: "Isa", image: require("../../../assets/images/number1.jpg") },
+  { word: "Two", translated: "Dalawa", image: require("../../../assets/images/number2.jpg") },
+  { word: "Three", translated: "Tatlo", image: require("../../../assets/images/number3.png") },
+  { word: "Four", translated: "Apat", image: require("../../../assets/images/number4.png") },
+  { word: "Five", translated: "Lima", image: require("../../../assets/images/number5.png") },
 ];
 
-// number "e.g 1" here just means what slide is it on admittdly it isn't the best thing .
-  //word meaining the english Word that We want to learn translated into Taga log
-
+/* ----------------------------------------
+   QUIZ
+---------------------------------------- */
 const questions = [
   {
-    question: "What is the correct way to say Number 1?",
-    options: ["Apat", "Isa", "Dalawa", "Tatlo"],
-    correctAnswer: "Isa",
-    image: require('../../../assets/images/rightAnswerQuestion1.jpg'),
+    question: "What is the correct way to say One?",
+    options: ["Isa", "Dalawa", "Tatlo", "Apat"],
+    correct: "Isa",
+    image: require("../../../assets/images/number1.jpg"),
   },
   {
-    question: "What is the correct way to say Number 9",
-    options: ["Dalawa", "Apat", "Lima", "Siyam"],
-    correctAnswer: "Dalawa",
-    image: require('../../../assets/images/number9.png'),
+    question: "What is the correct way to say Five?",
+    options: ["Tatlo", "Lima", "Isa", "Dalawa"],
+    correct: "Lima",
+    image: require("../../../assets/images/number5.png"),
   },
-  // Add more questions as needed
 ];
 
 const Lesson2: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [showAnswer, setShowAnswer] = useState(false);
+  const completeLesson = useProgressStore((s) => s.completeLesson);
 
-  const handleNextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide((prev) => prev + 1);
-    } else {
-      setCurrentSlide(null); // Indicates that the intro slides are over
+  const [page, setPage] = useState<"lesson" | "quiz" | "summary">("lesson");
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
+
+  const [selected, setSelected] = useState<string | null>(null);
+  const [wrong, setWrong] = useState<string | null>(null);
+  const [locked, setLocked] = useState(false);
+
+  /* ----------------------------------------
+     MARK COMPLETE (ONLY ON SUMMARY)
+  ---------------------------------------- */
+  useEffect(() => {
+    if (page === "summary") {
+      completeLesson(2);
     }
-  };
+  }, [page, completeLesson]);
 
-  const handleOptionPress = (option: string) => {
-    if (selectedOption === option) {
-      setShowAnswer(true);
-      setTimeout(() => {
-        setCurrentQuestion((prev) => prev + 1);
-        setSelectedOption(null);
-        setShowAnswer(false);
-      }, 3000); // 3 seconds delay before moving to the next question
-    } else {
-      setSelectedOption(option);
-    }
-  };
-
-  if (currentSlide !== null && currentSlide < slides.length) {
-    // Render intro slides
+  /* ----------------------------------------
+     SUMMARY
+  ---------------------------------------- */
+  if (page === "summary") {
     return (
-      <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-        <View style={styles.card}>
-          <Text style={styles.text}>{slides[currentSlide].word}</Text>
-          <Image source={slides[currentSlide].image} style={styles.introImage} resizeMode="contain" />
-          <Text style={styles.text}>{slides[currentSlide].translated}</Text>
-        </View>
-        <TouchableOpacity onPress={handleNextSlide} style={styles.nextButton}>
-          <Text style={styles.optionText}>Next</Text>
-        </TouchableOpacity>
-      </LinearGradient>
+      <AppLayout title="Lesson 2">
+        <LessonLayout lessonNumber={2} mode="summary">
+          <Text style={styles.title}>Nice work 🎉</Text>
+          <Text style={styles.text}>You’ve completed Lesson 2</Text>
+        </LessonLayout>
+      </AppLayout>
     );
   }
 
-  if (currentQuestion >= questions.length) {
+  /* ----------------------------------------
+     QUIZ
+  ---------------------------------------- */
+  if (page === "quiz") {
+    const q = questions[questionIndex];
+
     return (
-      <View style={styles.container}>
-        <Text style={styles.text}>You've completed the First lesson</Text>
-      </View>
+      <AppLayout title="Lesson 2">
+        <LessonLayout
+          lessonNumber={2}
+          mode="quiz"
+          step={questionIndex + 1}
+          total={questions.length}
+        >
+          <Text style={styles.title}>{q.question}</Text>
+
+          {q.options.map((opt) => (
+            <TouchableOpacity
+              key={opt}
+              disabled={locked}
+              style={[
+                styles.option,
+                selected === opt && styles.selected,
+                wrong === opt && styles.wrong,
+                locked && { opacity: 0.6 },
+              ]}
+              onPress={() => {
+                if (locked) return;
+
+                setSelected(opt);
+                setWrong(null);
+
+                // ❌ Wrong
+                if (opt !== q.correct) {
+                  setWrong(opt);
+                  setTimeout(() => setWrong(null), 600);
+                  return;
+                }
+
+                // ✅ Correct
+                setLocked(true);
+
+                setTimeout(() => {
+                  setSelected(null);
+                  setWrong(null);
+                  setLocked(false);
+
+                  if (questionIndex + 1 === questions.length) {
+                    setPage("summary");
+                  } else {
+                    setQuestionIndex((i) => i + 1);
+                  }
+                }, 700);
+              }}
+            >
+              <Text>{opt}</Text>
+            </TouchableOpacity>
+          ))}
+
+          <Image source={q.image} style={styles.image} />
+        </LessonLayout>
+      </AppLayout>
     );
   }
+
+  /* ----------------------------------------
+     LESSON
+  ---------------------------------------- */
+  const slide = slides[slideIndex];
 
   return (
-    <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Question {currentQuestion + 1} of {questions.length}</Text>
-      </View>
-      <View style={styles.card}>
-        <Text style={styles.text}>{questions[currentQuestion].question}</Text>
-        {!showAnswer ? (
-          questions[currentQuestion].options.map((option) => (
-            <TouchableOpacity
-              key={option}
-              onPress={() => handleOptionPress(option)}
-              style={[
-                styles.optionButton,
-                selectedOption === option && styles.selectedOption,
-              ]}
-            >
-              <Text style={styles.optionText}>{option}</Text>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <>
-            <Text style={styles.answerText}>
-              Correct Answer: {questions[currentQuestion].correctAnswer}
-            </Text>
-            <Image
-              source={questions[currentQuestion].image}
-              style={styles.answerImage}
-              resizeMode="contain"
-            />
-          </>
-        )}
-      </View>
-    </LinearGradient>
+    <AppLayout title="Lesson 2">
+      <LessonLayout
+        lessonNumber={2}
+        mode="lesson"
+        step={slideIndex + 1}
+        total={slides.length}
+      >
+        <Text style={styles.title}>{slide.word}</Text>
+        <Image source={slide.image} style={styles.image} />
+        <Text style={styles.text}>{slide.translated}</Text>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            slideIndex < slides.length - 1
+              ? setSlideIndex((i) => i + 1)
+              : setPage("quiz")
+          }
+        >
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </LessonLayout>
+    </AppLayout>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-  header: {
-    marginBottom: 20,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 5,
-    alignItems: 'center', // Center the content
+  title: {
+    fontSize: 24,
+    fontWeight: "800",
+    marginBottom: 16,
+    textAlign: "center",
   },
   text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-    textAlign: 'center',
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 12,
   },
-  optionButton: {
-    padding: 15,
-    marginVertical: 10,
-    borderRadius: 5,
-    backgroundColor: '#ddd',
-    width: '100%', // Ensure the button width is full
-    alignItems: 'center',
+  image: {
+    width: 220,
+    height: 220,
+    marginVertical: 16,
+    resizeMode: "contain",
   },
-  optionText: {
-    fontSize: 18,
-    color: '#333',
-  },
-  selectedOption: {
-    backgroundColor: 'orange',
-  },
-  answerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'green',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  answerImage: {
-    width: '80%',
-    height: 200,
-  },
-  introImage: {
-    width: '80%',
-    height: 300,
-    marginBottom: 20,
-  },
-  nextButton: {
-    padding: 15,
+  button: {
     marginTop: 20,
-    borderRadius: 5,
-    backgroundColor: 'blue',
-    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: "#2563EB",
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: "#FFF",
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  option: {
+    width: "100%",
+    padding: 14,
+    borderRadius: 8,
+    backgroundColor: "#E5E7EB",
+    marginVertical: 6,
+    alignItems: "center",
+  },
+  selected: {
+    backgroundColor: "#FBBF24", // yellow
+  },
+  wrong: {
+    backgroundColor: "#F87171", // red
   },
 });
 

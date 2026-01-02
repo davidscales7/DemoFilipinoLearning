@@ -1,236 +1,219 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-// greetings along with basic responses
+// Lesson3.tsx
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+
+import AppLayout from "../../components/Layout/AppLayout";
+import LessonLayout from "./LessonLayout";
+import { useProgressStore } from "../../store/useProgressStore";
+
+/* ----------------------------------------
+   SLIDES
+---------------------------------------- */
 const slides = [
-  { word: "Father", translated: "Ama", image: require('../../../assets/images/father.png') },
-  { word: "Mother", translated: "Ina", image: require('../../../assets/images/mother.png') },
-  { word: "Brother", translated: "Kapatid na Lalaki", image: require('../../../assets/images/brother.png') },
-  { word: "Sister", translated: "Kapatid na Babae", image: require('../../../assets/images/sister.png') },
-  { word: "Grandfather", translated: "Lolo", image: require('../../../assets/images/grandad.png') },
-  { word: "Grandmother", translated: "Lola", image: require('../../../assets/images/grandma.png') },
-  { word: "Uncle", translated: "Tiyo", image: require('../../../assets/images/uncle.jpg') },
-  { word: "Aunt", translated: "Tiya", image: require('../../../assets/images/aunt.jpg') },
-  { word: "Cousin", translated: "Pinsan", image: require('../../../assets/images/cousin.png') },
+  { word: "Father", translated: "Ama", image: require("../../../assets/images/father.png") },
+  { word: "Mother", translated: "Ina", image: require("../../../assets/images/mother.png") },
+  { word: "Brother", translated: "Kapatid na Lalaki", image: require("../../../assets/images/brother.png") },
+  { word: "Sister", translated: "Kapatid na Babae", image: require("../../../assets/images/sister.png") },
 ];
 
-
+/* ----------------------------------------
+   QUIZ
+---------------------------------------- */
 const questions = [
   {
-    question: "What is the correct way to say 'Father' in Tagalog?",
+    question: "What is Father in Tagalog?",
     options: ["Ama", "Ina", "Lolo", "Pinsan"],
-    correctAnswer: "Ama",
-    image: require('../../../assets/images/father.png'), // Update with the correct image path
+    correct: "Ama",
+    image: require("../../../assets/images/father.png"),
   },
   {
-    question: "What is the correct way to say 'Mother' in Tagalog?",
-    options: ["Kapatid na Babae", "Ina", "Tiya", "Lola"],
-    correctAnswer: "Ina",
-    image: require('../../../assets/images/mother.png'), // Update with the correct image path
+    question: "What is Sister in Tagalog?",
+    options: ["Ina", "Kapatid na Babae", "Lola", "Ama"],
+    correct: "Kapatid na Babae",
+    image: require("../../../assets/images/sister.png"),
   },
   {
-    question: "What is the correct way to say 'Brother' in Tagalog?",
-    options: ["Kapatid na Lalaki", "Ama", "Tiyo", "Pinsan"],
-    correctAnswer: "Kapatid na Lalaki",
-    image: require('../../../assets/images/brother.png'), // Update with the correct image path
-  },
-  {
-    question: "What is the correct way to say 'Sister' in Tagalog?",
-    options: ["Lolo", "Kapatid na Babae", "Ina", "Lola"],
-    correctAnswer: "Kapatid na Babae",
-    image: require('../../../assets/images/sister.png'), // Update with the correct image path
-  },
-  {
-    question: "What is the correct way to say 'Grandfather' in Tagalog?",
-    options: ["Lolo", "Tiyo", "Ama", "Tiya"],
-    correctAnswer: "Lolo",
-    image: require('../../../assets/images/grandad.png'), // Update with the correct image path
-  },
-  {
-    question: "What is the correct way to say 'Grandmother' in Tagalog?",
-    options: ["Lola", "Ina", "Pinsan", "Tiya"],
-    correctAnswer: "Lola",
-    image: require('../../../assets/images/grandma.png'), // Update with the correct image path
-  },
-  {
-    question: "What is the correct way to say 'Uncle' in Tagalog?",
-    options: ["Tiyo", "Kapatid na Lalaki", "Lolo", "Ama"],
-    correctAnswer: "Tiyo",
-    image: require('../../../assets/images/uncle.jpg'), // Update with the correct image path
-  },
-  {
-    question: "What is the correct way to say 'Aunt' in Tagalog?",
-    options: ["Tiya", "Lola", "Ina", "Pinsan"],
-    correctAnswer: "Tiya",
-    image: require('../../../assets/images/aunt.jpg'), // Update with the correct image path
-  },
-  {
-    question: "What is the correct way to say 'Cousin' in Tagalog?",
-    options: ["Pinsan", "Ama", "Kapatid na Babae", "Lolo"],
-    correctAnswer: "Pinsan",
-    image: require('../../../assets/images/cousin.png'), // Update with the correct image path
+    question: "Testing question 3?",
+    options: ["Correct", "Ina", "Lolo", "Pinsan"],
+    correct: "Correct",
+    image: require("../../../assets/images/father.png"),
   },
 ];
 
-
 const Lesson3: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [showAnswer, setShowAnswer] = useState(false);
+  const completeLesson = useProgressStore((s) => s.completeLesson);
 
-  const handleNextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide((prev) => prev + 1);
-    } else {
-      setCurrentSlide(null); // Indicates that the intro slides are over
+  const [page, setPage] = useState<"lesson" | "quiz" | "summary">("lesson");
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
+
+  const [selected, setSelected] = useState<string | null>(null);
+  const [wrong, setWrong] = useState<string | null>(null);
+  const [locked, setLocked] = useState(false);
+
+  /* ----------------------------------------
+     MARK COMPLETE (ONLY ON SUMMARY)
+  ---------------------------------------- */
+  useEffect(() => {
+    if (page === "summary") {
+      completeLesson(3);
     }
-  };
+  }, [page, completeLesson]);
 
-  const handleOptionPress = (option: string) => {
-    if (selectedOption === option) {
-      setShowAnswer(true);
-      setTimeout(() => {
-        setCurrentQuestion((prev) => prev + 1);
-        setSelectedOption(null);
-        setShowAnswer(false);
-      }, 3000); // 3 seconds delay before moving to the next question
-    } else {
-      setSelectedOption(option);
-    }
-  };
-
-  if (currentSlide !== null && currentSlide < slides.length) {
-    // Render intro slides
+  /* ----------------------------------------
+     SUMMARY
+  ---------------------------------------- */
+  if (page === "summary") {
     return (
-      <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-        <View style={styles.card}>
-          <Text style={styles.text}>{slides[currentSlide].word}</Text>
-          <Image source={slides[currentSlide].image} style={styles.introImage} resizeMode="contain" />
-          <Text style={styles.text}>{slides[currentSlide].translated}</Text>
-        </View>
-        <TouchableOpacity onPress={handleNextSlide} style={styles.nextButton}>
-          <Text style={styles.optionText}>Next</Text>
-        </TouchableOpacity>
-      </LinearGradient>
+      <AppLayout title="Lesson 3">
+        <LessonLayout lessonNumber={3} mode="summary">
+          <Text style={styles.title}>Great job 🎉</Text>
+          <Text>You’ve completed Lesson 3</Text>
+        </LessonLayout>
+      </AppLayout>
     );
   }
 
-  if (currentQuestion >= questions.length) {
+  /* ----------------------------------------
+     QUIZ
+  ---------------------------------------- */
+  if (page === "quiz") {
+    const q = questions[questionIndex];
+
+    // Safety guard
+    if (!q) {
+      setPage("summary");
+      return null;
+    }
+
     return (
-      <View style={styles.container}>
-        <Text style={styles.text}>You've completed the First lesson</Text>
-      </View>
+      <AppLayout title="Lesson 3">
+        <LessonLayout
+          lessonNumber={3}
+          mode="quiz"
+          step={questionIndex + 1}
+          total={questions.length}
+        >
+          <Text style={styles.title}>{q.question}</Text>
+
+          {q.options.map((opt) => (
+            <TouchableOpacity
+              key={opt}
+              disabled={locked}
+              style={[
+                styles.option,
+                selected === opt && styles.selected, // correct (yellow)
+                wrong === opt && styles.wrong,       // wrong (red)
+                locked && { opacity: 0.6 },
+              ]}
+              onPress={() => {
+                if (locked) return;
+
+                setSelected(opt);
+                setWrong(null);
+
+                // ❌ Wrong answer
+                if (opt !== q.correct) {
+                  setWrong(opt);
+                  setTimeout(() => setWrong(null), 600);
+                  return;
+                }
+
+                // ✅ Correct answer
+                setLocked(true);
+
+                setTimeout(() => {
+                  setSelected(null);
+                  setWrong(null);
+                  setLocked(false);
+
+                  if (questionIndex + 1 === questions.length) {
+                    setPage("summary");
+                  } else {
+                    setQuestionIndex((i) => i + 1);
+                  }
+                }, 700);
+              }}
+            >
+              <Text>{opt}</Text>
+            </TouchableOpacity>
+          ))}
+
+          <Image source={q.image} style={styles.image} />
+        </LessonLayout>
+      </AppLayout>
     );
   }
+
+  /* ----------------------------------------
+     LESSON
+  ---------------------------------------- */
+  const slide = slides[slideIndex];
 
   return (
-    <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Question {currentQuestion + 1} of {questions.length}</Text>
-      </View>
-      <View style={styles.card}>
-        <Text style={styles.text}>{questions[currentQuestion].question}</Text>
-        {!showAnswer ? (
-          questions[currentQuestion].options.map((option) => (
-            <TouchableOpacity
-              key={option}
-              onPress={() => handleOptionPress(option)}
-              style={[
-                styles.optionButton,
-                selectedOption === option && styles.selectedOption,
-              ]}
-            >
-              <Text style={styles.optionText}>{option}</Text>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <>
-            <Text style={styles.answerText}>
-              Correct Answer: {questions[currentQuestion].correctAnswer}
-            </Text>
-            <Image
-              source={questions[currentQuestion].image}
-              style={styles.answerImage}
-              resizeMode="contain"
-            />
-          </>
-        )}
-      </View>
-    </LinearGradient>
+    <AppLayout title="Lesson 3">
+      <LessonLayout
+        lessonNumber={3}
+        mode="lesson"
+        step={slideIndex + 1}
+        total={slides.length}
+      >
+        <Text style={styles.title}>{slide.word}</Text>
+        <Image source={slide.image} style={styles.image} />
+        <Text>{slide.translated}</Text>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            slideIndex < slides.length - 1
+              ? setSlideIndex((i) => i + 1)
+              : setPage("quiz")
+          }
+        >
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </LessonLayout>
+    </AppLayout>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
+  title: {
+    fontSize: 22,
+    fontWeight: "800",
+    marginBottom: 12,
+    textAlign: "center",
   },
-  header: {
-    marginBottom: 20,
+  image: {
+    width: 220,
+    height: 220,
+    marginVertical: 16,
+    resizeMode: "contain",
   },
-  headerText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 5,
-    alignItems: 'center', // Center the content
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  optionButton: {
-    padding: 15,
-    marginVertical: 10,
-    borderRadius: 5,
-    backgroundColor: '#ddd',
-    width: '100%', // Ensure the button width is full
-    alignItems: 'center',
-  },
-  optionText: {
-    fontSize: 18,
-    color: '#333',
-  },
-  selectedOption: {
-    backgroundColor: 'orange',
-  },
-  answerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'green',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  answerImage: {
-    width: '80%',
-    height: 200,
-  },
-  introImage: {
-    width: '80%',
-    height: 300,
-    marginBottom: 20,
-  },
-  nextButton: {
-    padding: 15,
+  button: {
     marginTop: 20,
-    borderRadius: 5,
-    backgroundColor: 'blue',
-    alignItems: 'center',
+    padding: 12,
+    backgroundColor: "#2563EB",
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: "#FFF",
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  option: {
+    width: "100%",
+    padding: 14,
+    backgroundColor: "#E5E7EB",
+    borderRadius: 8,
+    marginVertical: 6,
+    alignItems: "center",
+  },
+  selected: {
+    backgroundColor: "#FBBF24", // yellow
+  },
+  wrong: {
+    backgroundColor: "#F87171", // red
   },
 });
 

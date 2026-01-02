@@ -31,6 +31,7 @@ import FilipinoWeatherScreen from "../components/FilipinoFlash/FilipinoWeather";
 import FilipinoAnimalsScreen from "../components/FilipinoFlash/FilipinoAnimals";
 
 // LESSONS
+import LessonLayout from "../components/FilipinoLessons/LessonLayout";
 import FilipinoLessons from "../components/FilipinoLessons/FilipinoLessons";
 import Lesson1 from "../components/FilipinoLessons/Lesson1";
 import Lesson2 from "../components/FilipinoLessons/Lesson2";
@@ -58,6 +59,7 @@ import Quiz10 from "../components/FilipinoQuizzes/Quiz10";
 
 // ACCOLADES
 import FilipinoAccolades from "../components/FilipinoAccolades/FilipinoAccolades";
+
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -98,6 +100,7 @@ function AppNavigator() {
       <Stack.Screen name="Quiz10" component={Quiz10} />
 
       {/* LESSONS */}
+    <Stack.Screen name="LessonLayout" component={LessonLayout} />
       <Stack.Screen name="FilipinoLessons" component={FilipinoLessons} />
       <Stack.Screen name="Lesson1" component={Lesson1} />
       <Stack.Screen name="Lesson2" component={Lesson2} />

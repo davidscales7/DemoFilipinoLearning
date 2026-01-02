@@ -16,7 +16,7 @@ const TopBar: React.FC<TopBarProps> = ({
   title,
   animatedStartXP = null,
   animatedEndXP = null,
-  showXPBadge = false, // ❗ default OFF
+  showXPBadge = true, // ❗ default OFF
 }) => {
   const theme = useTheme();
   const xp = useXPStore((s) => s.xp);

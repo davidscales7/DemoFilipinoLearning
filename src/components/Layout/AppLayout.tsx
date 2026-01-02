@@ -11,6 +11,7 @@ interface AppLayoutProps {
   children: React.ReactNode;
   animatedStartXP?: number | null;
   animatedEndXP?: number | null;
+  showXPBadge?: boolean; // ✅ control XP ring
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({
@@ -18,6 +19,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   children,
   animatedStartXP = null,
   animatedEndXP = null,
+  showXPBadge = true, // ✅ DEFAULT ON
 }) => {
   const route = useRoute();
 
@@ -32,7 +34,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({
             title={title}
             animatedStartXP={animatedStartXP}
             animatedEndXP={animatedEndXP}
-            showXPBadge={false} // 🔒 ALWAYS OFF here
+            showXPBadge={showXPBadge}
           />
 
           {children}

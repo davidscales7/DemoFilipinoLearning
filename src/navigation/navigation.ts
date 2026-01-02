@@ -33,7 +33,7 @@ export type RootStackParamList = {
   FilipinoFlashNumbersBasic: undefined;
   FilipinoNumbersIntermediate: undefined;
   FilipinoNumbersExpert: undefined;
-
+LessonLayout: undefined;
   Lesson1: undefined;
   Lesson2: undefined;
   Lesson3: undefined;

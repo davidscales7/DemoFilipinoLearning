@@ -52,7 +52,7 @@ const FilipinoLearning: React.FC = () => {
       title="" // we’ll render our own big title below
       animatedStartXP={params.animatedStartXP}
       animatedEndXP={params.animatedEndXP}
-      hideTopBarXP={true} // 👈 no ring in top bar
+      showXPBadge={false} // 👈 no ring in top bar
     >
       {/* Greeting bar */}
       <ProfileHeader username="DJ" streak={3} />

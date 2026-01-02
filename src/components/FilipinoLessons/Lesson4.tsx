@@ -1,243 +1,216 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-// greetings along with basic responses
+// Lesson4.tsx
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+
+import AppLayout from "../../components/Layout/AppLayout";
+import LessonLayout from "./LessonLayout";
+import { useProgressStore } from "../../store/useProgressStore";
+
+/* ----------------------------------------
+   SLIDES
+---------------------------------------- */
 const slides = [
-  { word: "Red", translated: "Pula", image: require('../../../assets/images/red.jpg') },
-  { word: "Blue", translated: "Asul", image: require('../../../assets/images/blue.png') },
-  { word: "Green", translated: "Berde", image: require('../../../assets/images/green.png') },
-  { word: "Yellow", translated: "Dilaw", image: require('../../../assets/images/yellow.png') },
-  { word: "Black", translated: "Itim", image: require('../../../assets/images/black.png') },
-  { word: "White", translated: "Puti", image: require('../../../assets/images/white.png') },
-  { word: "Orange", translated: "Kahel", image: require('../../../assets/images/orange.png') },
-  { word: "Pink", translated: "Rosas", image: require('../../../assets/images/pink.jpg') },
-  { word: "Purple", translated: "Lila", image: require('../../../assets/images/purple.jpg') },
-  { word: "Brown", translated: "Kayumanggi", image: require('../../../assets/images/brown.png') },
+  { word: "Red", translated: "Pula", image: require("../../../assets/images/red.jpg") },
+  { word: "Blue", translated: "Asul", image: require("../../../assets/images/blue.png") },
+  { word: "Green", translated: "Berde", image: require("../../../assets/images/green.png") },
+  { word: "Yellow", translated: "Dilaw", image: require("../../../assets/images/yellow.png") },
+  { word: "Black", translated: "Itim", image: require("../../../assets/images/black.png") },
 ];
 
+/* ----------------------------------------
+   QUIZ
+---------------------------------------- */
 const questions = [
   {
-    question: "What is the correct way to say 'Red' in Tagalog?",
+    question: "What is Red in Tagalog?",
     options: ["Pula", "Asul", "Dilaw", "Lila"],
-    correctAnswer: "Pula",
-    image: require('../../../assets/images/red.jpg'),
+    correct: "Pula",
+    image: require("../../../assets/images/red.jpg"),
   },
   {
-    question: "What is the correct way to say 'Blue' in Tagalog?",
+    question: "What is Blue in Tagalog?",
     options: ["Itim", "Puti", "Asul", "Kayumanggi"],
-    correctAnswer: "Asul",
-    image: require('../../../assets/images/blue.png'),
+    correct: "Asul",
+    image: require("../../../assets/images/blue.png"),
   },
   {
-    question: "What is the correct way to say 'Green' in Tagalog?",
+    question: "What is Green in Tagalog?",
     options: ["Berde", "Kahel", "Dilaw", "Rosas"],
-    correctAnswer: "Berde",
-    image: require('../../../assets/images/green.png'),
-  },
-  {
-    question: "What is the correct way to say 'Yellow' in Tagalog?",
-    options: ["Dilaw", "Pula", "Lila", "Puti"],
-    correctAnswer: "Dilaw",
-    image: require('../../../assets/images/yellow.png'),
-  },
-  {
-    question: "What is the correct way to say 'Black' in Tagalog?",
-    options: ["Asul", "Puti", "Dilaw", "Itim"],
-    correctAnswer: "Itim",
-    image: require('../../../assets/images/black.png'),
-  },
-  {
-    question: "What is the correct way to say 'White' in Tagalog?",
-    options: ["Pula", "Puti", "Kahel", "Berde"],
-    correctAnswer: "Puti",
-    image: require('../../../assets/images/white.png'),
-  },
-  {
-    question: "What is the correct way to say 'Orange' in Tagalog?",
-    options: ["Kayumanggi", "Kahel", "Dilaw", "Lila"],
-    correctAnswer: "Kahel",
-    image: require('../../../assets/images/orange.png'),
-  },
-  {
-    question: "What is the correct way to say 'Pink' in Tagalog?",
-    options: ["Rosas", "Asul", "Itim", "Pula"],
-    correctAnswer: "Rosas",
-    image: require('../../../assets/images/pink.jpg'),
-  },
-  {
-    question: "What is the correct way to say 'Purple' in Tagalog?",
-    options: ["Dilaw", "Lila", "Berde", "Puti"],
-    correctAnswer: "Lila",
-    image: require('../../../assets/images/purple.jpg'),
-  },
-  {
-    question: "What is the correct way to say 'Brown' in Tagalog?",
-    options: ["Kayumanggi", "Kahel", "Pula", "Rosas"],
-    correctAnswer: "Kayumanggi",
-    image: require('../../../assets/images/brown.png'),
+    correct: "Berde",
+    image: require("../../../assets/images/green.png"),
   },
 ];
 
-
-
 const Lesson4: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [showAnswer, setShowAnswer] = useState(false);
+  const completeLesson = useProgressStore((s) => s.completeLesson);
 
-  const handleNextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide((prev) => prev + 1);
-    } else {
-      setCurrentSlide(null); // Indicates that the intro slides are over
+  const [page, setPage] = useState<"lesson" | "quiz" | "summary">("lesson");
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [selected, setSelected] = useState<string | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+
+  /* ----------------------------------------
+     MARK COMPLETE (ONLY ON SUMMARY)
+  ---------------------------------------- */
+  useEffect(() => {
+    if (page === "summary") {
+      completeLesson(4);
     }
-  };
+  }, [page, completeLesson]);
 
-  const handleOptionPress = (option: string) => {
-    if (selectedOption === option) {
-      setShowAnswer(true);
-      setTimeout(() => {
-        setCurrentQuestion((prev) => prev + 1);
-        setSelectedOption(null);
-        setShowAnswer(false);
-      }, 3000); // 3 seconds delay before moving to the next question
-    } else {
-      setSelectedOption(option);
-    }
-  };
-
-  if (currentSlide !== null && currentSlide < slides.length) {
-    // Render intro slides
+  /* ----------------------------------------
+     SUMMARY
+  ---------------------------------------- */
+  if (page === "summary") {
     return (
-      <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-        <View style={styles.card}>
-          <Text style={styles.text}>{slides[currentSlide].word}</Text>
-          <Image source={slides[currentSlide].image} style={styles.introImage} resizeMode="contain" />
-          <Text style={styles.text}>{slides[currentSlide].translated}</Text>
-        </View>
-        <TouchableOpacity onPress={handleNextSlide} style={styles.nextButton}>
-          <Text style={styles.optionText}>Next</Text>
-        </TouchableOpacity>
-      </LinearGradient>
+      <AppLayout title="Lesson 4">
+        <LessonLayout lessonNumber={4} mode="summary">
+          <Text style={styles.title}>Great job 🎉</Text>
+          <Text>You’ve completed Lesson 4</Text>
+        </LessonLayout>
+      </AppLayout>
     );
   }
 
-  if (currentQuestion >= questions.length) {
+  /* ----------------------------------------
+     QUIZ
+  ---------------------------------------- */
+  if (page === "quiz") {
+    const q = questions[questionIndex];
+
     return (
-      <View style={styles.container}>
-        <Text style={styles.text}>You've completed the First lesson</Text>
-      </View>
+      <AppLayout title="Lesson 4">
+        <LessonLayout
+          lessonNumber={4}
+          mode="quiz"
+          step={questionIndex + 1}
+          total={questions.length}
+        >
+          <Text style={styles.title}>{q.question}</Text>
+
+          {q.options.map((opt) => {
+            const isSelected = selected === opt;
+            const wrong = isSelected && isCorrect === false;
+            const correct = isSelected && isCorrect === true;
+
+            return (
+              <TouchableOpacity
+                key={opt}
+                style={[
+                  styles.option,
+                  wrong && styles.optionWrong,
+                  correct && styles.optionCorrect,
+                ]}
+                disabled={selected !== null}
+                onPress={() => {
+                  setSelected(opt);
+
+                  const ok = opt === q.correct;
+                  setIsCorrect(ok);
+
+                  if (!ok) {
+                    // ❌ WRONG → reset only, stay on same question
+                    setTimeout(() => {
+                      setSelected(null);
+                      setIsCorrect(null);
+                    }, 900);
+                    return;
+                  }
+
+                  // ✅ CORRECT → advance
+                  setTimeout(() => {
+                    setSelected(null);
+                    setIsCorrect(null);
+
+                    if (questionIndex + 1 === questions.length) {
+                      setPage("summary");
+                    } else {
+                      setQuestionIndex((i) => i + 1);
+                    }
+                  }, 900);
+                }}
+              >
+                <Text>{opt}</Text>
+              </TouchableOpacity>
+            );
+          })}
+
+          <Image source={q.image} style={styles.image} />
+        </LessonLayout>
+      </AppLayout>
     );
   }
+
+  /* ----------------------------------------
+     LESSON SLIDES
+  ---------------------------------------- */
+  const slide = slides[slideIndex];
 
   return (
-    <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Question {currentQuestion + 1} of {questions.length}</Text>
-      </View>
-      <View style={styles.card}>
-        <Text style={styles.text}>{questions[currentQuestion].question}</Text>
-        {!showAnswer ? (
-          questions[currentQuestion].options.map((option) => (
-            <TouchableOpacity
-              key={option}
-              onPress={() => handleOptionPress(option)}
-              style={[
-                styles.optionButton,
-                selectedOption === option && styles.selectedOption,
-              ]}
-            >
-              <Text style={styles.optionText}>{option}</Text>
-            </TouchableOpacity>
-          ))
-        ) : (
-          <>
-            <Text style={styles.answerText}>
-              Correct Answer: {questions[currentQuestion].correctAnswer}
-            </Text>
-            <Image
-              source={questions[currentQuestion].image}
-              style={styles.answerImage}
-              resizeMode="contain"
-            />
-          </>
-        )}
-      </View>
-    </LinearGradient>
+    <AppLayout title="Lesson 4">
+      <LessonLayout
+        lessonNumber={4}
+        mode="lesson"
+        step={slideIndex + 1}
+        total={slides.length}
+      >
+        <Text style={styles.title}>{slide.word}</Text>
+        <Image source={slide.image} style={styles.image} />
+        <Text>{slide.translated}</Text>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            slideIndex < slides.length - 1
+              ? setSlideIndex((i) => i + 1)
+              : setPage("quiz")
+          }
+        >
+          <Text style={styles.buttonText}>Next</Text>
+        </TouchableOpacity>
+      </LessonLayout>
+    </AppLayout>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
+  title: {
+    fontSize: 22,
+    fontWeight: "800",
+    marginBottom: 12,
+    textAlign: "center",
   },
-  header: {
-    marginBottom: 20,
+  image: {
+    width: 220,
+    height: 220,
+    marginVertical: 16,
+    resizeMode: "contain",
   },
-  headerText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 5,
-    alignItems: 'center', // Center the content
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  optionButton: {
-    padding: 15,
-    marginVertical: 10,
-    borderRadius: 5,
-    backgroundColor: '#ddd',
-    width: '100%', // Ensure the button width is full
-    alignItems: 'center',
-  },
-  optionText: {
-    fontSize: 18,
-    color: '#333',
-  },
-  selectedOption: {
-    backgroundColor: 'orange',
-  },
-  answerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'green',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  answerImage: {
-    width: '80%',
-    height: 200,
-  },
-  introImage: {
-    width: '80%',
-    height: 300,
-    marginBottom: 20,
-  },
-  nextButton: {
-    padding: 15,
+  button: {
     marginTop: 20,
-    borderRadius: 5,
-    backgroundColor: 'blue',
-    alignItems: 'center',
+    padding: 12,
+    backgroundColor: "#2563EB",
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: "#FFF",
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  option: {
+    width: "100%",
+    padding: 14,
+    backgroundColor: "#E5E7EB",
+    borderRadius: 8,
+    marginVertical: 6,
+    alignItems: "center",
+  },
+  optionWrong: {
+    backgroundColor: "#F87171",
+  },
+  optionCorrect: {
+    backgroundColor: "#4ADE80",
   },
 });
 

@@ -1,250 +1,241 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, useWindowDimensions, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/navigation';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-// This needs to be Lesson 5 for teaching animals
-type Card = {
-  id: number;
-  content: string;
-  isFlipped: boolean;
-  isMatched: boolean;
-  opacity: Animated.Value;
-};
+// Lesson5.tsx
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 
-type Lesson5NavigationProp = StackNavigationProp<RootStackParamList, 'FilipinoLessons'>;
+import AppLayout from "../../components/Layout/AppLayout";
+import LessonLayout from "./LessonLayout";
+import { useProgressStore } from "../../store/useProgressStore";
 
-const cardData: Card[] = [
-  { id: 1, content: 'Pusa', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Cat
-  { id: 2, content: '🐱', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 3, content: 'Aso', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Dog
-  { id: 4, content: '🐶', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 5, content: 'Ibon', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Bird
-  { id: 6, content: '🐦', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 7, content: 'Unggoy', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Monkey
-  { id: 8, content: '🐵', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 9, content: 'Tigre', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Tiger
-  { id: 10, content: '🐯', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 11, content: 'Isda', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Fish
-  { id: 12, content: '🐟', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 13, content: 'Leon', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Lion
-  { id: 14, content: '🦁', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 15, content: 'Ahas', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Snake
-  { id: 16, content: '🐍', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 17, content: 'Manok', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Chicken
-  { id: 18, content: '🐔', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 19, content: 'Baka', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Cow
-  { id: 20, content: '🐄', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 21, content: 'Kambing', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Goat
-  { id: 22, content: '🐐', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 23, content: 'Baboy', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Pig
-  { id: 24, content: '🐖', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
+/* ----------------------------------------
+   SLIDES — TEACH SENTENCES
+---------------------------------------- */
+const slides = [
+  {
+    title: "Ito ay pusa.",
+    subtitle: "This is a cat.",
+    image: require("../../../assets/images/cat.png"),
+  },
+  {
+    title: "Ito ay aso.",
+    subtitle: "This is a dog.",
+    image: require("../../../assets/images/dog.png"),
+  },
+  {
+    title: "May pusa ako.",
+    subtitle: "I have a cat.",
+    image: require("../../../assets/images/cat.png"),
+  },
+  {
+    title: "May aso ako.",
+    subtitle: "I have a dog.",
+    image: require("../../../assets/images/dog.png"),
+  },
+];
+
+/* ----------------------------------------
+   QUIZ — SENTENCE USAGE
+---------------------------------------- */
+const questions = [
+  {
+    question: "Ito ay ___ 🐱",
+    options: ["Aso", "Pusa", "Ibon"],
+    correct: "Pusa",
+    image: require("../../../assets/images/cat.png"),
+  },
+  {
+    question: "May ___ ako 🐶",
+    options: ["Pusa", "Aso", "Isda"],
+    correct: "Aso",
+    image: require("../../../assets/images/dog.png"),
+  },
+  {
+    question: "Ito ay ___ 🐟",
+    options: ["Isda", "Ibon", "Pusa"],
+    correct: "Isda",
+    image: require("../../../assets/images/fish.png"),
+  },
 ];
 
 const Lesson5: React.FC = () => {
-  const navigation = useNavigation<Lesson5NavigationProp>();
+  const completeLesson = useProgressStore((s) => s.completeLesson);
 
-  const { width, height } = useWindowDimensions(); // Get the screen dimensions
+  const [page, setPage] = useState<"lesson" | "quiz" | "summary">("lesson");
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [questionIndex, setQuestionIndex] = useState(0);
 
-  const isLandscape = width > height;
+  const [selected, setSelected] = useState<string | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
-  // Adjust the number of columns and rows to fit the screen
-  const numColumns = isLandscape ? 6 : 4;
-  const numRows = Math.ceil(cardData.length / numColumns);
-
-  // Calculate card size based on the number of columns
-  const cardSize = width / numColumns - 10; // Adjust the margin as needed
-
-  const [cards, setCards] = useState<Card[]>(cardData);
-  const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
-  const [isCheckingMatch, setIsCheckingMatch] = useState(false);
-
-  const handleCardClick = (index: number) => {
-    if (isCheckingMatch || cards[index].isFlipped || flippedIndices.length === 2) {
-      return;
+  /* ----------------------------------------
+     MARK COMPLETE — ONLY HERE
+  ---------------------------------------- */
+  useEffect(() => {
+    if (page === "summary") {
+      completeLesson(5);
     }
+  }, [page, completeLesson]);
 
-    const newCards = [...cards];
-    newCards[index].isFlipped = true;
-    setCards(newCards);
-    setFlippedIndices([...flippedIndices, index]);
+  /* ----------------------------------------
+     SUMMARY
+  ---------------------------------------- */
+  if (page === "summary") {
+    return (
+      <AppLayout title="Lesson 5">
+        <LessonLayout lessonNumber={5} mode="summary">
+          <Text style={styles.title}>Great job 🎉</Text>
+          <Text>You can now talk about animals in Filipino.</Text>
 
-    if (flippedIndices.length === 1) {
-      setIsCheckingMatch(true);
+          <Text style={styles.summaryLine}>• Ito ay ___</Text>
+          <Text style={styles.summaryLine}>• May ___ ako</Text>
+        </LessonLayout>
+      </AppLayout>
+    );
+  }
 
-      const firstIndex = flippedIndices[0];
-      const secondIndex = index;
-      const delay = 500; // 1 second delay
+  /* ----------------------------------------
+     QUIZ
+  ---------------------------------------- */
+  if (page === "quiz") {
+    const q = questions[questionIndex];
 
-      // Check if cards match
-      const isMatch =
-        (newCards[firstIndex].content === 'Pusa' && newCards[secondIndex].content === '🐱') ||
-        (newCards[firstIndex].content === '🐱' && newCards[secondIndex].content === 'Pusa') ||
-        (newCards[firstIndex].content === 'Aso' && newCards[secondIndex].content === '🐶') ||
-        (newCards[firstIndex].content === '🐶' && newCards[secondIndex].content === 'Aso') ||
-        (newCards[firstIndex].content === 'Ibon' && newCards[secondIndex].content === '🐦') ||
-        (newCards[firstIndex].content === '🐦' && newCards[secondIndex].content === 'Ibon') ||
-        (newCards[firstIndex].content === 'Unggoy' && newCards[secondIndex].content === '🐵') ||
-        (newCards[firstIndex].content === '🐵' && newCards[secondIndex].content === 'Unggoy') ||
-        (newCards[firstIndex].content === 'Tigre' && newCards[secondIndex].content === '🐯') ||
-        (newCards[firstIndex].content === '🐯' && newCards[secondIndex].content === 'Tigre') ||
-        (newCards[firstIndex].content === 'Isda' && newCards[secondIndex].content === '🐟') ||
-        (newCards[firstIndex].content === '🐟' && newCards[secondIndex].content === 'Isda') ||
-        (newCards[firstIndex].content === 'Leon' && newCards[secondIndex].content === '🦁') ||
-        (newCards[firstIndex].content === '🦁' && newCards[secondIndex].content === 'Leon') ||
-        (newCards[firstIndex].content === 'Ahas' && newCards[secondIndex].content === '🐍') ||
-        (newCards[firstIndex].content === '🐍' && newCards[secondIndex].content === 'Ahas') ||
-        (newCards[firstIndex].content === 'Manok' && newCards[secondIndex].content === '🐔') ||
-        (newCards[firstIndex].content === '🐔' && newCards[secondIndex].content === 'Manok') ||
-        (newCards[firstIndex].content === 'Baka' && newCards[secondIndex].content === '🐄') ||
-        (newCards[firstIndex].content === '🐄' && newCards[secondIndex].content === 'Baka') ||
-        (newCards[firstIndex].content === 'Kambing' && newCards[secondIndex].content === '🐐') ||
-        (newCards[firstIndex].content === '🐐' && newCards[secondIndex].content === 'Kambing') ||
-        (newCards[firstIndex].content === 'Baboy' && newCards[secondIndex].content === '🐖') ||
-        (newCards[firstIndex].content === '🐖' && newCards[secondIndex].content === 'Baboy');
+    return (
+      <AppLayout title="Lesson 5">
+        <LessonLayout
+          lessonNumber={5}
+          mode="quiz"
+          step={questionIndex + 1}
+          total={questions.length}
+        >
+          <Text style={styles.title}>{q.question}</Text>
 
-      if (isMatch) {
-        setTimeout(() => {
-          newCards[firstIndex].isMatched = true;
-          newCards[secondIndex].isMatched = true;
-          newCards[firstIndex].opacity.setValue(0);
-          newCards[secondIndex].opacity.setValue(0);
-          setCards(newCards);
-          setFlippedIndices([]);
-          setIsCheckingMatch(false);
-        }, delay);
-      } else {
-        setTimeout(() => {
-          newCards[firstIndex].isFlipped = false;
-          newCards[secondIndex].isFlipped = false;
-          setCards(newCards);
-          setFlippedIndices([]);
-          setIsCheckingMatch(false);
-        }, delay);
-      }
-    }
-  };
+          {q.options.map((opt) => {
+            const selectedThis = selected === opt;
+            const wrong = selectedThis && isCorrect === false;
+            const correct = selectedThis && isCorrect === true;
 
-  const handleReset = () => {
-    setCards(cardData.map(card => ({ ...card, isFlipped: false, isMatched: false, opacity: new Animated.Value(1) })));
-    setFlippedIndices([]);
-    setIsCheckingMatch(false);
-  };
-
-  const handleNavigateToLessonsScreen = () => {
-    navigation.navigate('FilipinoLessons');
-  };
-  async function finishedLessonForAccoladePosting(){
-    
-
-
-
-
-
-
-
-
-    const token = await AsyncStorage.getItem('token')
-    fetch('http://localhost:3000/addAccolade', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${token}`},
-      body: JSON.stringify({accolade:"Lesson 5"})
-  })
-  .then(response => response.json())
-  .then(data => {
-  
-  })
-  
-    }
-    finishedLessonForAccoladePosting()
-    
-  return (
-    <ScrollView contentContainerStyle={styles.scrollView}>
-      <View style={[styles.container, { padding: 5 }]}>
-        <Text style={styles.title}>Filipino Animal Matching Game</Text>
-        <View style={styles.grid}>
-          {cards.map((card, index) => (
-            <Animated.View key={card.id} style={{ opacity: card.opacity }}>
+            return (
               <TouchableOpacity
+                key={opt}
                 style={[
-                  styles.card,
-                  {
-                    width: cardSize,
-                    height: cardSize,
-                    backgroundColor: card.isFlipped || card.isMatched ? '#fff' : '#ccc',
-                    borderColor: card.isFlipped || card.isMatched ? '#000' : '#999',
-                  },
+                  styles.option,
+                  wrong && styles.optionWrong,
+                  correct && styles.optionCorrect,
                 ]}
-                onPress={() => handleCardClick(index)}
+                disabled={selected !== null}
+                onPress={() => {
+                  setSelected(opt);
+                  const ok = opt === q.correct;
+                  setIsCorrect(ok);
+
+                  setTimeout(() => {
+                    setSelected(null);
+                    setIsCorrect(null);
+
+                    if (questionIndex + 1 === questions.length) {
+                      setPage("summary");
+                    } else {
+                      setQuestionIndex((i) => i + 1);
+                    }
+                  }, 900);
+                }}
               >
-                <Text style={styles.cardText}>
-                  {card.isFlipped || card.isMatched ? card.content : '?'}
-                </Text>
+                <Text style={styles.optionText}>{opt}</Text>
               </TouchableOpacity>
-            </Animated.View>
-          ))}
-        </View>
-        <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-          <Text style={styles.buttonText}>Reset Game</Text>
+            );
+          })}
+
+          <Image source={q.image} style={styles.image} />
+        </LessonLayout>
+      </AppLayout>
+    );
+  }
+
+  /* ----------------------------------------
+     LESSON SLIDES
+  ---------------------------------------- */
+  const slide = slides[slideIndex];
+
+  return (
+    <AppLayout title="Lesson 5">
+      <LessonLayout
+        lessonNumber={5}
+        mode="lesson"
+        step={slideIndex + 1}
+        total={slides.length}
+      >
+        <Text style={styles.title}>{slide.title}</Text>
+        <Image source={slide.image} style={styles.image} />
+        <Text style={styles.subtitle}>{slide.subtitle}</Text>
+
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            slideIndex < slides.length - 1
+              ? setSlideIndex((i) => i + 1)
+              : setPage("quiz")
+          }
+        >
+          <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navigateButton} onPress={handleNavigateToLessonsScreen}>
-          <Text style={styles.buttonText}>Back to Lessons</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </LessonLayout>
+    </AppLayout>
   );
 };
 
+/* ----------------------------------------
+   STYLES
+---------------------------------------- */
 const styles = StyleSheet.create({
-  scrollView: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginVertical: 20,
-    textAlign: 'center',
+    fontSize: 22,
+    fontWeight: "800",
+    marginBottom: 12,
+    textAlign: "center",
   },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+  subtitle: {
+    fontSize: 16,
+    textAlign: "center",
+    opacity: 0.75,
   },
-  card: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 5,
-    borderWidth: 2,
+  image: {
+    width: 220,
+    height: 220,
+    marginVertical: 16,
+    resizeMode: "contain",
+    alignSelf: "center",
+  },
+  button: {
+    marginTop: 20,
+    padding: 12,
+    backgroundColor: "#2563EB",
     borderRadius: 10,
   },
-  cardText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  resetButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#4CAF50',
-    borderRadius: 5,
-  },
-  navigateButton: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#2196F3',
-    borderRadius: 5,
-  },
   buttonText: {
-    fontSize: 18,
-    color: '#fff',
-    textAlign: 'center',
+    color: "#FFF",
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  option: {
+    width: "100%",
+    padding: 14,
+    backgroundColor: "#E5E7EB",
+    borderRadius: 8,
+    marginVertical: 6,
+    alignItems: "center",
+  },
+  optionText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  optionWrong: {
+    backgroundColor: "#F87171",
+  },
+  optionCorrect: {
+    backgroundColor: "#4ADE80",
+  },
+  summaryLine: {
+    marginTop: 8,
+    fontWeight: "600",
   },
 });
 
