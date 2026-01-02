@@ -156,9 +156,27 @@ const FilipinoAnimals: React.FC = () => {
       </Text>
 
       {/* CARD */}
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <FlipCard front={cards[index].front} back={cards[index].back} />
-      </View>
+     <View
+  style={{
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  }}
+>
+  <FlipCard front={cards[index].front} back={cards[index].back} />
+
+  <Text
+    style={{
+      marginTop: theme.spacing.sm,
+      fontSize: 13,
+      color: theme.colors.textSecondary,
+      opacity: 0.8,
+    }}
+  >
+    Tap to reveal Tagalog
+  </Text>
+</View>
+
 
       {/* 🔊 PRONUNCIATION BUTTON */}
       <Pressable

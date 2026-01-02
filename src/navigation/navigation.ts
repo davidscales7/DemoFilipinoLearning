@@ -46,8 +46,8 @@ export type RootStackParamList = {
   Lesson10: undefined;
 
   Quiz1: undefined;
-  Quiz2: undefined;   // ← FIXED
-  Quiz3: undefined;   // ← FIXED
+  Quiz2: undefined;   
+  Quiz3: undefined;   
   Quiz4: undefined;
   Quiz5: undefined;
   Quiz6: undefined;

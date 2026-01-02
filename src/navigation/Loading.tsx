@@ -32,7 +32,7 @@ if(!loggedIn){
 navigation.navigate('Filipino');
 }
 else{
-  navigation.navigate('Login')
+  navigation.navigate('FilipinoLessons')
 }
 
 

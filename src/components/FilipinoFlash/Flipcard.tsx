@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import { Pressable, Text, Animated } from "react-native";
+import React, { useState, useRef } from "react";
+import { View, Pressable, Text, Animated } from "react-native";
 import { useTheme } from "../../theme/ThemeProvider";
+
+const CARD_HEIGHT = 220;
+const CARD_WIDTH = "80%";
 
 const FlipCard = ({ front, back }) => {
   const theme = useTheme();
   const [flipped, setFlipped] = useState(false);
-  const rotate = useState(new Animated.Value(0))[0];
+  const rotate = useRef(new Animated.Value(0)).current;
 
   const flip = () => {
     Animated.timing(rotate, {
@@ -26,55 +29,81 @@ const FlipCard = ({ front, back }) => {
     outputRange: ["180deg", "360deg"],
   });
 
-  const baseStyle: any = {
-    width: "80%",
-    height: 220,
+  const faceStyle: any = {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
     borderRadius: 20,
-    backgroundColor: theme.colors.card,
     justifyContent: "center",
     alignItems: "center",
+    backfaceVisibility: "hidden",
     shadowOpacity: 0.1,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 4 },
     elevation: 3,
-    position: "absolute",
-    backfaceVisibility: "hidden" as const,
   };
 
   return (
-    <>
-      {/* FRONT CARD */}
-      <Animated.View
-        style={[baseStyle, { transform: [{ rotateY: frontInterpolate }] }]}
-      >
-        <Pressable
-          onPress={flip}
-          style={{ width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}
-        >
-          <Text style={[theme.typography.title]}>{front}</Text>
-        </Pressable>
-      </Animated.View>
-
-      {/* BACK CARD */}
+    // ✅ THIS is the key fix: normal-flow container
+    <View
+      style={{
+        width: CARD_WIDTH,
+        height: CARD_HEIGHT,
+      }}
+    >
+      {/* FRONT */}
       <Animated.View
         style={[
-          baseStyle,
+          faceStyle,
           {
-            transform: [{ rotateY: backInterpolate }],
-            backgroundColor: theme.colors.accent,
+            backgroundColor: theme.colors.card,
+            transform: [{ rotateY: frontInterpolate }],
           },
         ]}
       >
         <Pressable
           onPress={flip}
-          style={{ width: "100%", height: "100%", justifyContent: "center", alignItems: "center" }}
+          style={{
+            width: "100%",
+            height: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          <Text style={[theme.typography.title, { color: theme.colors.textLight }]}>
+          <Text style={theme.typography.title}>{front}</Text>
+        </Pressable>
+      </Animated.View>
+
+      {/* BACK */}
+      <Animated.View
+        style={[
+          faceStyle,
+          {
+            backgroundColor: theme.colors.accent,
+            transform: [{ rotateY: backInterpolate }],
+          },
+        ]}
+      >
+        <Pressable
+          onPress={flip}
+          style={{
+            width: "100%",
+            height: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={[
+              theme.typography.title,
+              { color: theme.colors.textLight },
+            ]}
+          >
             {back}
           </Text>
         </Pressable>
       </Animated.View>
-    </>
+    </View>
   );
 };
 
