@@ -13,6 +13,9 @@ import ProfileHeader from "../components/ProfileHeader/ProfileHeader";
 import ProgressRing from "../components/XP/ProgressRing";
 
 type Nav = StackNavigationProp<RootStackParamList, "FilipinoLearning">;
+import type { ComponentProps } from "react";
+
+type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
 
 const FilipinoLearning: React.FC = () => {
   const navigation = useNavigation<Nav>();
@@ -20,32 +23,41 @@ const FilipinoLearning: React.FC = () => {
   const params: any = route.params || {};
   const theme = useTheme();
 
-  const menuItems = [
-    {
-      title: "Flashcards",
-      icon: "cards-outline",
-      color: theme.colors.primary,
-      screen: "FilipinoFlashHome",
-    },
-    {
-      title: "Quizzes",
-      icon: "help-circle-outline",
-      color: theme.colors.accent,
-      screen: "FilipinoQuizzes",
-    },
-    {
-      title: "Lessons",
-      icon: "blackboard",
-      color: theme.colors.secondary,
-      screen: "FilipinoLessons",
-    },
-    {
-      title: "Accolades",
-      icon: "trophy-award",
-      color: theme.colors.success,
-      screen: "FilipinoAccolades",
-    },
-  ];
+
+
+  const menuItems: {
+  title: string;
+  icon: IconName;
+  color: string;
+  screen: string;
+}[] = [
+
+  {
+    title: "Flashcards",
+    icon: "cards",
+    color: "#ff6f61",
+    screen: "FilipinoFlashHome",
+  },
+  {
+    title: "Quizzes",
+    icon: "help-circle",
+    color: theme.colors.accent,
+    screen: "FilipinoQuizzes",
+  },
+  {
+    title: "Lessons",
+    icon: "book-open-page-variant",
+    color: theme.colors.secondary,
+    screen: "FilipinoLessons",
+  },
+  {
+    title: "Accolades",
+    icon: "trophy",
+    color: theme.colors.success,
+    screen: "FilipinoAccolades",
+  },
+];
+
 
   return (
     <AppLayout
@@ -106,26 +118,30 @@ const FilipinoLearning: React.FC = () => {
             onPress={() => navigation.navigate(item.screen as any)}
             style={{ width: "45%", minWidth: 260 }}
           >
-            <AppCard color={item.color}>
-              <Text
-                style={[
-                  theme.typography.subtitle,
-                  {
-                    textAlign: "center",
-                    marginBottom: theme.spacing.sm,
-                  },
-                ]}
-              >
-                {item.title}
-              </Text>
+            
 
-              <MaterialCommunityIcons
-                name={item.icon as any}
-                size={40}
-                color={theme.colors.textLight}
-                style={{ alignSelf: "center", marginTop: theme.spacing.sm }}
-              />
-            </AppCard>
+<AppCard color={item.color}>
+  <View style={{ alignItems: "center", gap: 8 }}>
+    <MaterialCommunityIcons
+      name={item.icon}
+      size={36}
+      color={item.color}
+    />
+
+    <Text
+      style={[
+        theme.typography.subtitle,
+        { textAlign: "center" },
+      ]}
+    >
+      {item.title}
+    </Text>
+  </View>
+</AppCard>
+
+
+
+
           </Pressable>
         ))}
       </View>

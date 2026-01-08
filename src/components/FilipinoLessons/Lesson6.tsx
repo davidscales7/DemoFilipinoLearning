@@ -1,251 +1,223 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions, useWindowDimensions, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/navigation';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-// This needs to be Lesson 5 for teaching animals
-type Card = {
-  id: number;
-  content: string;
-  isFlipped: boolean;
-  isMatched: boolean;
-  opacity: Animated.Value;
+import React, { useState } from "react";
+import { View, Text, Pressable, Image } from "react-native";
+
+import AppLayout from "../../components/Layout/AppLayout";
+import { useTheme } from "../../theme/ThemeProvider";
+import { useXPStore } from "../../store/useXPStore";
+import { useProgressStore } from "../../store/useProgressStore";
+import { useNavigation } from "@react-navigation/native";
+
+type FoodItem = {
+  english: string;
+  filipino: string;
+  sentenceEN: string;
+  sentenceTL: string;
+  image: any;
 };
 
-type Lesson6NavigationProp = StackNavigationProp<RootStackParamList, 'FilipinoLessons'>;
-
-const cardData: Card[] = [
-  { id: 1, content: 'Tubig', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Water
-  { id: 2, content: '💧', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 3, content: 'Kape', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Coffee
-  { id: 4, content: '☕', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 5, content: 'Tinapay', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Bread
-  { id: 6, content: '🍞', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 7, content: 'Gatas', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Milk
-  { id: 8, content: '🥛', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 9, content: 'Saging', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Banana
-  { id: 10, content: '🍌', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 11, content: 'Kanin', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Rice
-  { id: 12, content: '🍚', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 13, content: 'Isda', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Fish
-  { id: 14, content: '🐟', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 15, content: 'Adobo', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Adobo
-  { id: 16, content: '🍗', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 17, content: 'Mansanas', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Apple
-  { id: 18, content: '🍎', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 19, content: 'Sopas', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Soup
-  { id: 20, content: '🍜', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 21, content: 'Tsokolate', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Chocolate
-  { id: 22, content: '🍫', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
-  { id: 23, content: 'Pineapple Juice', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) }, // Pineapple Juice
-  { id: 24, content: '🍍', isFlipped: false, isMatched: false, opacity: new Animated.Value(1) },
+const FOOD_ITEMS: FoodItem[] = [
+  {
+    english: "Rice",
+    filipino: "Kanin",
+    sentenceEN: "I eat rice.",
+    sentenceTL: "Kumakain ako ng kanin.",
+    image: require("../../../assets/images/rice.png"),
+  },
+  {
+    english: "Chicken",
+    filipino: "Manok",
+    sentenceEN: "I eat chicken.",
+    sentenceTL: "Kumakain ako ng manok.",
+    image: require("../../../assets/images/chicken.jpg"),
+  },
+  {
+    english: "Fish",
+    filipino: "Isda",
+    sentenceEN: "I eat fish.",
+    sentenceTL: "Kumakain ako ng isda.",
+    image: require("../../../assets/images/fish.png"),
+  },
 ];
 
+const XP_PER_ITEM = 15;
 
 const Lesson6: React.FC = () => {
-  const navigation = useNavigation<Lesson6NavigationProp>();
+  const theme = useTheme();
+  const navigation = useNavigation();
 
-  const { width, height } = useWindowDimensions(); // Get the screen dimensions
+  const addXP = useXPStore((s) => s.addXP);
+  const completeLesson = useProgressStore((s) => s.completeLesson);
 
-  const isLandscape = width > height;
+  const [index, setIndex] = useState(0);
+  const [stage, setStage] = useState<"word" | "sentence" | "summary">("word");
 
-  // Adjust the number of columns and rows to fit the screen
-  const numColumns = isLandscape ? 6 : 4;
-  const numRows = Math.ceil(cardData.length / numColumns);
+  const current = FOOD_ITEMS[index];
 
-  // Calculate card size based on the number of columns
-  const cardSize = width / numColumns - 10; // Adjust the margin as needed
+  const next = () => {
+    console.log("➡️ NEXT PRESSED");
+    console.log("Index:", index, "Stage:", stage);
 
-  const [cards, setCards] = useState<Card[]>(cardData);
-  const [flippedIndices, setFlippedIndices] = useState<number[]>([]);
-  const [isCheckingMatch, setIsCheckingMatch] = useState(false);
+    addXP(XP_PER_ITEM);
+    console.log("✅ XP ADDED:", XP_PER_ITEM);
 
-  const handleCardClick = (index: number) => {
-    if (isCheckingMatch || cards[index].isFlipped || flippedIndices.length === 2) {
+    if (stage === "word") {
+      setStage("sentence");
       return;
     }
 
-    const newCards = [...cards];
-    newCards[index].isFlipped = true;
-    setCards(newCards);
-    setFlippedIndices([...flippedIndices, index]);
-
-    if (flippedIndices.length === 1) {
-      setIsCheckingMatch(true);
-
-      const firstIndex = flippedIndices[0];
-      const secondIndex = index;
-      const delay = 500; // 1 second delay
-
-      // Check if cards match
-      const isMatch =
-      (newCards[firstIndex].content === 'Tubig' && newCards[secondIndex].content === '💧') ||
-      (newCards[firstIndex].content === '💧' && newCards[secondIndex].content === 'Tubig') ||
-      (newCards[firstIndex].content === 'Kape' && newCards[secondIndex].content === '☕') ||
-      (newCards[firstIndex].content === '☕' && newCards[secondIndex].content === 'Kape') ||
-      (newCards[firstIndex].content === 'Tinapay' && newCards[secondIndex].content === '🍞') ||
-      (newCards[firstIndex].content === '🍞' && newCards[secondIndex].content === 'Tinapay') ||
-      (newCards[firstIndex].content === 'Gatas' && newCards[secondIndex].content === '🥛') ||
-      (newCards[firstIndex].content === '🥛' && newCards[secondIndex].content === 'Gatas') ||
-      (newCards[firstIndex].content === 'Saging' && newCards[secondIndex].content === '🍌') ||
-      (newCards[firstIndex].content === '🍌' && newCards[secondIndex].content === 'Saging') ||
-      (newCards[firstIndex].content === 'Kanin' && newCards[secondIndex].content === '🍚') ||
-      (newCards[firstIndex].content === '🍚' && newCards[secondIndex].content === 'Kanin') ||
-      (newCards[firstIndex].content === 'Isda' && newCards[secondIndex].content === '🐟') ||
-      (newCards[firstIndex].content === '🐟' && newCards[secondIndex].content === 'Isda') ||
-      (newCards[firstIndex].content === 'Adobo' && newCards[secondIndex].content === '🍗') ||
-      (newCards[firstIndex].content === '🍗' && newCards[secondIndex].content === 'Adobo') ||
-      (newCards[firstIndex].content === 'Mansanas' && newCards[secondIndex].content === '🍎') ||
-      (newCards[firstIndex].content === '🍎' && newCards[secondIndex].content === 'Mansanas') ||
-      (newCards[firstIndex].content === 'Sopas' && newCards[secondIndex].content === '🍜') ||
-      (newCards[firstIndex].content === '🍜' && newCards[secondIndex].content === 'Sopas') ||
-      (newCards[firstIndex].content === 'Tsokolate' && newCards[secondIndex].content === '🍫') ||
-      (newCards[firstIndex].content === '🍫' && newCards[secondIndex].content === 'Tsokolate') ||
-      (newCards[firstIndex].content === 'Pineapple Juice' && newCards[secondIndex].content === '🍍') ||
-      (newCards[firstIndex].content === '🍍' && newCards[secondIndex].content === 'Pineapple Juice');
-    
-      if (isMatch) {
-        setTimeout(() => {
-          newCards[firstIndex].isMatched = true;
-          newCards[secondIndex].isMatched = true;
-          newCards[firstIndex].opacity.setValue(0);
-          newCards[secondIndex].opacity.setValue(0);
-          setCards(newCards);
-          setFlippedIndices([]);
-          setIsCheckingMatch(false);
-        }, delay);
-      } else {
-        setTimeout(() => {
-          newCards[firstIndex].isFlipped = false;
-          newCards[secondIndex].isFlipped = false;
-          setCards(newCards);
-          setFlippedIndices([]);
-          setIsCheckingMatch(false);
-        }, delay);
-      }
+    if (index < FOOD_ITEMS.length - 1) {
+      setIndex(index + 1);
+      setStage("word");
+      return;
     }
+
+    console.log("🎉 ALL FOOD ITEMS COMPLETED");
+    setStage("summary");
   };
 
-  const handleReset = () => {
-    setCards(cardData.map(card => ({ ...card, isFlipped: false, isMatched: false, opacity: new Animated.Value(1) })));
-    setFlippedIndices([]);
-    setIsCheckingMatch(false);
+  const finishLesson = () => {
+    console.log("🏁 FINISH LESSON 6");
+
+    console.log(
+      "Before completion:",
+      useProgressStore.getState().completedLessons
+    );
+
+    completeLesson(6); // 🔓 THIS UNLOCKS LESSON 7
+
+    console.log(
+      "After completion:",
+      useProgressStore.getState().completedLessons
+    );
+
+    navigation.goBack();
   };
 
-  const handleNavigateToLessonsScreen = () => {
-    navigation.navigate('FilipinoLessons');
-  };
-  async function finishedLessonForAccoladePosting(){
-    
-
-
-
-
-
-
-
-
-    const token = await AsyncStorage.getItem('token')
-    fetch('http://localhost:3000/addAccolade', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json','Authorization': `Bearer ${token}`},
-      body: JSON.stringify({accolade:"LessonTestLesson6"})
-  })
-  .then(response => response.json())
-  .then(data => {
-  
-  })
-  
-    }
-    finishedLessonForAccoladePosting()
   return (
-    <ScrollView contentContainerStyle={styles.scrollView}>
-      <View style={[styles.container, { padding: 5 }]}>
-        <Text style={styles.title}>Filipino Animal Matching Game</Text>
-        <View style={styles.grid}>
-          {cards.map((card, index) => (
-            <Animated.View key={card.id} style={{ opacity: card.opacity }}>
-              <TouchableOpacity
-                style={[
-                  styles.card,
-                  {
-                    width: cardSize,
-                    height: cardSize,
-                    backgroundColor: card.isFlipped || card.isMatched ? '#fff' : '#ccc',
-                    borderColor: card.isFlipped || card.isMatched ? '#000' : '#999',
-                  },
-                ]}
-                onPress={() => handleCardClick(index)}
-              >
-                <Text style={styles.cardText}>
-                  {card.isFlipped || card.isMatched ? card.content : '?'}
+    <AppLayout title="Lesson 6 — Food">
+      {stage !== "summary" ? (
+        <>
+          {/* Card */}
+          <View
+            style={{
+              backgroundColor: "white",
+              borderRadius: 20,
+              padding: theme.spacing.xl,
+              alignItems: "center",
+              shadowOpacity: 0.08,
+              shadowRadius: 10,
+            }}
+          >
+            <Image
+              source={current.image}
+              style={{ width: 120, height: 120, marginBottom: 16 }}
+              resizeMode="contain"
+            />
+
+            {stage === "word" ? (
+              <>
+                <Text style={theme.typography.title}>
+                  {current.english}
                 </Text>
-              </TouchableOpacity>
-            </Animated.View>
-          ))}
+
+                <Text
+                  style={[
+                    theme.typography.subtitle,
+                    { color: theme.colors.primary, marginVertical: 8 },
+                  ]}
+                >
+                  {current.filipino}
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text
+                  style={[
+                    theme.typography.subtitle,
+                    { textAlign: "center", marginBottom: 6 },
+                  ]}
+                >
+                  {current.sentenceEN}
+                </Text>
+
+                <Text
+                  style={[
+                    theme.typography.body,
+                    { textAlign: "center", color: theme.colors.primary },
+                  ]}
+                >
+                  {current.sentenceTL}
+                </Text>
+              </>
+            )}
+          </View>
+
+          {/* Controls */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              marginTop: theme.spacing.xl,
+            }}
+          >
+            <Pressable
+              onPress={next}
+              style={{
+                paddingVertical: theme.spacing.md,
+                paddingHorizontal: theme.spacing.xl,
+                borderRadius: 14,
+                backgroundColor: theme.colors.primary,
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: "700" }}>
+                Next →
+              </Text>
+            </Pressable>
+          </View>
+
+          {/* Progress */}
+          <Text
+            style={{
+              textAlign: "center",
+              marginTop: theme.spacing.md,
+              color: theme.colors.textSecondary,
+            }}
+          >
+            Item {index + 1} / {FOOD_ITEMS.length}
+          </Text>
+        </>
+      ) : (
+        /* SUMMARY SCREEN */
+        <View style={{ alignItems: "center", marginTop: 40 }}>
+          <Text style={theme.typography.title}>Great job! 🎉</Text>
+
+          <Text
+            style={[
+              theme.typography.body,
+              { marginVertical: 12, textAlign: "center" },
+            ]}
+          >
+            You’ve completed Lesson 6.
+          </Text>
+
+          <Pressable
+            onPress={finishLesson}
+            style={{
+              marginTop: 20,
+              paddingVertical: theme.spacing.md,
+              paddingHorizontal: theme.spacing.xl,
+              borderRadius: 16,
+              backgroundColor: theme.colors.success,
+            }}
+          >
+            <Text style={{ color: "white", fontWeight: "700" }}>
+              Finish Lesson ✓
+            </Text>
+          </Pressable>
         </View>
-        <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-          <Text style={styles.buttonText}>Reset Game</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navigateButton} onPress={handleNavigateToLessonsScreen}>
-          <Text style={styles.buttonText}>Back to Lessons</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      )}
+    </AppLayout>
   );
 };
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginVertical: 20,
-    textAlign: 'center',
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-  },
-  card: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 5,
-    borderWidth: 2,
-    borderRadius: 10,
-  },
-  cardText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  resetButton: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#4CAF50',
-    borderRadius: 5,
-  },
-  navigateButton: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#2196F3',
-    borderRadius: 5,
-  },
-  buttonText: {
-    fontSize: 18,
-    color: '#fff',
-    textAlign: 'center',
-  },
-});
 
 export default Lesson6;

@@ -1,180 +1,246 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, ScrollView } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, { useState } from "react";
+import { View, Text, Pressable, StyleSheet } from "react-native";
+
+import AppLayout from "../../components/Layout/AppLayout";
+import { useTheme } from "../../theme/ThemeProvider";
+import { useXPStore } from "../../store/useXPStore";
+import { useProgressStore } from "../../store/useProgressStore";
+
+type Question = {
+  question: string;
+  options: string[];
+  correctIndex: number;
+};
+
+const QUESTIONS: Question[] = [
+  {
+    question: "What does 'Kamusta' mean?",
+    options: ["Goodbye", "Thank you", "Hello / How are you", "Please"],
+    correctIndex: 2,
+  },
+  {
+    question: "Which is the correct Filipino word for 'Dog'?",
+    options: ["Pusa", "Aso", "Ibon", "Isda"],
+    correctIndex: 1,
+  },
+  {
+    question: "Translate: 'I eat rice.'",
+    options: [
+      "Ako ay kumakain ng isda.",
+      "Kumakain ako ng kanin.",
+      "Ako ay nagluluto ng kanin.",
+      "Kanin ay kinakain ko.",
+    ],
+    correctIndex: 1,
+  },
+  {
+    question: "Which sentence is grammatically correct?",
+    options: [
+      "Masaya ay ako.",
+      "Ako ay masaya.",
+      "Ay masaya ako.",
+      "Masaya ako ay.",
+    ],
+    correctIndex: 1,
+  },
+  {
+    question: "How do you say 'They are not playing'?",
+    options: [
+      "Sila ay naglalaro.",
+      "Sila ay hindi naglalaro.",
+      "Hindi sila ay naglalaro.",
+      "Ay hindi naglalaro sila.",
+    ],
+    correctIndex: 1,
+  },
+];
+
+const XP_PER_CORRECT = 25;
+const XP_COMPLETION_BONUS = 100;
 
 const Lesson10: React.FC = () => {
-  const [currentActivity, setCurrentActivity] = useState(0);
-  const [userStory, setUserStory] = useState('');
-  const [futurePlans, setFuturePlans] = useState('');
-  const [scrambledSentence, setScrambledSentence] = useState(['blue', 'am', 'shirt', 'wearing', 'I']);
-  const [userUnscrambled, setUserUnscrambled] = useState('');
+  const theme = useTheme();
+  const addXP = useXPStore((s) => s.addXP);
+  const completeLesson = useProgressStore((s) => s.completeLesson);
 
-  const activities = [
-    {
-      title: "Activity 1: Create a Story",
-      description: "Write a short story using words you've learned. Describe what the character is wearing and their hobbies.",
-      example: "The boy wore a red shirt and played soccer in the park.",
-    },
-    {
-      title: "Activity 2: Daily Routine",
-      description: "Describe a daily routine. Use sentences like 'I wake up at 7 AM. I wear my green dress. I like reading.'",
-    },
-    {
-      title: "Activity 3: Sentence Race",
-      description: "Unscramble the words to form a correct sentence. For example: 'blue / am / shirt / wearing / I'.",
-      scrambled: scrambledSentence.join(' / '),
-      answer: "I am wearing a blue shirt.",
-    },
-    {
-      title: "Activity 4: Future Plans",
-      description: "Write a sentence about your future plans using 'I will'. For example: 'I will wear my red dress tomorrow.'",
-    },
-  ];
+  const [index, setIndex] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [score, setScore] = useState(0);
+  const [finished, setFinished] = useState(false);
 
-  const handleNextActivity = () => {
-    if (currentActivity < activities.length - 1) {
-      // Clear text inputs when moving to the next activity
-      setUserStory('');
-      setFuturePlans('');
-      setUserUnscrambled('');
-      setCurrentActivity((prev) => prev + 1);
+  const current = QUESTIONS[index];
+
+  const submitAnswer = () => {
+    if (selected === null) return;
+
+    const isCorrect = selected === current.correctIndex;
+
+    console.log("📝 ANSWER:", {
+      question: index + 1,
+      selected,
+      correct: current.correctIndex,
+      isCorrect,
+    });
+
+    if (isCorrect) {
+      addXP(XP_PER_CORRECT);
+      setScore((s) => s + 1);
+    }
+
+    setSelected(null);
+
+    if (index < QUESTIONS.length - 1) {
+      setIndex((i) => i + 1);
     } else {
-      alert("You've completed the Final Basic Lesson! Great job!");
+      finishTest(isCorrect);
     }
   };
 
-  const handleUnscrambleCheck = () => {
-    if (userUnscrambled.trim() === activities[2].answer) {
-      alert("Correct! Great job!");
-    } else {
-      alert("Try again!");
-    }
+  const finishTest = (lastCorrect: boolean) => {
+    const finalScore = lastCorrect ? score + 1 : score;
+    console.log("🎓 FINAL SCORE:", finalScore);
+
+    addXP(XP_COMPLETION_BONUS);
+    completeLesson(10); // 🎉 course complete
+    setFinished(true);
   };
 
   return (
-    <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>{activities[currentActivity].title}</Text>
-        <Text style={styles.description}>{activities[currentActivity].description}</Text>
+    <AppLayout title="Lesson 10 — Final Test">
+      {!finished ? (
+        <>
+          {/* Question */}
+          <View style={styles.card}>
+            <Text style={styles.question}>
+              {current.question}
+            </Text>
 
-        {currentActivity === 0 && (
-          <>
-            <TextInput
-              style={styles.input}
-              placeholder="Write your story here..."
-              multiline
-              value={userStory}
-              onChangeText={setUserStory}
-            />
-            <Text style={styles.example}>Example: {activities[currentActivity].example}</Text>
-          </>
-        )}
+            {current.options.map((opt, i) => {
+              const isSelected = selected === i;
+              return (
+                <Pressable
+                  key={i}
+                  onPress={() => setSelected(i)}
+                  style={[
+                    styles.option,
+                    {
+                      borderColor: isSelected
+                        ? theme.colors.primary
+                        : theme.colors.border,
+                      backgroundColor: isSelected
+                        ? "#EAF2FF"
+                        : "white",
+                    },
+                  ]}
+                >
+                  <Text style={styles.optionText}>{opt}</Text>
+                </Pressable>
+              );
+            })}
+          </View>
 
-        {currentActivity === 1 && (
-          <TextInput
-            style={styles.input}
-            placeholder="Describe your daily routine..."
-            multiline
-            value={userStory}
-            onChangeText={setUserStory}
-          />
-        )}
+          {/* Controls */}
+          <View style={styles.controls}>
+            <Pressable
+              onPress={submitAnswer}
+              disabled={selected === null}
+              style={[
+                styles.primaryButton,
+                { opacity: selected === null ? 0.5 : 1 },
+              ]}
+            >
+              <Text style={styles.primaryText}>
+                {index === QUESTIONS.length - 1
+                  ? "Finish Test ✓"
+                  : "Submit →"}
+              </Text>
+            </Pressable>
+          </View>
 
-        {currentActivity === 2 && (
-          <>
-            <Text style={styles.scrambled}>{activities[currentActivity].scrambled}</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Unscramble the sentence..."
-              value={userUnscrambled}
-              onChangeText={setUserUnscrambled}
-            />
-            <TouchableOpacity onPress={handleUnscrambleCheck} style={styles.checkButton}>
-              <Text style={styles.buttonText}>Check Answer</Text>
-            </TouchableOpacity>
-          </>
-        )}
+          {/* Progress */}
+          <Text style={styles.progress}>
+            Question {index + 1} / {QUESTIONS.length}
+          </Text>
+        </>
+      ) : (
+        <>
+          {/* Results */}
+          <View style={styles.card}>
+            <Text style={styles.finishTitle}>🎉 Course Complete!</Text>
+            <Text style={styles.resultText}>
+              You scored {score} / {QUESTIONS.length}
+            </Text>
 
-        {currentActivity === 3 && (
-          <TextInput
-            style={styles.input}
-            placeholder="Write your future plans here..."
-            multiline
-            value={futurePlans}
-            onChangeText={setFuturePlans}
-          />
-        )}
-
-        <TouchableOpacity onPress={handleNextActivity} style={styles.nextButton}>
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </LinearGradient>
+            <Text style={styles.explanation}>
+              Amazing work. You’ve completed all core Filipino lessons and built
+              a strong foundation in vocabulary and sentence structure.
+            </Text>
+          </View>
+        </>
+      )}
+    </AppLayout>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  card: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 24,
   },
-  scrollContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 30,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  description: {
-    fontSize: 18,
-    color: '#555',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  input: {
-    width: '100%',
-    height: 100,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 10,
-    textAlignVertical: 'top',
-    marginBottom: 20,
-  },
-  scrambled: {
+  question: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-    textAlign: 'center',
+    fontWeight: "800",
+    marginBottom: 16,
+    textAlign: "center",
   },
-  checkButton: {
-    backgroundColor: '#4CAF50',
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 20,
+  option: {
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 2,
+    marginBottom: 10,
   },
-  nextButton: {
-    backgroundColor: '#007BFF',
-    padding: 15,
-    borderRadius: 5,
-    marginTop: 20,
-  },
-  buttonText: {
-    color: '#fff',
+  optionText: {
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
   },
-  example: {
+  controls: {
+    alignItems: "center",
+    marginTop: 12,
+  },
+  primaryButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 36,
+    borderRadius: 16,
+    backgroundColor: "#1E80FF",
+  },
+  primaryText: {
+    color: "white",
+    fontWeight: "800",
     fontSize: 16,
-    color: '#888',
-    marginTop: 10,
-    textAlign: 'center',
+  },
+  progress: {
+    textAlign: "center",
+    marginTop: 12,
+    color: "#777",
+  },
+  finishTitle: {
+    fontSize: 26,
+    fontWeight: "900",
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  resultText: {
+    fontSize: 20,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  explanation: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#444",
   },
 });
 

@@ -1,23 +1,43 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Pressable, View, Text, StyleSheet, Animated } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from "../../theme/ThemeProvider";
+import { Lesson } from "./types";
 
-const LessonNode = ({ icon, title, color, locked, onPress }) => {
+/* ✅ Correct icon name type */
+type IconName = React.ComponentProps<
+  typeof MaterialCommunityIcons
+>["name"];
+
+type Props = {
+  icon: IconName;
+  title: string;
+  color: string;
+  locked: boolean;
+  onPress: () => void;
+};
+
+const LessonNode: React.FC<Props> = ({
+  icon,
+  title,
+  color,
+  locked,
+  onPress,
+}) => {
   const { colors, typography } = useTheme();
-  const scale = new Animated.Value(1);
+  const scale = useRef(new Animated.Value(1)).current;
 
   const animatePress = () => {
     Animated.sequence([
       Animated.timing(scale, {
         toValue: 0.9,
         duration: 100,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }),
       Animated.timing(scale, {
         toValue: 1,
         duration: 100,
-        useNativeDriver: false,
+        useNativeDriver: true,
       }),
     ]).start(() => {
       if (!locked) onPress();
@@ -25,7 +45,7 @@ const LessonNode = ({ icon, title, color, locked, onPress }) => {
   };
 
   return (
-    <View style={{ alignItems: "center" }}>
+    <View style={styles.nodeBox}>
       <Pressable onPress={animatePress} disabled={locked}>
         <Animated.View
           style={[
@@ -45,14 +65,21 @@ const LessonNode = ({ icon, title, color, locked, onPress }) => {
         </Animated.View>
       </Pressable>
 
-      <Text style={[typography.body, { marginTop: 8 }]}>
+      <Text style={[typography.body, styles.label]}>
         {title}
       </Text>
     </View>
   );
 };
 
+export default LessonNode;
+
+/* ✅ THIS FIXES THE `styles` ERROR */
 const styles = StyleSheet.create({
+  nodeBox: {
+    width: 160,
+    alignItems: "center",
+  },
   circle: {
     width: 80,
     height: 80,
@@ -62,6 +89,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
   },
+  label: {
+    marginTop: 10,
+    textAlign: "center",
+    width: "100%",
+  },
 });
-
-export default LessonNode;

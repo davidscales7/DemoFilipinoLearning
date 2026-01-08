@@ -77,12 +77,14 @@ const QuizNode: React.FC<QuizNodeProps> = ({
 
 const styles = StyleSheet.create({
   circle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  width: 80,
+  height: 80,
+  borderRadius: 40,
+  justifyContent: "center",
+  alignItems: "center",
+  borderWidth: 3,
+},
+
 });
 
 export default QuizNode;

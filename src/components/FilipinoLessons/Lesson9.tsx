@@ -1,161 +1,203 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, { useState } from "react";
+import { View, Text, Pressable, StyleSheet } from "react-native";
+
+import AppLayout from "../../components/Layout/AppLayout";
+import { useTheme } from "../../theme/ThemeProvider";
+import { useXPStore } from "../../store/useXPStore";
+import { useProgressStore } from "../../store/useProgressStore";
+
+type Step = {
+  title: string;
+  explanation: string;
+  examples: string[];
+};
+
+const STEPS: Step[] = [
+  {
+    title: "Subject–Verb–Object (SVO)",
+    explanation:
+      "Filipino sentences often follow a Subject–Verb–Object structure. The subject comes first, followed by the verb and then the object.",
+    examples: [
+      "Ako ay masaya. (I am happy.)",
+      "Ikaw ay malungkot. (You are sad.)",
+      "Si Juan ay nagbabasa ng libro. (Juan is reading a book.)",
+    ],
+  },
+  {
+    title: "Negation with 'hindi'",
+    explanation:
+      "To make a sentence negative, use 'hindi' before the verb or adjective.",
+    examples: [
+      "Ako ay hindi masaya. (I am not happy.)",
+      "Sila ay hindi naglalaro. (They are not playing.)",
+      "Juan ay hindi nagbabasa ng libro.",
+    ],
+  },
+  {
+    title: "Questions",
+    explanation:
+      "Questions are formed using question words like 'Ano', 'Saan', or 'Kailan' at the start of the sentence.",
+    examples: [
+      "Ano ang ginagawa mo? (What are you doing?)",
+      "Saan siya pupunta? (Where is he/she going?)",
+      "Kailan tayo kakain? (When will we eat?)",
+    ],
+  },
+  {
+    title: "Sentence Variations",
+    explanation:
+      "You can add locations, descriptions, or details to make sentences richer.",
+    examples: [
+      "Si Maria ay nag-aaral sa eskuwelahan.",
+      "Ang aso ay natutulog sa ilalim ng mesa.",
+      "Kami ay naglalaro sa hardin.",
+    ],
+  },
+];
+
+const XP_PER_STEP = 20;
+const XP_FINISH_BONUS = 40;
 
 const Lesson9: React.FC = () => {
-  const [currentStep, setCurrentStep] = useState(0);
+  const theme = useTheme();
+  const addXP = useXPStore((s) => s.addXP);
+  const completeLesson = useProgressStore((s) => s.completeLesson);
 
-  const steps = [
-    {
-      title: "Subject-Verb-Object (SVO) Structure",
-      content: `
-        In Filipino, sentences typically follow the Subject-Verb-Object (SVO) structure. 
-        This means the subject comes first, followed by the verb, and then the object.
-        For example:
-          'Ako ay masaya.' means 'I am happy.'
-          'Sila ay mabuti.' means 'They are good.'
-      `,
-      examples: [
-        "Ako ay masaya. (I am happy.)",
-        "Ikaw ay malungkot. (You are sad.)",
-        "Sila ay mabuti. (They are good.)",
-        "Si Juan ay nagbabasa ng libro. (Juan is reading a book.)",
-      ],
-      activity: `
-        Translate the following sentences into Filipino:
-        1. I am reading a book.
-        2. She is singing a song.
-        3. They are playing soccer.
-      `,
-    },
-    {
-      title: "Negation (Pagsalungat)",
-      content: `
-        To negate a sentence in Filipino, you use the word 'hindi' before the adjective or verb. 
-        This changes the meaning of the sentence to a negative one.
-        For example:
-          'Ako ay hindi masaya.' means 'I am not happy.'
-          'Ikaw ay hindi mabuti.' means 'You are not good.'
-      `,
-      examples: [
-        "Ako ay hindi malungkot. (I am not sad.)",
-        "Ikaw ay hindi masaya. (You are not happy.)",
-        "Sila ay hindi naglalaro. (They are not playing.)",
-        "Juan ay hindi nagbabasa ng libro. (Juan is not reading a book.)",
-      ],
-      activity: `
-        Turn the following positive sentences into negative ones:
-        1. I am happy.
-        2. You are good.
-        3. They are playing.
-      `,
-    },
-    {
-      title: "Questions with SVO Structure",
-      content: `
-        In Filipino, forming a question can be done by adding a question word (e.g., 'Ano' or 'Saan') at the start of the sentence.
-        For example:
-          'Ano ang ginagawa mo?' means 'What are you doing?'
-          'Saan ka pupunta?' means 'Where are you going?'
-      `,
-      examples: [
-        "Ano ang ginagawa mo? (What are you doing?)",
-        "Saan siya pupunta? (Where is he/she going?)",
-        "Kailan tayo kakain? (When will we eat?)",
-        "Paano nila ginagawa ito? (How are they doing this?)",
-      ],
-      activity: `
-        Translate the following questions into Filipino:
-        1. What are you eating?
-        2. Where are they going?
-        3. How is she feeling?
-      `,
-    },
-    {
-      title: "Practice Sentences",
-      content: `
-        Practice rearranging words to form grammatically correct sentences. 
-        For example:
-          'malungkot / Ako / ay' → 'Ako ay malungkot.'
-      `,
-      examples: [
-        "Rearrange: 'masaya / Ikaw / ay' → Correct: 'Ikaw ay masaya.'",
-        "Rearrange: 'nagbabasa / Si Juan / ng libro / ay' → Correct: 'Si Juan ay nagbabasa ng libro.'",
-      ],
-      activity: `
-        Rearrange these words to form correct sentences:
-        1. 'ay / Si Ana / nagluluto / ng pagkain'
-        2. 'naglalaro / Ay / Sila / soccer'
-        3. 'Ako / ay / hindi / malungkot'
-      `,
-    },
-    {
-      title: "Sentence Variations",
-      content: `
-        You can add more variety to Filipino sentences by using descriptive phrases, prepositions, or additional details.
-        For example:
-          'Si Maria ay nag-aaral sa eskuwelahan.' means 'Maria is studying at the school.'
-          'Si Pedro ay kumakain ng mansanas sa kusina.' means 'Pedro is eating an apple in the kitchen.'
-      `,
-      examples: [
-        "Si Juan ay naglalakad sa parke. (Juan is walking in the park.)",
-        "Ang aso ay natutulog sa ilalim ng mesa. (The dog is sleeping under the table.)",
-        "Kami ay naglalaro sa hardin. (We are playing in the garden.)",
-      ],
-      activity: `
-        Translate the following into Filipino:
-        1. She is reading a book in the library.
-        2. The children are playing in the park.
-        3. I am eating lunch in the dining room.
-      `,
-    },
-  ];
+  const [stepIndex, setStepIndex] = useState(0);
+  const isLastStep = stepIndex >= STEPS.length;
 
-  const handleNext = () => {
-    if (currentStep < steps.length) {
-      setCurrentStep((prev) => prev + 1);
+  const next = () => {
+    console.log("➡️ NEXT STEP:", stepIndex);
+    addXP(XP_PER_STEP);
+
+    if (stepIndex < STEPS.length) {
+      setStepIndex((s) => s + 1);
     }
   };
 
+  const finishLesson = () => {
+    console.log("🎉 LESSON 9 COMPLETED");
+    addXP(XP_FINISH_BONUS);
+    completeLesson(9); // 🔓 unlocks Lesson 10
+  };
+
   return (
-    <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-      {currentStep < steps.length ? (
-        <View style={styles.card}>
-          <Text style={styles.title}>{steps[currentStep].title}</Text>
-          <Text style={styles.content}>{steps[currentStep].content}</Text>
-          {steps[currentStep].examples.map((example, index) => (
-            <Text key={index} style={styles.example}>{example}</Text>
-          ))}
-          <TouchableOpacity onPress={handleNext} style={styles.nextButton}>
-            <Text style={styles.nextButtonText}>Next</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={styles.card}>
-          <Text style={styles.congratulationsText}>🎉 Congratulations! 🎉</Text>
-          <Text style={styles.content}>
-            You have successfully completed Lesson 9! Great job applying what you've learned about Filipino sentence structure and grammar.
+    <AppLayout title="Lesson 9 — Sentence Structure">
+      {!isLastStep ? (
+        <>
+          {/* Intro */}
+          <Text
+            style={[
+              theme.typography.body,
+              {
+                textAlign: "center",
+                marginBottom: theme.spacing.lg,
+                color: theme.colors.textSecondary,
+              },
+            ]}
+          >
+            Learn how to build clear and natural Filipino sentences.
           </Text>
-        </View>
+
+          {/* Card */}
+          <View style={styles.card}>
+            <Text style={styles.title}>{STEPS[stepIndex].title}</Text>
+
+            <Text style={styles.explanation}>
+              {STEPS[stepIndex].explanation}
+            </Text>
+
+            {STEPS[stepIndex].examples.map((ex, i) => (
+              <Text key={i} style={styles.example}>
+                • {ex}
+              </Text>
+            ))}
+          </View>
+
+          {/* Controls */}
+          <View style={styles.controls}>
+            <Pressable onPress={next} style={styles.primaryButton}>
+              <Text style={styles.primaryText}>
+                {stepIndex === STEPS.length - 1 ? "Review Summary →" : "Next →"}
+              </Text>
+            </Pressable>
+          </View>
+
+          {/* Progress */}
+          <Text style={styles.progress}>
+            Step {stepIndex + 1} / {STEPS.length}
+          </Text>
+        </>
+      ) : (
+        <>
+          {/* Summary */}
+          <View style={styles.card}>
+            <Text style={styles.finishTitle}>🎉 Lesson Complete!</Text>
+            <Text style={styles.explanation}>
+              You now understand Filipino sentence structure, negation, and
+              question forms. Great work!
+            </Text>
+          </View>
+
+          <View style={styles.controls}>
+            <Pressable onPress={finishLesson} style={styles.primaryButton}>
+              <Text style={styles.primaryText}>Finish Lesson ✓</Text>
+            </Pressable>
+          </View>
+        </>
       )}
-    </LinearGradient>
+    </AppLayout>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  card: { padding: 20, backgroundColor: 'white', borderRadius: 10, alignItems: 'center' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-  content: { fontSize: 18, marginBottom: 10, textAlign: 'center' },
-  example: { fontSize: 16, fontStyle: 'italic', marginBottom: 5 },
-  nextButton: { marginTop: 20, padding: 10, backgroundColor: 'blue', borderRadius: 5 },
-  nextButtonText: { color: 'white', fontSize: 16 },
-  congratulationsText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: 'green',
-    marginBottom: 20,
-    textAlign: 'center',
+  card: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 24,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: "800",
+    marginBottom: 12,
+    textAlign: "center",
+  },
+  explanation: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  example: {
+    fontSize: 15,
+    marginBottom: 6,
+    color: "#444",
+  },
+  finishTitle: {
+    fontSize: 26,
+    fontWeight: "900",
+    textAlign: "center",
+    marginBottom: 16,
+  },
+  controls: {
+    alignItems: "center",
+    marginTop: 12,
+  },
+  primaryButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 32,
+    borderRadius: 16,
+    backgroundColor: "#1E80FF",
+  },
+  primaryText: {
+    color: "white",
+    fontWeight: "800",
+    fontSize: 16,
+  },
+  progress: {
+    textAlign: "center",
+    marginTop: 12,
+    color: "#777",
   },
 });
 

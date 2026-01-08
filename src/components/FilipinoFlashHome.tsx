@@ -1,74 +1,174 @@
 import React from "react";
-import { View, Text, Pressable } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { View, Text, Pressable, ScrollView, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../navigation/navigation";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import type { ComponentProps } from "react";
 
 import AppLayout from "../components/Layout/AppLayout";
-import { AppCard } from "../theme/components";
 import { useTheme } from "../theme/ThemeProvider";
+import { RootStackParamList } from "../navigation/navigation";
 
 type Nav = StackNavigationProp<RootStackParamList, "FilipinoFlashHome">;
+type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
+type FlashcardItem = {
+  title: string;
+  icon: IconName;
+  screen: string;
+  color: string;
+};
 
-const FilipinoFlashHome: React.FC = () => {
-  const navigation = useNavigation<Nav>();
-  const route = useRoute();
-  const theme = useTheme();
 
-  const params = (route.params as RootStackParamList["FilipinoFlashHome"]) ?? undefined;
-const flashcardTopics = [
-  { title: "Greetings", icon: "👋", count: 0, screen: "FilipinoGreetings", color: theme.colors.primary },
-  { title: "Numbers (Basic)", icon: "🔢", count: 0, screen: "FilipinoFlashNumbersBasic", color: theme.colors.secondary },
+const RED = "#ef4444";
 
-  { title: "Animals", icon: "🐶", count: 0, screen: "FilipinoAnimals", color: theme.colors.accent },
-  { title: "Body Parts", icon: "🧍", count: 0, screen: "FilipinoBodyparts", color: theme.colors.primary },
+/* -------------------- DATA -------------------- */
 
-  { title: "Colours", icon: "🎨", count: 0, screen: "FilipinoColours", color: theme.colors.secondary },
-  { title: "Weather", icon: "☀️", count: 0, screen: "FilipinoWeather", color: theme.colors.accent },
-
-  { title: "Food & Drink", icon: "🍲", count: 0, screen: "FilipinoFoodAndDrink", color: theme.colors.primary },
-  { title: "House Items", icon: "🏠", count: 0, screen: "FilipinoHouseItems", color: theme.colors.secondary },
-
-  { title: "Transport", icon: "🚗", count: 0, screen: "FilipinoTransports", color: theme.colors.accent },
-  { title: "Sports", icon: "⚽", count: 0, screen: "FilipinoSports", color: theme.colors.primary },
-
-  { title: "Family", icon: "👨‍👩‍👧‍👦", count: 0, screen: "FilipinoFamily", color: theme.colors.secondary },
-  { title: "General Topics", icon: "📚", count: 0, screen: "FilipinoGeneralTopics", color: theme.colors.accent },
-
-  { title: "Daily Lesson", icon: "📅", count: 0, screen: "FilipinoDailyLesson", color: theme.colors.primary },
-  { title: "New Topic", icon: "✨", count: 0, screen: "FilipinoNewTopic", color: theme.colors.secondary },
+const coreVocabulary: FlashcardItem[] = [
+  { title: "Greetings", icon: "hand-wave", screen: "FilipinoGreetings", color: "#3b82f6" }, // blue
+  { title: "Numbers", icon: "numeric", screen: "FilipinoFlashNumbersBasic", color: "#22c55e" }, // green
+  { title: "Family", icon: "account-group", screen: "FilipinoFamily", color: "#a855f7" }, // purple
+  { title: "Body Parts", icon: "human", screen: "FilipinoBodyparts", color: "#ef4444" }, // red
+  { title: "Colours", icon: "palette", screen: "FilipinoColours", color: "#f97316" }, // orange
 ];
 
-  return (
-    <AppLayout
-      title="Flashcards"
-      animatedStartXP={params?.animatedStartXP}
-      animatedEndXP={params?.animatedEndXP}
-    >
-      <Text style={[theme.typography.body, { textAlign: "center", marginBottom: theme.spacing.xl, color: theme.colors.textSecondary }]}>
-        Choose a flashcard deck to start practicing vocabulary!
-      </Text>
 
-      <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: theme.spacing.md }}>
-        {flashcardTopics.map((item, index) => (
+const everydayTopics: FlashcardItem[] = [
+  { title: "Food & Drink", icon: "food", screen: "FilipinoFoodAndDrink", color: "#f59e0b" }, // amber
+  { title: "Transport", icon: "car", screen: "FilipinoTransports", color: "#0ea5e9" }, // sky
+  { title: "Weather", icon: "weather-sunny", screen: "FilipinoWeather", color: "#eab308" }, // yellow
+  { title: "Sports", icon: "soccer", screen: "FilipinoSports", color: "#10b981" }, // emerald
+  { title: "House Items", icon: "home-outline", screen: "FilipinoHouseItems", color: "#6366f1" }, // indigo
+];
+
+
+
+const extras: FlashcardItem[] = [
+  { title: "General", icon: "book-outline", screen: "FilipinoGeneralTopics", color: "#64748b" }, // slate
+];
+
+/* -------------------- COMPONENTS -------------------- */
+
+const FlashcardTrack = ({
+  title,
+  items,
+}: {
+  title: string;
+  items: FlashcardItem[];
+}) => {
+  const navigation = useNavigation<Nav>();
+
+  return (
+    <View style={styles.trackBlock}>
+      <Text style={styles.trackTitle}>{title}</Text>
+
+      <View style={styles.trackRow}>
+        {items.map((item, index) => (
           <Pressable
             key={index}
             onPress={() => navigation.navigate(item.screen as any)}
-            style={{ width: "45%" }}
+            style={styles.nodeWrap}
           >
-            <AppCard color={item.color}>
-              <Text style={[theme.typography.subtitle, { textAlign: "center", marginBottom: theme.spacing.sm }]}>
-                {item.icon} {item.title}
-              </Text>
-              <Text style={{ textAlign: "center", marginTop: theme.spacing.xs, color: theme.colors.textSecondary }}>
-                {item.count} cards
-              </Text>
-            </AppCard>
+       <View
+  style={[
+    styles.node,
+    {
+      borderColor: item.color,
+      backgroundColor: `${item.color}15`,
+    },
+  ]}
+>
+  <MaterialCommunityIcons
+    name={item.icon}
+    size={28}
+    color={item.color}
+  />
+</View>
+
+
+            <Text style={styles.nodeLabel}>{item.title}</Text>
           </Pressable>
         ))}
       </View>
+    </View>
+  );
+};
+
+/* -------------------- SCREEN -------------------- */
+
+const FilipinoFlashHome: React.FC = () => {
+  const theme = useTheme();
+
+  return (
+    <AppLayout title="Flashcards">
+      <ScrollView contentContainerStyle={{ paddingBottom: 60 }}>
+        <Text
+          style={[
+            theme.typography.body,
+            {
+              textAlign: "center",
+              marginBottom: theme.spacing.xl,
+              color: theme.colors.textSecondary,
+            },
+          ]}
+        >
+          Drill vocabulary with focused flashcard tracks.
+        </Text>
+
+        <FlashcardTrack title="Core Vocabulary" items={coreVocabulary} />
+        <FlashcardTrack title="Everyday Topics" items={everydayTopics} />
+        <FlashcardTrack title="Extras" items={extras} />
+      </ScrollView>
     </AppLayout>
   );
 };
 
 export default FilipinoFlashHome;
+
+/* -------------------- STYLES -------------------- */
+
+const styles = StyleSheet.create({
+  trackBlock: {
+    marginBottom: 48,
+    alignItems: "center",
+  },
+
+  trackTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginBottom: 18,
+  },
+
+  trackRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 32,
+    flexWrap: "wrap",
+  },
+
+  nodeWrap: {
+    alignItems: "center",
+    width: 110,
+  },
+
+  node: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 3,
+    borderColor: RED,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
+  },
+
+    nodeLabel: {
+    marginTop: 8,
+    fontSize: 13,
+    textAlign: "center",
+  },
+});

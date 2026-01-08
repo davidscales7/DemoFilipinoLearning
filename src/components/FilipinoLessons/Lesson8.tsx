@@ -1,287 +1,253 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-//Hobbies and interests
-const slides = [
-  { word: "Reading", translated: "Pagbabasa", image: require('../../../assets/images/reading.jpg') },
-  { word: "Playing Sports", translated: "Paglalaro ng Palakasan", image: require('../../../assets/images/sports.jpg') },
-  { word: "Watching Movies", translated: "Panonood ng Pelikula", image: require('../../../assets/images/movies.jpg') },
-  { word: "Cooking", translated: "Pagluluto", image: require('../../../assets/images/cooking.jpg') },
-  { word: "Dancing", translated: "Pagsasayaw", image: require('../../../assets/images/dancing.jpg') },
-  { word: "Singing", translated: "Pagkanta", image: require('../../../assets/images/singing.jpg') },
-  { word: "Drawing", translated: "Pagpipinta", image: require('../../../assets/images/drawing.jpg') },
-  { word: "Gardening", translated: "Paghahalaman", image: require('../../../assets/images/gardening.jpg') },
-  { word: "Traveling", translated: "Paglalakbay", image: require('../../../assets/images/traveling.jpg') },
-  { word: "Playing Instruments", translated: "Pagtugtog ng Instrumento", image: require('../../../assets/images/music.jpg') },
-];
+import React, { useState } from "react";
+import { View, Text, Pressable, Image } from "react-native";
 
-const questions = [
+import AppLayout from "../../components/Layout/AppLayout";
+import { useTheme } from "../../theme/ThemeProvider";
+import { useXPStore } from "../../store/useXPStore";
+import { useProgressStore } from "../../store/useProgressStore";
+
+/* ---------------- TYPES ---------------- */
+
+type HobbyItem = {
+  english: string;
+  filipino: string;
+  sentenceEN: string;
+  sentenceTL: string;
+  image: any;
+};
+
+/* ---------------- DATA ---------------- */
+
+const HOBBIES: HobbyItem[] = [
   {
-    question: "How do you say 'Reading' in Tagalog?",
-    options: ["Pagluluto", "Pagbabasa", "Pagsasayaw", "Pagpipinta"],
-    correctAnswer: "Pagbabasa",
-    image: require('../../../assets/images/reading.jpg'),
+    english: "Reading",
+    filipino: "Pagbabasa",
+    sentenceEN: "I like reading books.",
+    sentenceTL: "Gusto kong magbasa ng libro.",
+    image: require("../../../assets/images/reading.png"),
   },
   {
-    question: "How do you say 'Cooking' in Tagalog?",
-    options: ["Pagsasayaw", "Pagluluto", "Panonood ng Pelikula", "Paghahalaman"],
-    correctAnswer: "Pagluluto",
-    image: require('../../../assets/images/cooking.jpg'),
+    english: "Playing games",
+    filipino: "Paglalaro",
+    sentenceEN: "I play games at night.",
+    sentenceTL: "Naglalaro ako sa gabi.",
+    image: require("../../../assets/images/gaming.png"),
   },
   {
-    question: "How do you say 'Watching Movies' in Tagalog?",
-    options: ["Paglalakbay", "Panonood ng Pelikula", "Pagtugtog ng Instrumento", "Pagkanta"],
-    correctAnswer: "Panonood ng Pelikula",
-    image: require('../../../assets/images/movies.jpg'),
-  },
-  {
-    question: "What hobby is 'Pagpipinta' in English?",
-    options: ["Drawing", "Dancing", "Traveling", "Gardening"],
-    correctAnswer: "Drawing",
-    image: require('../../../assets/images/drawing.jpg'),
-  },
-  {
-    question: "What is the Tagalog translation of 'Playing Instruments'?",
-    options: ["Pagtugtog ng Instrumento", "Pagbabasa", "Pagpipinta", "Pagkanta"],
-    correctAnswer: "Pagtugtog ng Instrumento",
-    image: require('../../../assets/images/music.jpg'),
+    english: "Cooking",
+    filipino: "Pagluluto",
+    sentenceEN: "I enjoy cooking food.",
+    sentenceTL: "Mahilig akong magluto ng pagkain.",
+    image: require("../../../assets/images/cooking.jpg"),
   },
 ];
 
+const XP_PER_ITEM = 15;
 
-
-const dialogues = [
-  {
-    // Question: "What is your hobby?" - This asks the listener about their hobby.
-    question: "Ano ang iyong libangan?",
-
-    // Answer: "I like reading." - This responds with a specific hobby (reading).
-    answer: "Gusto kong magbasa." 
-  },
-  {
-    // Question: "Do you like to cook?" - This asks if the listener enjoys cooking.
-    question: "Gusto mo bang magluto?",
-
-    // Answer: "Yes, I like to cook delicious food." - This affirms and elaborates with details.
-    answer: "Oo, gusto kong magluto ng mga masarap na pagkain."
-  },
-  {
-    // Question: "What do you do every Saturday?" - This asks about a habitual activity on Saturdays.
-    question: "Ano ang ginagawa mo tuwing Sabado?",
-
-    // Answer: "I paint every Saturday." - This responds with a specific hobby (painting) and mentions the routine.
-    answer: "Nagpipinta ako tuwing Sabado."
-  },
-  {
-    // Question: "Do you enjoy singing?" - This asks if the listener enjoys the hobby of singing.
-    question: "Gusto mo bang kumanta?",
-
-    // Answer: "Yes, I love singing songs." - This affirms the interest in singing with an added detail.
-    answer: "Oo, mahilig akong kumanta ng mga kanta."
-  },
-  {
-    // Question: "What hobby do you want to learn?" - This asks about a hobby the listener is interested in learning.
-    question: "Anong libangan ang gusto mong matutunan?",
-
-    // Answer: "I want to learn how to play the guitar." - This responds with a specific interest (playing the guitar).
-    answer: "Gusto kong matutong tumugtog ng gitara."
-  },
-];
-
-
+/* ---------------- COMPONENT ---------------- */
 
 const Lesson8: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [showAnswer, setShowAnswer] = useState(false);
-  const [inDialoguePhase, setInDialoguePhase] = useState(false);
-  const [currentDialogue, setCurrentDialogue] = useState(0);
+  const theme = useTheme();
 
-  const handleNextSlide = () => {
-    if (currentSlide < slides.length - 1) {
-      setCurrentSlide((prev) => prev + 1);
-    } else {
-      setCurrentSlide(null); // Indicates that the intro slides are over
+  const addXP = useXPStore((s) => s.addXP);
+  const completeLesson = useProgressStore((s) => s.completeLesson);
+
+  const [index, setIndex] = useState(0);
+  const [stage, setStage] = useState<"word" | "sentence">("word");
+  const [showSummary, setShowSummary] = useState(false);
+
+  const current = HOBBIES[index];
+
+  /* ---------------- NEXT ---------------- */
+
+  const next = () => {
+    console.log("➡️ NEXT PRESSED — Lesson 8");
+    console.log("Index:", index);
+    console.log("Stage:", stage);
+
+    addXP(XP_PER_ITEM);
+    console.log("✅ XP ADDED:", XP_PER_ITEM);
+
+    setStage("word");
+
+    if (index < HOBBIES.length - 1) {
+      setIndex((i) => i + 1);
+      return;
     }
+
+    // ✅ Finished lesson
+    console.log("🎉 ALL HOBBIES COMPLETED — UNLOCKING LESSON 9");
+    completeLesson(8);
+    setShowSummary(true);
   };
 
-  const handleOptionPress = (option: string) => {
-    if (selectedOption === option) {
-      setShowAnswer(true);
-      setTimeout(() => {
-        setCurrentQuestion((prev) => prev + 1);
-        setSelectedOption(null);
-        setShowAnswer(false);
-      }, 3000); // 3 seconds delay before moving to the next question
-    } else {
-      setSelectedOption(option);
-    }
-  };
+  /* ---------------- SUMMARY ---------------- */
 
-  if (currentSlide !== null && currentSlide < slides.length) {
+  if (showSummary) {
     return (
-      <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-        <View style={styles.card}>
-          <Text style={styles.text}>{slides[currentSlide].word}</Text>
-          <Image source={slides[currentSlide].image} style={styles.introImage} resizeMode="contain" />
-          <Text style={styles.text}>{slides[currentSlide].translated}</Text>
-        </View>
-        <TouchableOpacity onPress={handleNextSlide} style={styles.nextButton}>
-          <Text style={styles.optionText}>Next</Text>
-        </TouchableOpacity>
-      </LinearGradient>
-    );
-  }
+      <AppLayout title="Lesson 8 Complete 🎉">
+        <View style={{ alignItems: "center", marginTop: theme.spacing.xl }}>
+          <Text style={theme.typography.title}>
+            Great job!
+          </Text>
 
-  if (currentQuestion >= questions.length && !inDialoguePhase) {
-    setInDialoguePhase(true); // Start dialogue phase
-    setCurrentDialogue(0); // Reset dialogue index
-  }
-
-  if (inDialoguePhase) {
-    const dialogue = dialogues[currentDialogue];
-
-    return (
-      <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-        <View style={styles.card}>
-          <Text style={styles.text}>Q: {dialogue.question}</Text>
-          <Text style={styles.answerText}>A: {dialogue.answer}</Text>
-          <TouchableOpacity
-            onPress={() => {
-              if (currentDialogue < dialogues.length - 1) {
-                setCurrentDialogue((prev) => prev + 1);
-              } else {
-                setInDialoguePhase(false);
-                alert("You've completed the lesson! 🎉");
-              }
-            }}
-            style={styles.nextButton}
+          <Text
+            style={[
+              theme.typography.body,
+              {
+                marginTop: theme.spacing.md,
+                textAlign: "center",
+                color: theme.colors.textSecondary,
+              },
+            ]}
           >
-            <Text style={styles.optionText}>Next</Text>
-          </TouchableOpacity>
+            You’ve learned how to talk about hobbies in Filipino.
+            Lesson 9 is now unlocked!
+          </Text>
+
+          <Pressable
+            style={{
+              marginTop: theme.spacing.xl,
+              paddingVertical: theme.spacing.md,
+              paddingHorizontal: theme.spacing.xl,
+              borderRadius: 14,
+              backgroundColor: theme.colors.primary,
+            }}
+          >
+            <Text style={{ color: "white", fontWeight: "700" }}>
+              Continue →
+            </Text>
+          </Pressable>
         </View>
-      </LinearGradient>
+      </AppLayout>
     );
   }
 
-  if (currentQuestion >= questions.length) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>You've completed the First lesson</Text>
-      </View>
-    );
-  }
+  /* ---------------- MAIN ---------------- */
 
   return (
-    <LinearGradient colors={['#FFDEE9', '#B5FFFC']} style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Question {currentQuestion + 1} of {questions.length}</Text>
-      </View>
-      <View style={styles.card}>
-        <Text style={styles.text}>{questions[currentQuestion].question}</Text>
-        {!showAnswer ? (
-          questions[currentQuestion].options.map((option) => (
-            <TouchableOpacity
-              key={option}
-              onPress={() => handleOptionPress(option)}
+    <AppLayout title="Lesson 8 — Hobbies">
+      {/* Intro */}
+      <Text
+        style={[
+          theme.typography.body,
+          {
+            textAlign: "center",
+            marginBottom: theme.spacing.lg,
+            color: theme.colors.textSecondary,
+          },
+        ]}
+      >
+        Learn hobbies and how to talk about what you like doing.
+      </Text>
+
+      {/* Card */}
+      <View
+        style={{
+          backgroundColor: "white",
+          borderRadius: 20,
+          padding: theme.spacing.xl,
+          alignItems: "center",
+        }}
+      >
+        <Image
+          source={current.image}
+          style={{ width: 120, height: 120, marginBottom: 16 }}
+          resizeMode="contain"
+        />
+
+        {stage === "word" ? (
+          <>
+            <Text style={theme.typography.title}>
+              {current.english}
+            </Text>
+
+            <Text
               style={[
-                styles.optionButton,
-                selectedOption === option && styles.selectedOption,
+                theme.typography.subtitle,
+                { color: theme.colors.primary, marginVertical: 8 },
               ]}
             >
-              <Text style={styles.optionText}>{option}</Text>
-            </TouchableOpacity>
-          ))
+              {current.filipino}
+            </Text>
+
+            <Pressable
+              onPress={() => setStage("sentence")}
+              style={{
+                marginTop: 12,
+                paddingVertical: 10,
+                paddingHorizontal: 18,
+                borderRadius: 999,
+                backgroundColor: theme.colors.secondary,
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: "700" }}>
+                Use in a sentence →
+              </Text>
+            </Pressable>
+          </>
         ) : (
           <>
-            <Text style={styles.answerText}>
-              Correct Answer: {questions[currentQuestion].correctAnswer}
+            <Text
+              style={[
+                theme.typography.subtitle,
+                { textAlign: "center", marginBottom: 6 },
+              ]}
+            >
+              {current.sentenceEN}
             </Text>
-            <Image
-              source={questions[currentQuestion].image}
-              style={styles.answerImage}
-              resizeMode="contain"
-            />
+
+            <Text
+              style={[
+                theme.typography.body,
+                {
+                  textAlign: "center",
+                  color: theme.colors.primary,
+                  marginBottom: 12,
+                },
+              ]}
+            >
+              {current.sentenceTL}
+            </Text>
           </>
         )}
       </View>
-    </LinearGradient>
+
+      {/* Controls */}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "center",
+          marginTop: theme.spacing.xl,
+        }}
+      >
+        <Pressable
+          onPress={next}
+          style={{
+            paddingVertical: theme.spacing.md,
+            paddingHorizontal: theme.spacing.xl,
+            borderRadius: 14,
+            backgroundColor: theme.colors.primary,
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "700" }}>
+            {index === HOBBIES.length - 1 ? "Finish ✓" : "Next →"}
+          </Text>
+        </Pressable>
+      </View>
+
+      {/* Progress */}
+      <Text
+        style={{
+          textAlign: "center",
+          marginTop: theme.spacing.md,
+          color: theme.colors.textSecondary,
+        }}
+      >
+        Item {index + 1} / {HOBBIES.length}
+      </Text>
+    </AppLayout>
   );
 };
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 20,
-  },
-  header: {
-    marginBottom: 20,
-  },
-  headerText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
-  },
-  card: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 5,
-    alignItems: 'center', // Center the content
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  optionButton: {
-    padding: 15,
-    marginVertical: 10,
-    borderRadius: 5,
-    backgroundColor: '#ddd',
-    width: '100%', // Ensure the button width is full
-    alignItems: 'center',
-  },
-  optionText: {
-    fontSize: 18,
-    color: '#333',
-  },
-  selectedOption: {
-    backgroundColor: 'orange',
-  },
-  answerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: 'green',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  answerImage: {
-    width: '80%',
-    height: 200,
-  },
-  introImage: {
-    width: '80%',
-    height: 300,
-    marginBottom: 20,
-  },
-  nextButton: {
-    padding: 15,
-    marginTop: 20,
-    borderRadius: 5,
-    backgroundColor: 'blue',
-    alignItems: 'center',
-  },
-});
 
 export default Lesson8;
