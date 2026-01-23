@@ -32,8 +32,8 @@ export const useProgressStore = create<ProgressState>()(
 
         const completed = get().completedLessons;
         return (
-          completed.includes(lesson - 1) &&
-          completed.includes(lesson - 2)
+          completed.includes(lesson - 0) &&
+          completed.includes(lesson - 0)
         );
       },
     }),

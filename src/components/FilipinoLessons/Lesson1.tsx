@@ -1,23 +1,46 @@
 // Lesson1.tsx
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import AppLayout from "../../components/Layout/AppLayout";
 import LessonLayout from "./LessonLayout";
 import { useProgressStore } from "../../store/useProgressStore";
+import { useDemoStore } from "../../store/useDemoStore";
+import { RootStackParamList } from "../../navigation/navigation";
+import { useAccoladeStore } from "../../store/useAccoladeStore";
+import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
 
 /* ----------------------------------------
-   SLIDES
+   TYPES
+---------------------------------------- */
+type Nav = StackNavigationProp<
+  RootStackParamList,
+  "FilipinoLearning"
+>;
+
+/* ----------------------------------------
+   DATA
 ---------------------------------------- */
 const slides = [
-  { word: "Kamusta", translated: "Hello / How are you?", image: require("../../../assets/images/hello.png") },
-  { word: "Mabuti", translated: "I'm Good", image: require("../../../assets/images/good.jpg") },
-  { word: "Masaya", translated: "I'm Happy", image: require("../../../assets/images/happy.jpg") },
+  {
+    word: "Kamusta",
+    translated: "Hello / How are you?",
+    image: require("../../../assets/images/hello.png"),
+  },
+  {
+    word: "Mabuti",
+    translated: "I'm Good",
+    image: require("../../../assets/images/good.jpg"),
+  },
+  {
+    word: "Masaya",
+    translated: "I'm Happy",
+    image: require("../../../assets/images/happy.jpg"),
+  },
 ];
 
-/* ----------------------------------------
-   QUIZ
----------------------------------------- */
 const questions = [
   {
     question: "What does 'Kamusta' mean?",
@@ -28,34 +51,59 @@ const questions = [
 ];
 
 const Lesson1: React.FC = () => {
+
+  // 🧭 navigation
+  const navigation = useNavigation<Nav>();
+
+  // 📚 progress store
   const completeLesson = useProgressStore((s) => s.completeLesson);
 
+  // 🔓 demo store
+  const unlockDemo = useDemoStore((s) => s.unlockDemo);
+  
+  // 🏆 accolades store
+  const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
+
+  // 🧠 local state
   const [page, setPage] = useState<"lesson" | "quiz" | "summary">("lesson");
   const [slideIndex, setSlideIndex] = useState(0);
-  const [questionIndex] = useState(0);
 
   const [selected, setSelected] = useState<string | null>(null);
   const [wrong, setWrong] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
 
   /* ----------------------------------------
-     MARK COMPLETE (ONLY ON SUMMARY)
+     🔓 UNLOCK DEMO ON SUMMARY (ONCE)
   ---------------------------------------- */
   useEffect(() => {
-    if (page === "summary") {
-      completeLesson(1);
-    }
-  }, [page, completeLesson]);
+    if (page !== "summary") return;
+
+    completeLesson(1);
+    unlockDemo();
+    unlockAccolade(DEMO_ACCOLADES.LESSONS.LESSON_1);
+  }, [page, completeLesson, unlockDemo, unlockAccolade]);
 
   /* ----------------------------------------
      SUMMARY
   ---------------------------------------- */
   if (page === "summary") {
     return (
-      <AppLayout title="Lesson 1">
+      <AppLayout title="Lesson 1 Complete">
         <LessonLayout lessonNumber={1} mode="summary">
-          <Text style={styles.title}>Nice work 🎉</Text>
-          <Text>You completed Lesson 1</Text>
+          <Text style={styles.title}>🎉 Congratulations!</Text>
+
+          <Text style={styles.body}>
+            You've completed Lesson 1.
+            {"\n\n"}
+            The rest of the demo is now unlocked!
+          </Text>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("FilipinoLearning")}
+          >
+            <Text style={styles.buttonText}>Back to Dashboard</Text>
+          </TouchableOpacity>
         </LessonLayout>
       </AppLayout>
     );
@@ -65,7 +113,7 @@ const Lesson1: React.FC = () => {
      QUIZ
   ---------------------------------------- */
   if (page === "quiz") {
-    const q = questions[questionIndex];
+    const q = questions[0];
 
     return (
       <AppLayout title="Lesson 1">
@@ -80,7 +128,6 @@ const Lesson1: React.FC = () => {
                 styles.option,
                 selected === opt && styles.selected,
                 wrong === opt && styles.wrong,
-                locked && { opacity: 0.6 },
               ]}
               onPress={() => {
                 if (locked) return;
@@ -88,22 +135,14 @@ const Lesson1: React.FC = () => {
                 setSelected(opt);
                 setWrong(null);
 
-                // ❌ Wrong
                 if (opt !== q.correct) {
                   setWrong(opt);
                   setTimeout(() => setWrong(null), 600);
                   return;
                 }
 
-                // ✅ Correct
                 setLocked(true);
-
-                setTimeout(() => {
-                  setSelected(null);
-                  setWrong(null);
-                  setLocked(false);
-                  setPage("summary");
-                }, 700);
+                setTimeout(() => setPage("summary"), 700);
               }}
             >
               <Text>{opt}</Text>
@@ -117,7 +156,7 @@ const Lesson1: React.FC = () => {
   }
 
   /* ----------------------------------------
-     LESSON
+     LESSON SLIDES
   ---------------------------------------- */
   const slide = slides[slideIndex];
 
@@ -148,12 +187,22 @@ const Lesson1: React.FC = () => {
   );
 };
 
+export default Lesson1;
+
+/* ----------------------------------------
+   STYLES
+---------------------------------------- */
 const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: "800",
     marginBottom: 12,
     textAlign: "center",
+  },
+  body: {
+    textAlign: "center",
+    fontSize: 16,
+    marginBottom: 24,
   },
   image: {
     width: 220,
@@ -180,11 +229,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selected: {
-    backgroundColor: "#FBBF24", // yellow
+    backgroundColor: "#FBBF24",
   },
   wrong: {
-    backgroundColor: "#F87171", // red
+    backgroundColor: "#F87171",
   },
 });
-
-export default Lesson1;

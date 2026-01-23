@@ -6,11 +6,14 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import AppLayout from "../Layout/AppLayout";
 import { RootStackParamList } from "../../navigation/navigation";
 import QuizChapter from "./QuizChapter";
-
+import { useDemoStore } from "../../store/useDemoStore";
 type Nav = StackNavigationProp<RootStackParamList>;
 
 const FilipinoQuizzes: React.FC = () => {
   const navigation = useNavigation<Nav>();
+
+  // 🔓 DEMO FLAG (single source of truth)
+  const demoUnlocked = useDemoStore((s) => s.isUnlocked);
 
   const goTo = (screen: keyof RootStackParamList) => {
     navigation.navigate(screen as never);
@@ -25,21 +28,21 @@ const FilipinoQuizzes: React.FC = () => {
           title: "Greetings",
           icon: "comment-question-outline",
           color: "#3b82f6",
-          locked: false,
+          locked: !demoUnlocked,
           onPress: () => goTo("Quiz1"),
         },
         {
           title: "Numbers",
           icon: "numeric",
           color: "#22c55e",
-          locked: false,
+          locked: !demoUnlocked,
           onPress: () => goTo("Quiz2"),
         },
         {
           title: "Family",
           icon: "account-group",
           color: "#a855f7",
-          locked: true,
+          locked: !demoUnlocked,
           onPress: () => goTo("Quiz3"),
         },
       ],
@@ -52,21 +55,21 @@ const FilipinoQuizzes: React.FC = () => {
           title: "Colours",
           icon: "palette",
           color: "#f97316",
-          locked: true,
+          locked: !demoUnlocked,
           onPress: () => goTo("Quiz4"),
         },
         {
           title: "Animals",
           icon: "paw",
           color: "#eab308",
-          locked: true,
+          locked: !demoUnlocked,
           onPress: () => goTo("Quiz5"),
         },
         {
           title: "Food & Drink",
           icon: "food",
           color: "#ef4444",
-          locked: true,
+          locked: !demoUnlocked,
           onPress: () => goTo("Quiz6"),
         },
       ],
@@ -79,14 +82,14 @@ const FilipinoQuizzes: React.FC = () => {
           title: "Sentence Structure",
           icon: "format-text",
           color: "#14b8a6",
-          locked: true,
+          locked: !demoUnlocked,
           onPress: () => goTo("Quiz8"),
         },
         {
           title: "Final Test",
           icon: "clipboard-check",
           color: "#22c55e",
-          locked: true,
+          locked: !demoUnlocked,
           onPress: () => goTo("Quiz9"),
         },
       ],
