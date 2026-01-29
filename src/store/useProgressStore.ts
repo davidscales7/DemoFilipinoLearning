@@ -13,33 +13,26 @@ export const useProgressStore = create<ProgressState>()(
   persist(
     (set, get) => ({
       completedLessons: [],
-
+      
       completeLesson: (lesson) => {
         const completed = get().completedLessons;
         if (!completed.includes(lesson)) {
           set({ completedLessons: [...completed, lesson] });
         }
       },
-
+      
       /**
-       * 🔓 PAIR-BASED UNLOCKING
-       * 1–2 → unlock 3–4
-       * 3–4 → unlock 5–6
-       * etc
-       */
-      isLessonUnlocked: (lesson) => {
-        if (lesson === 1 || lesson === 2) return true;
+       * lesson 1 unlocks everything purely for demo purposes
+        */isLessonUnlocked: (lesson) => {
+  if (lesson === 1) return true;
 
-        const completed = get().completedLessons;
-        return (
-          completed.includes(lesson - 0) &&
-          completed.includes(lesson - 0)
-        );
-      },
+  const completed = get().completedLessons;
+  return completed.includes(1);
+        }
     }),
     {
       name: "lesson-progress",
-      storage: createJSONStorage(() => AsyncStorage), // ✅ THIS FIXES IT
+      storage: createJSONStorage(() => AsyncStorage),
     }
   )
 );

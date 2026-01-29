@@ -15,23 +15,19 @@ import AppLayout from "../components/Layout/AppLayout";
 import { useTheme } from "../theme/ThemeProvider";
 import { RootStackParamList } from "../navigation/navigation";
 import { useDemoStore } from "../store/useDemoStore";
+import { useProgressStore } from "../store/useProgressStore";
 
 /* -------------------- TYPES -------------------- */
 
-type Nav = StackNavigationProp<
-  RootStackParamList,
-  "FilipinoFlashHome"
->;
-
-type IconName = ComponentProps<
-  typeof MaterialCommunityIcons
->["name"];
+type Nav = StackNavigationProp<RootStackParamList, "FilipinoFlashHome">;
+type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
 
 type FlashcardItem = {
   title: string;
   icon: IconName;
   screen: string;
   color: string;
+  requiredLesson?: number;
 };
 
 /* -------------------- DATA -------------------- */
@@ -42,30 +38,35 @@ const coreVocabulary: FlashcardItem[] = [
     icon: "hand-wave",
     screen: "FilipinoGreetings",
     color: "#3b82f6",
+    requiredLesson: 1,
   },
   {
     title: "Numbers",
     icon: "numeric",
     screen: "FilipinoFlashNumbersBasic",
     color: "#22c55e",
+    requiredLesson: 2,
   },
   {
     title: "Family",
     icon: "account-group",
     screen: "FilipinoFamily",
     color: "#a855f7",
+    requiredLesson: 3,
   },
   {
     title: "Body Parts",
     icon: "human",
     screen: "FilipinoBodyparts",
     color: "#ef4444",
+    requiredLesson: 3,
   },
   {
     title: "Colours",
     icon: "palette",
     screen: "FilipinoColours",
     color: "#f97316",
+    requiredLesson: 4,
   },
 ];
 
@@ -75,30 +76,35 @@ const everydayTopics: FlashcardItem[] = [
     icon: "food",
     screen: "FilipinoFoodAndDrink",
     color: "#f59e0b",
+    requiredLesson: 6,
   },
   {
     title: "Transport",
     icon: "car",
     screen: "FilipinoTransports",
     color: "#0ea5e9",
+    requiredLesson: 6,
   },
   {
     title: "Weather",
     icon: "weather-sunny",
     screen: "FilipinoWeather",
     color: "#eab308",
+    requiredLesson: 6,
   },
   {
     title: "Sports",
     icon: "soccer",
     screen: "FilipinoSports",
     color: "#10b981",
+    requiredLesson: 8,
   },
   {
     title: "House Items",
     icon: "home-outline",
     screen: "FilipinoHouseItems",
     color: "#6366f1",
+    requiredLesson: 7,
   },
 ];
 
@@ -108,6 +114,7 @@ const extras: FlashcardItem[] = [
     icon: "book-outline",
     screen: "FilipinoGeneralTopics",
     color: "#64748b",
+    requiredLesson: 5,
   },
 ];
 
@@ -116,11 +123,13 @@ const extras: FlashcardItem[] = [
 const FlashcardTrack = ({
   title,
   items,
-  locked,
+  demoUnlocked,
+  completedLessons,
 }: {
   title: string;
   items: FlashcardItem[];
-  locked: boolean;
+  demoUnlocked: boolean;
+  completedLessons: number[];
 }) => {
   const navigation = useNavigation<Nav>();
 
@@ -129,52 +138,63 @@ const FlashcardTrack = ({
       <Text style={styles.trackTitle}>{title}</Text>
 
       <View style={styles.trackRow}>
-        {items.map((item, index) => (
-          <Pressable
-            key={index}
-            disabled={locked}
-            onPress={() =>
-              !locked &&
-              navigation.navigate(item.screen as any)
-            }
-            style={({ pressed }) => [
-              styles.nodeWrap,
-              {
-                opacity: locked
-                  ? 0.45
-                  : pressed
-                  ? 0.85
-                  : 1,
-              },
-            ]}
-          >
-            <View
-              style={[
-                styles.node,
+        {items.map((item, index) => {
+          const isUnlocked =
+            demoUnlocked ||
+            (item.requiredLesson
+              ? completedLessons.includes(item.requiredLesson)
+              : true);
+
+          return (
+            <Pressable
+              key={index}
+              disabled={!isUnlocked}
+              onPress={() =>
+                isUnlocked && navigation.navigate(item.screen as any)
+              }
+              style={({ pressed }) => [
+                styles.nodeWrap,
                 {
-                  borderColor: item.color,
-                  backgroundColor: `${item.color}15`,
+                  opacity: pressed && isUnlocked ? 0.7 : 1,
                 },
               ]}
             >
-              <MaterialCommunityIcons
-                name={locked ? "lock" : item.icon}
-                size={28}
-                color={locked ? "#9ca3af" : item.color}
-              />
-            </View>
+              <View
+                style={[
+                  styles.node,
+                  {
+                    borderColor: isUnlocked ? item.color : "#d1d5db",
+                    backgroundColor: isUnlocked
+                      ? `${item.color}15`
+                      : "#f3f4f6",
+                    opacity: isUnlocked ? 1 : 0.5,
+                  },
+                ]}
+              >
+                <MaterialCommunityIcons
+                  name={!isUnlocked ? "lock" : item.icon}
+                  size={28}
+                  color={!isUnlocked ? "#9ca3af" : item.color}
+                />
+              </View>
 
-            <Text style={styles.nodeLabel}>
-              {item.title}
-            </Text>
-
-            {locked && (
-              <Text style={styles.lockedText}>
-                Complete Lesson 1
+              <Text
+                style={[
+                  styles.nodeLabel,
+                  { color: isUnlocked ? "#000" : "#9ca3af" },
+                ]}
+              >
+                {item.title}
               </Text>
-            )}
-          </Pressable>
-        ))}
+
+              {!isUnlocked && (
+                <Text style={styles.lockedText}>
+                  Complete Lesson {item.requiredLesson || 1}
+                </Text>
+              )}
+            </Pressable>
+          );
+        })}
       </View>
     </View>
   );
@@ -184,9 +204,8 @@ const FlashcardTrack = ({
 
 const FilipinoFlashHome: React.FC = () => {
   const theme = useTheme();
-
-  // 🔓 demo unlock flag
   const demoUnlocked = useDemoStore((s) => s.isUnlocked);
+  const completedLessons = useProgressStore((s) => s.completedLessons);
 
   return (
     <AppLayout title="Flashcards">
@@ -212,27 +231,29 @@ const FilipinoFlashHome: React.FC = () => {
               color: theme.colors.textSecondary,
             }}
           >
-            🔒 Demo Mode — complete Lesson 1 to unlock
-            flashcards
+            🔒 Complete lessons to unlock flashcards
           </Text>
         )}
 
         <FlashcardTrack
           title="Core Vocabulary"
           items={coreVocabulary}
-          locked={!demoUnlocked}
+          demoUnlocked={demoUnlocked}
+          completedLessons={completedLessons}
         />
 
         <FlashcardTrack
           title="Everyday Topics"
           items={everydayTopics}
-          locked={!demoUnlocked}
+          demoUnlocked={demoUnlocked}
+          completedLessons={completedLessons}
         />
 
         <FlashcardTrack
           title="Extras"
           items={extras}
-          locked={!demoUnlocked}
+          demoUnlocked={demoUnlocked}
+          completedLessons={completedLessons}
         />
       </ScrollView>
     </AppLayout>
@@ -274,7 +295,6 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "white",
     shadowColor: "#000",
     shadowOpacity: 0.08,
     shadowRadius: 10,
@@ -286,6 +306,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 13,
     textAlign: "center",
+    fontWeight: "500",
   },
 
   lockedText: {

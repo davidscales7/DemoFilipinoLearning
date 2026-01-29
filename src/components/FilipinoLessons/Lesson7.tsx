@@ -18,9 +18,9 @@ type ClothingItem = {
 const CLOTHES: ClothingItem[] = [
   {
     english: "Shirt",
-    filipino: "Damit",
+    filipino: "Polo",
     sentenceEN: "I am wearing a shirt.",
-    sentenceTL: "Nagsusuot ako ng damit.",
+    sentenceTL: "Nagsusuot ako ng polo.",
     image: require("../../../assets/images/shirt.png"),
   },
   {

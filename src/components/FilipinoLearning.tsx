@@ -6,13 +6,14 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { ComponentProps } from "react";
 
 import { useDemoStore } from "../store/useDemoStore";
+import { useProgressStore } from "../store/useProgressStore";
 import { RootStackParamList } from "../navigation/navigation";
 import AppLayout from "../components/Layout/AppLayout";
 import { AppCard } from "../theme/components";
 import { useTheme } from "../theme/ThemeProvider";
 import ProfileHeader from "../components/ProfileHeader/ProfileHeader";
 import ProgressRing from "../components/XP/ProgressRing";
-import completedLessons from "../store/useProgressStore";
+
 type Nav = StackNavigationProp<RootStackParamList, "FilipinoLearning">;
 type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
 
@@ -43,6 +44,9 @@ const FilipinoLearning: React.FC = () => {
 
   /* ✅ REACTIVE demo state */
   const demoUnlocked = useDemoStore((s) => s.isUnlocked);
+  
+  /* ✅ REACTIVE progress state */
+  const completedLessons = useProgressStore((s) => s.completedLessons);
 
   const menuItems: MenuItem[] = [
     {
@@ -75,8 +79,7 @@ const FilipinoLearning: React.FC = () => {
       color: theme.colors.success,
       screen: "FilipinoAccolades",
       completed: 0,
-      total: 8,
-    },
+      total: 4,},
   ];
 
   return (
@@ -156,7 +159,7 @@ const FilipinoLearning: React.FC = () => {
                       position: "absolute",
                       top: 12,
                       right: 12,
-                      backgroundColor: "rgba(0,0,0,0.6)",
+                      backgroundColor: "rgba(0,0,0,0.55)",
                       borderRadius: 999,
                       paddingHorizontal: 10,
                       paddingVertical: 4,
@@ -177,7 +180,7 @@ const FilipinoLearning: React.FC = () => {
                     cardPressableBaseStyle,
                     {
                       opacity: locked
-                        ? 0.6
+                        ? 0.45
                         : pressed
                         ? 0.85
                         : 1,

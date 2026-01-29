@@ -1,4 +1,3 @@
-// components/Quizzes/QuizNode.tsx
 import React, { useRef } from "react";
 import { Pressable, View, Text, StyleSheet, Animated } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -24,10 +23,9 @@ const QuizNode: React.FC<QuizNodeProps> = ({
 
   const handlePress = () => {
     if (locked || !onPress) return;
-
     Animated.sequence([
       Animated.timing(scale, {
-        toValue: 0.9,
+        toValue: 0.95,
         duration: 100,
         useNativeDriver: true,
       }),
@@ -48,16 +46,17 @@ const QuizNode: React.FC<QuizNodeProps> = ({
           style={[
             styles.circle,
             {
-              backgroundColor: locked ? colors.card : color,
+              backgroundColor: locked ? "#f3f4f6" : color,
+              borderColor: locked ? "#d1d5db" : color,
               transform: [{ scale }],
-              opacity: locked ? 0.6 : 1,
+              opacity: locked ? 0.5 : 1,
             },
           ]}
         >
           <MaterialCommunityIcons
             name={locked ? ("lock" as any) : (icon as any)}
             size={28}
-            color={locked ? colors.textSecondary : "#FFFFFF"}
+            color={locked ? "#9ca3af" : "#FFFFFF"}
           />
         </Animated.View>
       </Pressable>
@@ -65,26 +64,45 @@ const QuizNode: React.FC<QuizNodeProps> = ({
       <Text
         style={[
           typography.body,
-          { marginTop: 8, textAlign: "center" },
-          locked && { color: colors.textSecondary },
+          styles.nodeLabel,
+          { color: locked ? "#9ca3af" : colors.textPrimary },
         ]}
       >
         {title}
       </Text>
+
+      {locked && (
+        <Text style={styles.lockedText}>Complete lesson first</Text>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   circle: {
-  width: 80,
-  height: 80,
-  borderRadius: 40,
-  justifyContent: "center",
-  alignItems: "center",
-  borderWidth: 3,
-},
-
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 3,
+  },
+  nodeLabel: {
+    marginTop: 8,
+    textAlign: "center",
+    fontWeight: "500",
+  },
+  lockedText: {
+    marginTop: 4,
+    fontSize: 11,
+    color: "#9ca3af",
+    textAlign: "center",
+  },
 });
 
 export default QuizNode;

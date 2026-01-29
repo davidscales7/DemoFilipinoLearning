@@ -1,13 +1,30 @@
 // Lesson2.tsx
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import AppLayout from "../../components/Layout/AppLayout";
 import LessonLayout from "./LessonLayout";
 import { useProgressStore } from "../../store/useProgressStore";
+import { useDemoStore } from "../../store/useDemoStore";
+import { RootStackParamList } from "../../navigation/navigation";
+import { useAccoladeStore } from "../../store/useAccoladeStore";
+import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
+
 
 /* ----------------------------------------
-   SLIDES (NUMBERS)
+   TYPES
+---------------------------------------- */
+type Nav = StackNavigationProp<
+  RootStackParamList,
+  "FilipinoLearning"
+>;
+
+
+
+/* ----------------------------------------
+   DATA
 ---------------------------------------- */
 const slides = [
   { word: "One", translated: "Isa", image: require("../../../assets/images/number1.jpg") },
@@ -17,9 +34,6 @@ const slides = [
   { word: "Five", translated: "Lima", image: require("../../../assets/images/number5.png") },
 ];
 
-/* ----------------------------------------
-   QUIZ
----------------------------------------- */
 const questions = [
   {
     question: "What is the correct way to say One?",
@@ -36,12 +50,13 @@ const questions = [
 ];
 
 const Lesson2: React.FC = () => {
+  const navigation = useNavigation<Nav>();
   const completeLesson = useProgressStore((s) => s.completeLesson);
-
+// local state
   const [page, setPage] = useState<"lesson" | "quiz" | "summary">("lesson");
   const [slideIndex, setSlideIndex] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
-
+const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
   const [selected, setSelected] = useState<string | null>(null);
   const [wrong, setWrong] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
@@ -52,6 +67,7 @@ const Lesson2: React.FC = () => {
   useEffect(() => {
     if (page === "summary") {
       completeLesson(2);
+      unlockAccolade(DEMO_ACCOLADES.LESSONS.LESSON_2);
     }
   }, [page, completeLesson]);
 
@@ -60,10 +76,17 @@ const Lesson2: React.FC = () => {
   ---------------------------------------- */
   if (page === "summary") {
     return (
-      <AppLayout title="Lesson 2">
+      <AppLayout title="Lesson 2 Complete">
         <LessonLayout lessonNumber={2} mode="summary">
+          
           <Text style={styles.title}>Nice work 🎉</Text>
           <Text style={styles.text}>You’ve completed Lesson 2</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate("FilipinoLessons")}
+        >
+          <Text style={styles.buttonText}>Back to Lessons</Text>
+        </TouchableOpacity>
         </LessonLayout>
       </AppLayout>
     );
@@ -101,16 +124,15 @@ const Lesson2: React.FC = () => {
                 setSelected(opt);
                 setWrong(null);
 
-                // ❌ Wrong
+                //  Wrong
                 if (opt !== q.correct) {
                   setWrong(opt);
                   setTimeout(() => setWrong(null), 600);
                   return;
                 }
 
-                // ✅ Correct
+                //  Correct
                 setLocked(true);
-
                 setTimeout(() => {
                   setSelected(null);
                   setWrong(null);

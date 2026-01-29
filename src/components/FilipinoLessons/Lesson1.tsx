@@ -52,7 +52,7 @@ const questions = [
 
 const Lesson1: React.FC = () => {
 
-  // 🧭 navigation
+
   const navigation = useNavigation<Nav>();
 
   // 📚 progress store
@@ -100,9 +100,15 @@ const Lesson1: React.FC = () => {
 
           <TouchableOpacity
             style={styles.button}
+            onPress={() => navigation.navigate("FilipinoLessons")}
+          >
+            <Text style={styles.buttonText}>Back to Lessons</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
             onPress={() => navigation.navigate("FilipinoLearning")}
           >
-            <Text style={styles.buttonText}>Back to Dashboard</Text>
+            <Text style={styles.buttonText}>Back to main menu</Text>
           </TouchableOpacity>
         </LessonLayout>
       </AppLayout>
@@ -117,7 +123,7 @@ const Lesson1: React.FC = () => {
 
     return (
       <AppLayout title="Lesson 1">
-        <LessonLayout lessonNumber={1} mode="quiz" step={1} total={1}>
+        <LessonLayout lessonNumber={1} mode="quiz" step={1} total={questions.length}>
           <Text style={styles.title}>{q.question}</Text>
 
           {q.options.map((opt) => (
@@ -134,13 +140,16 @@ const Lesson1: React.FC = () => {
 
                 setSelected(opt);
                 setWrong(null);
-
+                
+                // Wrong
                 if (opt !== q.correct) {
                   setWrong(opt);
                   setTimeout(() => setWrong(null), 600);
                   return;
                 }
 
+
+                // Correct
                 setLocked(true);
                 setTimeout(() => setPage("summary"), 700);
               }}
@@ -187,7 +196,6 @@ const Lesson1: React.FC = () => {
   );
 };
 
-export default Lesson1;
 
 /* ----------------------------------------
    STYLES
@@ -235,3 +243,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F87171",
   },
 });
+
+
+export default Lesson1;
