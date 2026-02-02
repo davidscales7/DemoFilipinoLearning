@@ -7,7 +7,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import AppLayout from "../../components/Layout/AppLayout";
 import LessonLayout from "./LessonLayout";
 import { useProgressStore } from "../../store/useProgressStore";
-import { useDemoStore } from "../../store/useDemoStore";
 import { RootStackParamList } from "../../navigation/navigation";
 import { useAccoladeStore } from "../../store/useAccoladeStore";
 import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
@@ -33,7 +32,9 @@ const slides = [
   { word: "Four", translated: "Apat", image: require("../../../assets/images/number4.png") },
   { word: "Five", translated: "Lima", image: require("../../../assets/images/number5.png") },
 ];
-
+/* ----------------------------------------
+   QUESTIONS
+---------------------------------------- */
 const questions = [
   {
     question: "What is the correct way to say One?",
@@ -97,6 +98,11 @@ const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
   ---------------------------------------- */
   if (page === "quiz") {
     const q = questions[questionIndex];
+// Safety guard
+    if (!q) {
+      setPage("summary");
+      return null;
+    }
 
     return (
       <AppLayout title="Lesson 2">
@@ -114,8 +120,8 @@ const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
               disabled={locked}
               style={[
                 styles.option,
-                selected === opt && styles.selected,
-                wrong === opt && styles.wrong,
+                selected === opt && styles.selected, // correct (yellow)
+                wrong === opt && styles.wrong,    // wrong (red)
                 locked && { opacity: 0.6 },
               ]}
               onPress={() => {
@@ -124,10 +130,10 @@ const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
                 setSelected(opt);
                 setWrong(null);
 
-                //  Wrong
+                //  Wrong answer
                 if (opt !== q.correct) {
                   setWrong(opt);
-                  setTimeout(() => setWrong(null), 600);
+                  setTimeout(() => setWrong(null), 600); // if wrong, clear after 600ms
                   return;
                 }
 
