@@ -1,10 +1,11 @@
-// store/useAccoladeStore.ts
+// src/store/useAccoladeStore.ts
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-/* ----------------------------------------
-   TYPES
----------------------------------------- */
+// ✅ FIXED: Include ALL accolade IDs from all categories
 export type AccoladeId =
+  // Lesson Accolades
   | "lesson_1"
   | "lesson_2"
   | "lesson_3"
@@ -15,6 +16,7 @@ export type AccoladeId =
   | "lesson_8"
   | "lesson_9"
   | "lesson_10"
+  // Quiz Accolades
   | "quiz_1"
   | "quiz_2"
   | "quiz_3"
@@ -25,6 +27,7 @@ export type AccoladeId =
   | "quiz_8"
   | "quiz_9"
   | "quiz_10"
+  // Flashcard Accolades
   | "flashcards_1";
 
 export type Accolade = {
@@ -34,24 +37,37 @@ export type Accolade = {
   icon: string;
 };
 
-type AccoladeState = {
+interface AccoladeState {
   unlocked: Accolade[];
   unlockAccolade: (accolade: Accolade) => void;
-};
+  isUnlocked: (id: AccoladeId) => boolean;
+}
 
-/* ----------------------------------------
-   STORE
----------------------------------------- */
-export const useAccoladeStore = create<AccoladeState>((set) => ({
-  unlocked: [],
-  unlockAccolade: (accolade) =>
-    set((state) => {
-      // prevent duplicates
-      if (state.unlocked.some((a) => a.id === accolade.id)) {
-        return state;
-      }
-      return {
-        unlocked: [...state.unlocked, accolade],
-      };
+export const useAccoladeStore = create<AccoladeState>()(
+  persist(
+    (set, get) => ({
+      unlocked: [],
+
+      unlockAccolade: (accolade) => {
+        const current = get().unlocked;
+        
+        // Prevent duplicates
+        if (current.some((a) => a.id === accolade.id)) {
+          console.log(`🔒 Accolade "${accolade.title}" already unlocked`);
+          return;
+        }
+
+        console.log(`🎉 Unlocking accolade: "${accolade.title}"`);
+        set({ unlocked: [...current, accolade] });
+      },
+
+      isUnlocked: (id) => {
+        return get().unlocked.some((a) => a.id === id);
+      },
     }),
-}));
+    {
+      name: "accolade-storage",
+      storage: createJSONStorage(() => AsyncStorage),
+    }
+  )
+);

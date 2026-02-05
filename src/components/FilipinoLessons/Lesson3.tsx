@@ -7,6 +7,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import AppLayout from "../../components/Layout/AppLayout";
 import LessonLayout from "./LessonLayout";
 import { useProgressStore } from "../../store/useProgressStore";
+import { useXPStore } from "../../store/useXPStore"; // ✅ ADDED
 import { RootStackParamList } from "../../navigation/navigation";
 import { useAccoladeStore } from "../../store/useAccoladeStore";
 import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
@@ -51,15 +52,21 @@ const questions = [
  
 ];
 
+// ✅ XP REWARDS
+const XP_PER_SLIDE = 10;
+const XP_PER_QUESTION = 15;
+
 const Lesson3: React.FC = () => {
   const navigation = useNavigation<Nav>();
   const completeLesson = useProgressStore((s) => s.completeLesson);
-//local state
+  const addXP = useXPStore((s) => s.addXP); // ✅ ADDED
+  const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
+  
+  //local state
   const [page, setPage] = useState<"lesson" | "quiz" | "summary">("lesson");
   const [slideIndex, setSlideIndex] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
 
-const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
   const [selected, setSelected] = useState<string | null>(null);
   const [wrong, setWrong] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
@@ -83,7 +90,7 @@ const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
         <LessonLayout lessonNumber={3} mode="summary">
 
           <Text style={styles.title}>Great job 🎉</Text>
-          <Text>You’ve completed Lesson 3</Text>
+          <Text>You've completed Lesson 3</Text>
           <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate("FilipinoLessons")}
@@ -140,8 +147,9 @@ const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
                   return;
                 }
 
-                //  Correct 
+                //  Correct ✅ AWARD XP HERE
                 setLocked(true);
+                addXP(XP_PER_QUESTION); // ✅ ADDED
 
                 setTimeout(() => {
                   setSelected(null);
@@ -185,11 +193,15 @@ const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            slideIndex < slides.length - 1
-              ? setSlideIndex((i) => i + 1)
-              : setPage("quiz")
-          }
+          onPress={() => {
+            addXP(XP_PER_SLIDE); // ✅ ADDED
+            
+            if (slideIndex < slides.length - 1) {
+              setSlideIndex((i) => i + 1);
+            } else {
+              setPage("quiz");
+            }
+          }}
         >
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>

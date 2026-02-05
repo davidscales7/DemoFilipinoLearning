@@ -1,21 +1,26 @@
-import React, { useState } from "react";
-import { View, Text, Pressable, Image } from "react-native";
+// Lesson6.tsx
+import React, { useEffect, useState } from "react";
+import { Text, View, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import AppLayout from "../../components/Layout/AppLayout";
-import { useTheme } from "../../theme/ThemeProvider";
-import { useXPStore } from "../../store/useXPStore";
+import LessonLayout from "./LessonLayout";
 import { useProgressStore } from "../../store/useProgressStore";
-import { useNavigation } from "@react-navigation/native";
+import { useXPStore } from "../../store/useXPStore";
+import { useAccoladeStore } from "../../store/useAccoladeStore";
+import { RootStackParamList } from "../../navigation/navigation";
+import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
 
-type FoodItem = {
-  english: string;
-  filipino: string;
-  sentenceEN: string;
-  sentenceTL: string;
-  image: any;
-};
+/* ----------------------------------------
+   TYPES
+---------------------------------------- */
+type Nav = StackNavigationProp<RootStackParamList, "FilipinoLearning">;
 
-const FOOD_ITEMS: FoodItem[] = [
+/* ----------------------------------------
+   DATA
+---------------------------------------- */
+const FOOD_ITEMS = [
   {
     english: "Rice",
     filipino: "Kanin",
@@ -42,17 +47,30 @@ const FOOD_ITEMS: FoodItem[] = [
 const XP_PER_ITEM = 15;
 
 const Lesson6: React.FC = () => {
-  const theme = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<Nav>();
 
   const addXP = useXPStore((s) => s.addXP);
   const completeLesson = useProgressStore((s) => s.completeLesson);
+  const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
 
   const [index, setIndex] = useState(0);
   const [stage, setStage] = useState<"word" | "sentence" | "summary">("word");
 
   const current = FOOD_ITEMS[index];
 
+  /* ----------------------------------------
+     MARK COMPLETE & UNLOCK ACCOLADE
+  ---------------------------------------- */
+  useEffect(() => {
+    if (stage === "summary") {
+      console.log("🏁 LESSON 6 COMPLETED - Unlocking accolade");
+      completeLesson(6);
+      unlockAccolade(DEMO_ACCOLADES.LESSONS.LESSON_6);
+    }
+  }, [stage, completeLesson, unlockAccolade]);
+
+
+  
   const next = () => {
     console.log("➡️ NEXT PRESSED");
     console.log("Index:", index, "Stage:", stage);
@@ -76,148 +94,148 @@ const Lesson6: React.FC = () => {
   };
 
   const finishLesson = () => {
-    console.log("🏁 FINISH LESSON 6");
-
-    console.log(
-      "Before completion:",
-      useProgressStore.getState().completedLessons
-    );
-
-    completeLesson(6); // 🔓 THIS UNLOCKS LESSON 7
-
-    console.log(
-      "After completion:",
-      useProgressStore.getState().completedLessons
-    );
-
-    navigation.goBack();
+    console.log("🏁 FINISH LESSON 6 - Returning to lessons");
+    navigation.navigate("FilipinoLessons");
   };
 
+  /* ----------------------------------------
+     SUMMARY SCREEN
+  ---------------------------------------- */
+  if (stage === "summary") {
+    return (
+      <AppLayout title="Lesson 6 — Food">
+        <LessonLayout lessonNumber={6} mode="summary">
+          <Text style={styles.title}>Great job! 🎉</Text>
+          
+          <Text style={styles.text}>
+            You've completed Lesson 6 and learned about food in Filipino!
+          </Text>
+
+          <TouchableOpacity style={styles.button} onPress={finishLesson}>
+            <Text style={styles.buttonText}>Back to Lessons</Text>
+          </TouchableOpacity>
+        </LessonLayout>
+      </AppLayout>
+    );
+  }
+
+  /* ----------------------------------------
+     LESSON CONTENT
+  ---------------------------------------- */
   return (
     <AppLayout title="Lesson 6 — Food">
-      {stage !== "summary" ? (
-        <>
-          {/* Card */}
-          <View
-            style={{
-              backgroundColor: "white",
-              borderRadius: 20,
-              padding: theme.spacing.xl,
-              alignItems: "center",
-              shadowOpacity: 0.08,
-              shadowRadius: 10,
-            }}
-          >
-            <Image
-              source={current.image}
-              style={{ width: 120, height: 120, marginBottom: 16 }}
-              resizeMode="contain"
-            />
+      <LessonLayout
+        lessonNumber={6}
+        mode="lesson"
+        step={index + 1}
+        total={FOOD_ITEMS.length}
+      >
+        {/* Card */}
+        <View style={styles.card}>
+          <Image
+            source={current.image}
+            style={styles.image}
+            resizeMode="contain"
+          />
 
-            {stage === "word" ? (
-              <>
-                <Text style={theme.typography.title}>
-                  {current.english}
-                </Text>
-
-                <Text
-                  style={[
-                    theme.typography.subtitle,
-                    { color: theme.colors.primary, marginVertical: 8 },
-                  ]}
-                >
-                  {current.filipino}
-                </Text>
-              </>
-            ) : (
-              <>
-                <Text
-                  style={[
-                    theme.typography.subtitle,
-                    { textAlign: "center", marginBottom: 6 },
-                  ]}
-                >
-                  {current.sentenceEN}
-                </Text>
-
-                <Text
-                  style={[
-                    theme.typography.body,
-                    { textAlign: "center", color: theme.colors.primary },
-                  ]}
-                >
-                  {current.sentenceTL}
-                </Text>
-              </>
-            )}
-          </View>
-
-          {/* Controls */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              marginTop: theme.spacing.xl,
-            }}
-          >
-            <Pressable
-              onPress={next}
-              style={{
-                paddingVertical: theme.spacing.md,
-                paddingHorizontal: theme.spacing.xl,
-                borderRadius: 14,
-                backgroundColor: theme.colors.primary,
-              }}
-            >
-              <Text style={{ color: "white", fontWeight: "700" }}>
-                Next →
-              </Text>
-            </Pressable>
-          </View>
-
-          {/* Progress */}
-          <Text
-            style={{
-              textAlign: "center",
-              marginTop: theme.spacing.md,
-              color: theme.colors.textSecondary,
-            }}
-          >
-            Item {index + 1} / {FOOD_ITEMS.length}
-          </Text>
-        </>
-      ) : (
-        /* SUMMARY SCREEN */
-        <View style={{ alignItems: "center", marginTop: 40 }}>
-          <Text style={theme.typography.title}>Great job! 🎉</Text>
-
-          <Text
-            style={[
-              theme.typography.body,
-              { marginVertical: 12, textAlign: "center" },
-            ]}
-          >
-            You’ve completed Lesson 6.
-          </Text>
-
-          <Pressable
-            onPress={finishLesson}
-            style={{
-              marginTop: 20,
-              paddingVertical: theme.spacing.md,
-              paddingHorizontal: theme.spacing.xl,
-              borderRadius: 16,
-              backgroundColor: theme.colors.success,
-            }}
-          >
-            <Text style={{ color: "white", fontWeight: "700" }}>
-              Finish Lesson ✓
-            </Text>
-          </Pressable>
+          {stage === "word" ? (
+            <>
+              <Text style={styles.title}>{current.english}</Text>
+              <Text style={styles.filipino}>{current.filipino}</Text>
+            </>
+          ) : (
+            <>
+              <Text style={styles.sentenceEN}>{current.sentenceEN}</Text>
+              <Text style={styles.sentenceTL}>{current.sentenceTL}</Text>
+            </>
+          )}
         </View>
-      )}
+
+        {/* Next Button */}
+        <TouchableOpacity style={styles.button} onPress={next}>
+          <Text style={styles.buttonText}>Next →</Text>
+        </TouchableOpacity>
+
+        {/* Progress Indicator */}
+        <Text style={styles.progress}>
+          Item {index + 1} / {FOOD_ITEMS.length}
+        </Text>
+      </LessonLayout>
     </AppLayout>
   );
 };
+
+/* ----------------------------------------
+   STYLES
+---------------------------------------- */
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 24,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 5,
+    marginBottom: 20,
+  },
+  image: {
+    width: 120,
+    height: 120,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "800",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  filipino: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#2563EB",
+    marginVertical: 8,
+    textAlign: "center",
+  },
+  sentenceEN: {
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: 6,
+  },
+  sentenceTL: {
+    fontSize: 16,
+    textAlign: "center",
+    color: "#2563EB",
+  },
+  button: {
+    marginTop: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: "#2563EB",
+    borderRadius: 14,
+    alignSelf: "center",
+  },
+  buttonText: {
+    color: "#FFF",
+    fontWeight: "700",
+    textAlign: "center",
+    fontSize: 16,
+  },
+  text: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 12,
+    marginTop: 8,
+  },
+  progress: {
+    textAlign: "center",
+    marginTop: 16,
+    color: "#6B7280",
+    fontSize: 14,
+  },
+});
 
 export default Lesson6;

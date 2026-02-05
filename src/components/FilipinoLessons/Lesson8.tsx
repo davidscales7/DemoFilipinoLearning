@@ -1,24 +1,26 @@
-import React, { useState } from "react";
-import { View, Text, Pressable, Image } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Text, View, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import AppLayout from "../../components/Layout/AppLayout";
-import { useTheme } from "../../theme/ThemeProvider";
-import { useXPStore } from "../../store/useXPStore";
+import LessonLayout from "./LessonLayout";
 import { useProgressStore } from "../../store/useProgressStore";
+import { useXPStore } from "../../store/useXPStore";
+import { useAccoladeStore } from "../../store/useAccoladeStore";
+import { RootStackParamList } from "../../navigation/navigation";
+import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
 
-/* ---------------- TYPES ---------------- */
+/* ----------------------------------------
+   TYPES
+---------------------------------------- */
+type Nav = StackNavigationProp<RootStackParamList, "FilipinoLearning">;
 
-type HobbyItem = {
-  english: string;
-  filipino: string;
-  sentenceEN: string;
-  sentenceTL: string;
-  image: any;
-};
+/* ----------------------------------------
+   DATA
+---------------------------------------- */
 
-/* ---------------- DATA ---------------- */
-
-const HOBBIES: HobbyItem[] = [
+const HOBBIES = [
   {
     english: "Reading",
     filipino: "Pagbabasa",
@@ -47,207 +49,191 @@ const XP_PER_ITEM = 15;
 /* ---------------- COMPONENT ---------------- */
 
 const Lesson8: React.FC = () => {
-  const theme = useTheme();
-
+  const navigation = useNavigation<Nav>();
+  
   const addXP = useXPStore((s) => s.addXP);
   const completeLesson = useProgressStore((s) => s.completeLesson);
+  const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
 
   const [index, setIndex] = useState(0);
-  const [stage, setStage] = useState<"word" | "sentence">("word");
-  const [showSummary, setShowSummary] = useState(false);
-
+  const [stage, setStage] = useState<"word" | "sentence" | "summary">("word");
   const current = HOBBIES[index];
 
-  /* ---------------- NEXT ---------------- */
+  /* ----------------------------------------
+     MARK COMPLETE & UNLOCK ACCOLADE
+  ---------------------------------------- */
+  useEffect(() => {
+    if (stage === "summary") {
+      console.log("🎉 LESSON 8 COMPLETED");
+      completeLesson(8);
+      unlockAccolade(DEMO_ACCOLADES.LESSONS.LESSON_8);
+    }
+  }, [stage, completeLesson, unlockAccolade]);
 
   const next = () => {
     console.log("➡️ NEXT PRESSED — Lesson 8");
-    console.log("Index:", index);
-    console.log("Stage:", stage);
+    console.log("Index:", index, "Stage:", stage);
 
     addXP(XP_PER_ITEM);
     console.log("✅ XP ADDED:", XP_PER_ITEM);
 
-    setStage("word");
-
-    if (index < HOBBIES.length - 1) {
-      setIndex((i) => i + 1);
+    if (stage === "word") {
+      setStage("sentence");
       return;
     }
 
-    // ✅ Finished lesson
-    console.log("🎉 ALL HOBBIES COMPLETED — UNLOCKING LESSON 9");
-    completeLesson(8);
-    setShowSummary(true);
+    if (index < HOBBIES.length - 1) {
+      setIndex(index + 1);
+      setStage("word");
+      return;
+    }
+
+    // Move to summary when all items completed
+    setStage("summary");
+  };
+
+  // Finishing the lesson
+  const finishLesson = () => {
+    console.log("🏁 FINISH LESSON 8 - Returning to lessons");
+    navigation.navigate("FilipinoLessons");
   };
 
   /* ---------------- SUMMARY ---------------- */
 
-  if (showSummary) {
+  if (stage === "summary") {
     return (
-      <AppLayout title="Lesson 8 Complete 🎉">
-        <View style={{ alignItems: "center", marginTop: theme.spacing.xl }}>
-          <Text style={theme.typography.title}>
-            Great job!
+      <AppLayout title="Lesson 8 - Hobbies 🎉">
+        <LessonLayout lessonNumber={8} mode="summary">
+          <Text style={styles.title}>Congratulations!</Text>
+          <Text style={styles.text}>
+            You can now talk about some common hobbies in Filipino.
           </Text>
-
-          <Text
-            style={[
-              theme.typography.body,
-              {
-                marginTop: theme.spacing.md,
-                textAlign: "center",
-                color: theme.colors.textSecondary,
-              },
-            ]}
-          >
-            You’ve learned how to talk about hobbies in Filipino.
-            Lesson 9 is now unlocked!
-          </Text>
-
-          <Pressable
-            style={{
-              marginTop: theme.spacing.xl,
-              paddingVertical: theme.spacing.md,
-              paddingHorizontal: theme.spacing.xl,
-              borderRadius: 14,
-              backgroundColor: theme.colors.primary,
-            }}
-          >
-            <Text style={{ color: "white", fontWeight: "700" }}>
-              Continue →
-            </Text>
-          </Pressable>
-        </View>
+          <TouchableOpacity style={styles.button} onPress={finishLesson}>
+            <Text style={styles.buttonText}>Back to Lessons</Text>
+          </TouchableOpacity>
+        </LessonLayout>
       </AppLayout>
     );
   }
 
-  /* ---------------- MAIN ---------------- */
+  /* ---------------- LESSON CONTENT ---------------- */
 
   return (
     <AppLayout title="Lesson 8 — Hobbies">
-      {/* Intro */}
-      <Text
-        style={[
-          theme.typography.body,
-          {
-            textAlign: "center",
-            marginBottom: theme.spacing.lg,
-            color: theme.colors.textSecondary,
-          },
-        ]}
+      <LessonLayout
+        lessonNumber={8}
+        mode="lesson"
+        step={index + 1}
+        total={HOBBIES.length}
       >
-        Learn hobbies and how to talk about what you like doing.
-      </Text>
+        {/* Card */}
+        <View style={styles.card}>
+          <Image
+            source={current.image}
+            style={styles.image}
+            resizeMode="contain"
+          />
+          {stage === "word" ? (
+            <>
+              <Text style={styles.english}>{current.english}</Text>
+              <Text style={styles.filipino}>{current.filipino}</Text>
+            </>
+          ) : (
+            <>
+              <Text style={styles.sentenceEN}>{current.sentenceEN}</Text>
+              <Text style={styles.sentenceTL}>{current.sentenceTL}</Text>
+            </>
+          )}
+        </View>
 
-      {/* Card */}
-      <View
-        style={{
-          backgroundColor: "white",
-          borderRadius: 20,
-          padding: theme.spacing.xl,
-          alignItems: "center",
-        }}
-      >
-        <Image
-          source={current.image}
-          style={{ width: 120, height: 120, marginBottom: 16 }}
-          resizeMode="contain"
-        />
+        {/* Next Button - ONLY ONE */}
+        <TouchableOpacity style={styles.button} onPress={next}>
+          <Text style={styles.buttonText}>Next →</Text>
+        </TouchableOpacity>
 
-        {stage === "word" ? (
-          <>
-            <Text style={theme.typography.title}>
-              {current.english}
-            </Text>
-
-            <Text
-              style={[
-                theme.typography.subtitle,
-                { color: theme.colors.primary, marginVertical: 8 },
-              ]}
-            >
-              {current.filipino}
-            </Text>
-
-            <Pressable
-              onPress={() => setStage("sentence")}
-              style={{
-                marginTop: 12,
-                paddingVertical: 10,
-                paddingHorizontal: 18,
-                borderRadius: 999,
-                backgroundColor: theme.colors.secondary,
-              }}
-            >
-              <Text style={{ color: "white", fontWeight: "700" }}>
-                Use in a sentence →
-              </Text>
-            </Pressable>
-          </>
-        ) : (
-          <>
-            <Text
-              style={[
-                theme.typography.subtitle,
-                { textAlign: "center", marginBottom: 6 },
-              ]}
-            >
-              {current.sentenceEN}
-            </Text>
-
-            <Text
-              style={[
-                theme.typography.body,
-                {
-                  textAlign: "center",
-                  color: theme.colors.primary,
-                  marginBottom: 12,
-                },
-              ]}
-            >
-              {current.sentenceTL}
-            </Text>
-          </>
-        )}
-      </View>
-
-      {/* Controls */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          marginTop: theme.spacing.xl,
-        }}
-      >
-        <Pressable
-          onPress={next}
-          style={{
-            paddingVertical: theme.spacing.md,
-            paddingHorizontal: theme.spacing.xl,
-            borderRadius: 14,
-            backgroundColor: theme.colors.primary,
-          }}
-        >
-          <Text style={{ color: "white", fontWeight: "700" }}>
-            {index === HOBBIES.length - 1 ? "Finish ✓" : "Next →"}
-          </Text>
-        </Pressable>
-      </View>
-
-      {/* Progress */}
-      <Text
-        style={{
-          textAlign: "center",
-          marginTop: theme.spacing.md,
-          color: theme.colors.textSecondary,
-        }}
-      >
-        Item {index + 1} / {HOBBIES.length}
-      </Text>
+        {/* Progress Indicator */}
+        <Text style={styles.progress}>
+          Item {index + 1} / {HOBBIES.length}
+        </Text>
+      </LessonLayout>
     </AppLayout>
   );
 };
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 24,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 5,
+    marginBottom: 20,
+  },
+  image: {
+    width: 120,
+    height: 120,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "800",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  english: {
+    fontSize: 22,
+    fontWeight: "700",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  filipino: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#2563EB",
+    marginVertical: 8,
+    textAlign: "center",
+  },
+  sentenceEN: {
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: 6,
+  },
+  sentenceTL: {
+    fontSize: 16,
+    textAlign: "center",
+    color: "#2563EB",
+  },
+  button: {
+    marginTop: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: "#2563EB",
+    borderRadius: 14,
+    alignSelf: "center",
+  },
+  buttonText: {
+    color: "#FFF",
+    fontWeight: "700",
+    textAlign: "center",
+    fontSize: 16,
+  },
+  text: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 12,
+    marginTop: 8,
+  },
+  progress: {
+    textAlign: "center",
+    marginTop: 16,
+    color: "#6B7280",
+    fontSize: 14,
+  },
+});
 
 export default Lesson8;

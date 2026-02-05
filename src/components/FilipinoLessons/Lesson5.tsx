@@ -1,33 +1,51 @@
 // Lesson5.tsx
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import AppLayout from "../../components/Layout/AppLayout";
 import LessonLayout from "./LessonLayout";
 import { useProgressStore } from "../../store/useProgressStore";
+import { useXPStore } from "../../store/useXPStore"; // ✅ ADDED
+import { RootStackParamList } from "../../navigation/navigation";
+import { useAccoladeStore } from "../../store/useAccoladeStore";
+import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
+
 
 /* ----------------------------------------
-   SLIDES — TEACH SENTENCES
+   TYPES
+---------------------------------------- */
+type Nav = StackNavigationProp<
+  RootStackParamList,
+  "FilipinoLearning"
+>;
+
+
+
+
+/* ----------------------------------------
+   DATA
 ---------------------------------------- */
 const slides = [
   {
     title: "Ito ay pusa.",
-    subtitle: "This is a cat.",
+    translated: "This is a cat.",
     image: require("../../../assets/images/cat.png"),
   },
   {
     title: "Ito ay aso.",
-    subtitle: "This is a dog.",
+    translated: "This is a dog.",
     image: require("../../../assets/images/dog.png"),
   },
   {
     title: "May pusa ako.",
-    subtitle: "I have a cat.",
+    translated: "I have a cat.",
     image: require("../../../assets/images/cat.png"),
   },
   {
     title: "May aso ako.",
-    subtitle: "I have a dog.",
+    translated: "I have a dog.",
     image: require("../../../assets/images/dog.png"),
   },
 ];
@@ -56,15 +74,24 @@ const questions = [
   },
 ];
 
-const Lesson5: React.FC = () => {
-  const completeLesson = useProgressStore((s) => s.completeLesson);
+// ✅ XP REWARDS
+const XP_PER_SLIDE = 10;
+const XP_PER_QUESTION = 15;
 
+const Lesson5: React.FC = () => {
+  const navigation = useNavigation<Nav>();
+  const completeLesson = useProgressStore((s) => s.completeLesson);
+  const addXP = useXPStore((s) => s.addXP); // ✅ ADDED
+  const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
+
+  // local state
   const [page, setPage] = useState<"lesson" | "quiz" | "summary">("lesson");
   const [slideIndex, setSlideIndex] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
 
   const [selected, setSelected] = useState<string | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [wrong, setWrong] = useState<string | null>(null);
+  const [locked, setLocked] = useState(false);
 
   /* ----------------------------------------
      MARK COMPLETE — ONLY HERE
@@ -72,6 +99,7 @@ const Lesson5: React.FC = () => {
   useEffect(() => {
     if (page === "summary") {
       completeLesson(5);
+      unlockAccolade(DEMO_ACCOLADES.LESSONS.LESSON_5);
     }
   }, [page, completeLesson]);
 
@@ -82,11 +110,16 @@ const Lesson5: React.FC = () => {
     return (
       <AppLayout title="Lesson 5">
         <LessonLayout lessonNumber={5} mode="summary">
+
           <Text style={styles.title}>Great job 🎉</Text>
           <Text>You can now talk about animals in Filipino.</Text>
 
-          <Text style={styles.summaryLine}>• Ito ay ___</Text>
-          <Text style={styles.summaryLine}>• May ___ ako</Text>
+          <TouchableOpacity 
+            style={styles.button}
+            onPress={() => navigation.navigate("FilipinoLessons")}
+          >
+            <Text style={styles.buttonText}>Back to Lessons</Text>
+          </TouchableOpacity>
         </LessonLayout>
       </AppLayout>
     );
@@ -97,6 +130,11 @@ const Lesson5: React.FC = () => {
   ---------------------------------------- */
   if (page === "quiz") {
     const q = questions[questionIndex];
+    // Safety guard
+    if (!q) {
+      setPage("summary");
+      return null;
+    }
 
     return (
       <AppLayout title="Lesson 5">
@@ -108,41 +146,49 @@ const Lesson5: React.FC = () => {
         >
           <Text style={styles.title}>{q.question}</Text>
 
-          {q.options.map((opt) => {
-            const selectedThis = selected === opt;
-            const wrong = selectedThis && isCorrect === false;
-            const correct = selectedThis && isCorrect === true;
+          {q.options.map((opt) => (
+            <TouchableOpacity
+              key={opt}
+              disabled={locked}
+              style={[
+                styles.option,
+                selected === opt && styles.selected, // correct (yellow)
+                wrong === opt && styles.wrong,       // wrong (red)
+                locked && { opacity: 0.6 },
+              ]}
+              onPress={() => {
+                if (locked) return;
 
-            return (
-              <TouchableOpacity
-                key={opt}
-                style={[
-                  styles.option,
-                  wrong && styles.optionWrong,
-                  correct && styles.optionCorrect,
-                ]}
-                disabled={selected !== null}
-                onPress={() => {
-                  setSelected(opt);
-                  const ok = opt === q.correct;
-                  setIsCorrect(ok);
+                setSelected(opt);
+                setWrong(null);
 
-                  setTimeout(() => {
-                    setSelected(null);
-                    setIsCorrect(null);
+                //  Wrong answer
+                if (opt !== q.correct) {
+                  setWrong(opt);
+                  setTimeout(() => setWrong(null), 600); // if wrong, clear after 600ms
+                  return;
+                }
 
-                    if (questionIndex + 1 === questions.length) {
-                      setPage("summary");
-                    } else {
-                      setQuestionIndex((i) => i + 1);
-                    }
-                  }, 900);
-                }}
-              >
-                <Text style={styles.optionText}>{opt}</Text>
-              </TouchableOpacity>
-            );
-          })}
+                //  Correct answer ✅ AWARD XP HERE
+                setLocked(true);
+                addXP(XP_PER_QUESTION); // ✅ ADDED - Award XP for correct answer
+                
+                setTimeout(() => {
+                  setSelected(null);
+                  setWrong(null);
+                  setLocked(false);
+
+                  if (questionIndex + 1 === questions.length) {
+                    setPage("summary");
+                  } else {
+                    setQuestionIndex((i) => i + 1);
+                  }
+                }, 700);
+              }}
+            >
+              <Text>{opt}</Text>
+            </TouchableOpacity>
+          ))}
 
           <Image source={q.image} style={styles.image} />
         </LessonLayout>
@@ -165,15 +211,19 @@ const Lesson5: React.FC = () => {
       >
         <Text style={styles.title}>{slide.title}</Text>
         <Image source={slide.image} style={styles.image} />
-        <Text style={styles.subtitle}>{slide.subtitle}</Text>
+        <Text style={styles.text}>{slide.translated}</Text>
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            slideIndex < slides.length - 1
-              ? setSlideIndex((i) => i + 1)
-              : setPage("quiz")
-          }
+          onPress={() => {
+            addXP(XP_PER_SLIDE); // ✅ ADDED - Award XP for completing slide
+            
+            if (slideIndex < slides.length - 1) {
+              setSlideIndex((i) => i + 1);
+            } else {
+              setPage("quiz");
+            }
+          }}
         >
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
@@ -185,28 +235,29 @@ const Lesson5: React.FC = () => {
 /* ----------------------------------------
    STYLES
 ---------------------------------------- */
+
 const styles = StyleSheet.create({
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "800",
-    marginBottom: 12,
+    marginBottom: 16,
     textAlign: "center",
   },
-  subtitle: {
+  text: {
     fontSize: 16,
     textAlign: "center",
-    opacity: 0.75,
+    marginBottom: 12,
   },
   image: {
     width: 220,
     height: 220,
     marginVertical: 16,
     resizeMode: "contain",
-    alignSelf: "center",
   },
   button: {
     marginTop: 20,
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     backgroundColor: "#2563EB",
     borderRadius: 10,
   },
@@ -218,24 +269,16 @@ const styles = StyleSheet.create({
   option: {
     width: "100%",
     padding: 14,
-    backgroundColor: "#E5E7EB",
     borderRadius: 8,
+    backgroundColor: "#E5E7EB",
     marginVertical: 6,
     alignItems: "center",
   },
-  optionText: {
-    fontSize: 16,
-    fontWeight: "600",
+  selected: {
+    backgroundColor: "#FBBF24", // yellow
   },
-  optionWrong: {
-    backgroundColor: "#F87171",
-  },
-  optionCorrect: {
-    backgroundColor: "#4ADE80",
-  },
-  summaryLine: {
-    marginTop: 8,
-    fontWeight: "600",
+  wrong: {
+    backgroundColor: "#F87171", // red
   },
 });
 

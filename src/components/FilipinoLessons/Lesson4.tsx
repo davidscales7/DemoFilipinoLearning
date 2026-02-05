@@ -1,13 +1,29 @@
 // Lesson4.tsx
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import AppLayout from "../../components/Layout/AppLayout";
 import LessonLayout from "./LessonLayout";
 import { useProgressStore } from "../../store/useProgressStore";
+import { useXPStore } from "../../store/useXPStore"; // ✅ ADDED
+import { RootStackParamList } from "../../navigation/navigation";
+import { useAccoladeStore } from "../../store/useAccoladeStore";
+import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
+
 
 /* ----------------------------------------
-   SLIDES
+   TYPES
+---------------------------------------- */
+type Nav = StackNavigationProp<
+  RootStackParamList,
+  "FilipinoLearning"
+>;
+
+
+/* ----------------------------------------
+   DATA
 ---------------------------------------- */
 const slides = [
   { word: "Red", translated: "Pula", image: require("../../../assets/images/red.jpg") },
@@ -18,7 +34,7 @@ const slides = [
 ];
 
 /* ----------------------------------------
-   QUIZ
+QUESTIONS
 ---------------------------------------- */
 const questions = [
   {
@@ -41,21 +57,31 @@ const questions = [
   },
 ];
 
-const Lesson4: React.FC = () => {
-  const completeLesson = useProgressStore((s) => s.completeLesson);
+// ✅ XP REWARDS
+const XP_PER_SLIDE = 10;
+const XP_PER_QUESTION = 15;
 
+const Lesson4: React.FC = () => {
+  const navigation = useNavigation<Nav>();
+  const completeLesson = useProgressStore((s) => s.completeLesson);
+  const addXP = useXPStore((s) => s.addXP); // ✅ ADDED
+  const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
+  
+  // local state
   const [page, setPage] = useState<"lesson" | "quiz" | "summary">("lesson");
   const [slideIndex, setSlideIndex] = useState(0);
   const [questionIndex, setQuestionIndex] = useState(0);
-  const [selected, setSelected] = useState<string | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
+  const [selected, setSelected] = useState<string | null>(null);
+  const [wrong, setWrong] = useState<string | null>(null);
+  const [locked, setLocked] = useState(false);
   /* ----------------------------------------
      MARK COMPLETE (ONLY ON SUMMARY)
   ---------------------------------------- */
   useEffect(() => {
     if (page === "summary") {
       completeLesson(4);
+      unlockAccolade(DEMO_ACCOLADES.LESSONS.LESSON_4);
     }
   }, [page, completeLesson]);
 
@@ -66,8 +92,16 @@ const Lesson4: React.FC = () => {
     return (
       <AppLayout title="Lesson 4">
         <LessonLayout lessonNumber={4} mode="summary">
+          
           <Text style={styles.title}>Great job 🎉</Text>
-          <Text>You’ve completed Lesson 4</Text>
+          <Text>You've completed Lesson 4</Text>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("FilipinoLearning")}
+          >
+            <Text style={styles.buttonText}>Back to Lessons</Text>
+          </TouchableOpacity>
         </LessonLayout>
       </AppLayout>
     );
@@ -89,58 +123,55 @@ const Lesson4: React.FC = () => {
         >
           <Text style={styles.title}>{q.question}</Text>
 
-          {q.options.map((opt) => {
-            const isSelected = selected === opt;
-            const wrong = isSelected && isCorrect === false;
-            const correct = isSelected && isCorrect === true;
+          {q.options.map((opt) => (
+            <TouchableOpacity
+              key={opt}
+              disabled={locked}
+              style={[
+                styles.option,
+                selected === opt && styles.selected,
+                wrong === opt && styles.wrong,
+                locked && { opacity: 0.6 },
+              ]}
+              onPress={() => {
+                if (locked) return;
 
-            return (
-              <TouchableOpacity
-                key={opt}
-                style={[
-                  styles.option,
-                  wrong && styles.optionWrong,
-                  correct && styles.optionCorrect,
-                ]}
-                disabled={selected !== null}
-                onPress={() => {
-                  setSelected(opt);
+                setSelected(opt);
+                setWrong(null);
 
-                  const ok = opt === q.correct;
-                  setIsCorrect(ok);
+                //Wrong answer
+                if (opt !== q.correct) {
+                  setWrong(opt);
+                  setTimeout(() => setWrong(null), 600); // if wrong, clear after 600ms
+                  return;
+                }
 
-                  if (!ok) {
-                    // ❌ WRONG → reset only, stay on same question
-                    setTimeout(() => {
-                      setSelected(null);
-                      setIsCorrect(null);
-                    }, 900);
-                    return;
+
+                // Correct answer ✅ AWARD XP HERE
+                setLocked(true);
+                addXP(XP_PER_QUESTION); // ✅ ADDED
+                
+                setTimeout(() => {
+                  setSelected(null);
+                  setWrong(null);
+                  setLocked(false);
+                  
+                  if (questionIndex + 1 === questions.length) {
+                    setPage("summary");
+                  } else {
+                    setQuestionIndex((i) => i + 1);
                   }
-
-                  // ✅ CORRECT → advance
-                  setTimeout(() => {
-                    setSelected(null);
-                    setIsCorrect(null);
-
-                    if (questionIndex + 1 === questions.length) {
-                      setPage("summary");
-                    } else {
-                      setQuestionIndex((i) => i + 1);
-                    }
-                  }, 900);
-                }}
-              >
+                }, 700);
+              }}>
                 <Text>{opt}</Text>
               </TouchableOpacity>
-            );
-          })}
+          ))}
 
           <Image source={q.image} style={styles.image} />
         </LessonLayout>
       </AppLayout>
     );
-  }
+  } 
 
   /* ----------------------------------------
      LESSON SLIDES
@@ -161,11 +192,15 @@ const Lesson4: React.FC = () => {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            slideIndex < slides.length - 1
-              ? setSlideIndex((i) => i + 1)
-              : setPage("quiz")
-          }
+          onPress={() => {
+            addXP(XP_PER_SLIDE); // ✅ ADDED
+            
+            if (slideIndex < slides.length - 1) {
+              setSlideIndex((i) => i + 1);
+            } else {
+              setPage("quiz");
+            }
+          }}
         >
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
@@ -176,10 +211,15 @@ const Lesson4: React.FC = () => {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: "800",
-    marginBottom: 12,
+    marginBottom: 16,
     textAlign: "center",
+  },
+  text: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 12,
   },
   image: {
     width: 220,
@@ -189,7 +229,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 20,
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     backgroundColor: "#2563EB",
     borderRadius: 10,
   },
@@ -201,16 +242,16 @@ const styles = StyleSheet.create({
   option: {
     width: "100%",
     padding: 14,
-    backgroundColor: "#E5E7EB",
     borderRadius: 8,
+    backgroundColor: "#E5E7EB",
     marginVertical: 6,
     alignItems: "center",
   },
-  optionWrong: {
-    backgroundColor: "#F87171",
+  selected: {
+    backgroundColor: "#FBBF24",
   },
-  optionCorrect: {
-    backgroundColor: "#4ADE80",
+  wrong: {
+    backgroundColor: "#f87171",
   },
 });
 

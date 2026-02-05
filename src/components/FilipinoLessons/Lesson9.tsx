@@ -1,16 +1,30 @@
-import React, { useState } from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
 import AppLayout from "../../components/Layout/AppLayout";
-import { useTheme } from "../../theme/ThemeProvider";
+import LessonLayout from "./LessonLayout";
 import { useXPStore } from "../../store/useXPStore";
 import { useProgressStore } from "../../store/useProgressStore";
+import { useAccoladeStore } from "../../store/useAccoladeStore";
+import { RootStackParamList } from "../../navigation/navigation";
+import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
+
+/* ----------------------------------------
+   TYPES
+---------------------------------------- */
+type Nav = StackNavigationProp<RootStackParamList, "FilipinoLearning">;
 
 type Step = {
   title: string;
   explanation: string;
   examples: string[];
 };
+
+/* ----------------------------------------
+   DATA
+---------------------------------------- */
 
 const STEPS: Step[] = [
   {
@@ -56,108 +70,139 @@ const STEPS: Step[] = [
 ];
 
 const XP_PER_STEP = 20;
-const XP_FINISH_BONUS = 40;
+
+/* ---------------- COMPONENT ---------------- */
 
 const Lesson9: React.FC = () => {
-  const theme = useTheme();
+  const navigation = useNavigation<Nav>();
+
   const addXP = useXPStore((s) => s.addXP);
   const completeLesson = useProgressStore((s) => s.completeLesson);
+  const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
 
   const [stepIndex, setStepIndex] = useState(0);
-  const isLastStep = stepIndex >= STEPS.length;
+  const [stage, setStage] = useState<"lesson" | "summary">("lesson");
+
+  /* ----------------------------------------
+     MARK COMPLETE & UNLOCK ACCOLADE
+  ---------------------------------------- */
+  useEffect(() => {
+    if (stage === "summary") {
+      console.log("🎉 LESSON 9 COMPLETED");
+      completeLesson(9);
+      unlockAccolade(DEMO_ACCOLADES.LESSONS.LESSON_9);
+    }
+  }, [stage, completeLesson, unlockAccolade]);
 
   const next = () => {
-    console.log("➡️ NEXT STEP:", stepIndex);
-    addXP(XP_PER_STEP);
+    console.log("➡️ NEXT PRESSED — Lesson 9");
+    console.log("Step Index:", stepIndex);
 
-    if (stepIndex < STEPS.length) {
-      setStepIndex((s) => s + 1);
+    addXP(XP_PER_STEP);
+    console.log("✅ XP ADDED:", XP_PER_STEP);
+
+    if (stepIndex < STEPS.length - 1) {
+      setStepIndex(stepIndex + 1);
+      return;
     }
+
+    // Move to summary when all steps completed
+    setStage("summary");
   };
 
   const finishLesson = () => {
-    console.log("🎉 LESSON 9 COMPLETED");
-    addXP(XP_FINISH_BONUS);
-    completeLesson(9); // 🔓 unlocks Lesson 10
+    console.log("🏁 FINISH LESSON 9 - Returning to lessons");
+    navigation.navigate("FilipinoLessons");
   };
+
+  /* ---------------- SUMMARY ---------------- */
+
+  if (stage === "summary") {
+    return (
+      <AppLayout title="Lesson 9 - Sentence Structure 🎉">
+        <LessonLayout lessonNumber={9} mode="summary">
+          <Text style={styles.title}>Congratulations!</Text>
+          <Text style={styles.text}>
+            You now understand Filipino sentence structure, negation, and
+            question forms. Great work!
+          </Text>
+          <TouchableOpacity style={styles.button} onPress={finishLesson}>
+            <Text style={styles.buttonText}>Back to Lessons</Text>
+          </TouchableOpacity>
+        </LessonLayout>
+      </AppLayout>
+    );
+  }
+
+  /* ---------------- LESSON CONTENT ---------------- */
+
+  const currentStep = STEPS[stepIndex];
 
   return (
     <AppLayout title="Lesson 9 — Sentence Structure">
-      {!isLastStep ? (
-        <>
-          {/* Intro */}
-          <Text
-            style={[
-              theme.typography.body,
-              {
-                textAlign: "center",
-                marginBottom: theme.spacing.lg,
-                color: theme.colors.textSecondary,
-              },
-            ]}
-          >
-            Learn how to build clear and natural Filipino sentences.
-          </Text>
+      <LessonLayout
+        lessonNumber={9}
+        mode="lesson"
+        step={stepIndex + 1}
+        total={STEPS.length}
+      >
+        {/* Intro */}
+        <Text style={styles.intro}>
+          Learn how to build clear and natural Filipino sentences.
+        </Text>
 
-          {/* Card */}
-          <View style={styles.card}>
-            <Text style={styles.title}>{STEPS[stepIndex].title}</Text>
+        {/* Card */}
+        <View style={styles.card}>
+          <Text style={styles.stepTitle}>{currentStep.title}</Text>
 
-            <Text style={styles.explanation}>
-              {STEPS[stepIndex].explanation}
+          <Text style={styles.explanation}>{currentStep.explanation}</Text>
+
+          {currentStep.examples.map((ex, i) => (
+            <Text key={i} style={styles.example}>
+              • {ex}
             </Text>
+          ))}
+        </View>
 
-            {STEPS[stepIndex].examples.map((ex, i) => (
-              <Text key={i} style={styles.example}>
-                • {ex}
-              </Text>
-            ))}
-          </View>
+        {/* Next Button */}
+        <TouchableOpacity style={styles.button} onPress={next}>
+          <Text style={styles.buttonText}>Next →</Text>
+        </TouchableOpacity>
 
-          {/* Controls */}
-          <View style={styles.controls}>
-            <Pressable onPress={next} style={styles.primaryButton}>
-              <Text style={styles.primaryText}>
-                {stepIndex === STEPS.length - 1 ? "Review Summary →" : "Next →"}
-              </Text>
-            </Pressable>
-          </View>
-
-          {/* Progress */}
-          <Text style={styles.progress}>
-            Step {stepIndex + 1} / {STEPS.length}
-          </Text>
-        </>
-      ) : (
-        <>
-          {/* Summary */}
-          <View style={styles.card}>
-            <Text style={styles.finishTitle}>🎉 Lesson Complete!</Text>
-            <Text style={styles.explanation}>
-              You now understand Filipino sentence structure, negation, and
-              question forms. Great work!
-            </Text>
-          </View>
-
-          <View style={styles.controls}>
-            <Pressable onPress={finishLesson} style={styles.primaryButton}>
-              <Text style={styles.primaryText}>Finish Lesson ✓</Text>
-            </Pressable>
-          </View>
-        </>
-      )}
+        {/* Progress Indicator */}
+        <Text style={styles.progress}>
+          Step {stepIndex + 1} / {STEPS.length}
+        </Text>
+      </LessonLayout>
     </AppLayout>
   );
 };
 
 const styles = StyleSheet.create({
+  intro: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+    color: "#6B7280",
+  },
   card: {
     backgroundColor: "white",
     borderRadius: 20,
     padding: 24,
-    marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
+    elevation: 5,
+    marginBottom: 20,
   },
   title: {
+    fontSize: 24,
+    fontWeight: "800",
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  stepTitle: {
     fontSize: 22,
     fontWeight: "800",
     marginBottom: 12,
@@ -167,37 +212,38 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     marginBottom: 16,
+    lineHeight: 24,
   },
   example: {
     fontSize: 15,
     marginBottom: 6,
     color: "#444",
   },
-  finishTitle: {
-    fontSize: 26,
-    fontWeight: "900",
+  button: {
+    marginTop: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: "#2563EB",
+    borderRadius: 14,
+    alignSelf: "center",
+  },
+  buttonText: {
+    color: "#FFF",
+    fontWeight: "700",
     textAlign: "center",
-    marginBottom: 16,
-  },
-  controls: {
-    alignItems: "center",
-    marginTop: 12,
-  },
-  primaryButton: {
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 16,
-    backgroundColor: "#1E80FF",
-  },
-  primaryText: {
-    color: "white",
-    fontWeight: "800",
     fontSize: 16,
+  },
+  text: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 12,
+    marginTop: 8,
   },
   progress: {
     textAlign: "center",
-    marginTop: 12,
-    color: "#777",
+    marginTop: 16,
+    color: "#6B7280",
+    fontSize: 14,
   },
 });
 

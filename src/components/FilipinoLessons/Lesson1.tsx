@@ -7,6 +7,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import AppLayout from "../../components/Layout/AppLayout";
 import LessonLayout from "./LessonLayout";
 import { useProgressStore } from "../../store/useProgressStore";
+import { useXPStore } from "../../store/useXPStore"; // ✅ ADDED
 import { useDemoStore } from "../../store/useDemoStore";
 import { RootStackParamList } from "../../navigation/navigation";
 import { useAccoladeStore } from "../../store/useAccoladeStore";
@@ -50,6 +51,10 @@ const questions = [
   },
 ];
 
+// ✅ XP REWARDS
+const XP_PER_SLIDE = 10;
+const XP_PER_QUESTION = 15;
+
 const Lesson1: React.FC = () => {
 
 
@@ -57,6 +62,9 @@ const Lesson1: React.FC = () => {
 
   // 📚 progress store
   const completeLesson = useProgressStore((s) => s.completeLesson);
+
+  // ✅ XP store
+  const addXP = useXPStore((s) => s.addXP); // ✅ ADDED
 
   // 🔓 demo store
   const unlockDemo = useDemoStore((s) => s.unlockDemo);
@@ -149,8 +157,9 @@ const Lesson1: React.FC = () => {
                 }
 
 
-                // Correct
+                // Correct ✅ AWARD XP HERE
                 setLocked(true);
+                addXP(XP_PER_QUESTION); // ✅ ADDED
                 setTimeout(() => setPage("summary"), 700);
               }}
             >
@@ -183,11 +192,15 @@ const Lesson1: React.FC = () => {
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() =>
-            slideIndex < slides.length - 1
-              ? setSlideIndex((i) => i + 1)
-              : setPage("quiz")
-          }
+          onPress={() => {
+            addXP(XP_PER_SLIDE); // ✅ ADDED
+            
+            if (slideIndex < slides.length - 1) {
+              setSlideIndex((i) => i + 1);
+            } else {
+              setPage("quiz");
+            }
+          }}
         >
           <Text style={styles.buttonText}>Next</Text>
         </TouchableOpacity>
