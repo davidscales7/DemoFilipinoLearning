@@ -22,7 +22,7 @@ export const QUIZZES: QuizData[] = [
   {
     id: 1,
     title: "Greetings Quiz",
-    accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_1, // ✅ First quiz → QUIZ_1
+    accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_1, // First quiz → QUIZ_1
     xpReward: 20,
     questions: [
       {

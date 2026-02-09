@@ -1,0 +1,20 @@
+import React from "react";
+import FlashcardLogic from "./FlashcardLogic";
+import { getFlashcardSetById } from "./FlashcardData";
+
+console.log("🔴 Flashcard4 FILE LOADED");
+
+const Flashcard4: React.FC = () => {
+  console.log("🔴 Flashcard4 COMPONENT RENDERING");
+
+  const flashcardData = getFlashcardSetById(4);
+  console.log("🔴 Flashcard4 - Flashcard data:", flashcardData);
+
+  if (!flashcardData) {
+    return null;
+  }
+  
+  return <FlashcardLogic flashcardData={flashcardData} />;
+};
+
+export default Flashcard4;

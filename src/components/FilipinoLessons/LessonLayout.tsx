@@ -9,7 +9,6 @@ interface LessonLayoutProps {
   children: React.ReactNode;
 }
 
-
 const LessonLayout: React.FC<LessonLayoutProps> = ({
   lessonNumber,
   mode,
@@ -17,27 +16,42 @@ const LessonLayout: React.FC<LessonLayoutProps> = ({
   total,
   children,
 }) => {
-  const pct = Math.round((step / total) * 100);
+  // Only show progress bar if NOT in summary mode
+  const showProgress = mode !== "summary" && step !== undefined && total !== undefined;
+  const pct = showProgress ? Math.round((step / total) * 100) : 100;
 
   return (
     <View style={styles.lessonCard}>
-      {/* HEADER */}
-      <View style={styles.topBarRow}>
-        <View style={styles.pill}>
-          <Text style={styles.pillText}>
-            {mode === "quiz" ? "QUIZ" : `LESSON ${lessonNumber}`}
-          </Text>
+      {/* HEADER - Only show if not in summary mode */}
+      {showProgress && (
+        <>
+          <View style={styles.topBarRow}>
+            <View style={styles.pill}>
+              <Text style={styles.pillText}>
+                {mode === "quiz" ? "QUIZ" : `LESSON ${lessonNumber}`}
+              </Text>
+            </View>
+            <Text style={styles.progressText}>
+              {step}/{total} • {pct}%
+            </Text>
+          </View>
+
+          {/* PROGRESS BAR */}
+          <View style={styles.progressTrack}>
+            <View style={[styles.progressFill, { width: `${pct}%` }]} />
+          </View>
+        </>
+      )}
+
+      {/* Summary mode - show completion badge */}
+      {mode === "summary" && (
+        <View style={styles.summaryHeader}>
+          <View style={styles.completedBadge}>
+            <Text style={styles.checkmark}>✓</Text>
+          </View>
+          <Text style={styles.summaryLabel}>LESSON {lessonNumber} COMPLETE</Text>
         </View>
-
-        <Text style={styles.progressText}>
-          {step}/{total} • {pct}%
-        </Text>
-      </View>
-
-      {/* PROGRESS */}
-      <View style={styles.progressTrack}>
-        <View style={[styles.progressFill, { width: `${pct}%` }]} />
-      </View>
+      )}
 
       {/* CONTENT */}
       {children}
@@ -63,13 +77,11 @@ const styles = StyleSheet.create({
           elevation: 6,
         }),
   },
-
   topBarRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
   },
-
   pill: {
     paddingVertical: 8,
     paddingHorizontal: 14,
@@ -83,12 +95,10 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     opacity: 0.75,
   },
-
   progressText: {
     fontWeight: "800",
     opacity: 0.7,
   },
-
   progressTrack: {
     height: 9,
     borderRadius: 999,
@@ -97,10 +107,36 @@ const styles = StyleSheet.create({
     marginTop: 14,
     marginBottom: 18,
   },
-
   progressFill: {
     height: "100%",
     backgroundColor: "#2563EB",
+  },
+  // Summary mode styles
+  summaryHeader: {
+    alignItems: "center",
+    marginBottom: 24,
+  },
+  completedBadge: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "#10B981",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  checkmark: {
+    fontSize: 40,
+    color: "#FFF",
+    fontWeight: "900",
+  },
+  summaryLabel: {
+    fontSize: 11,
+    fontWeight: "900",
+    letterSpacing: 1.3,
+    textTransform: "uppercase",
+    opacity: 0.75,
+    color: "#10B981",
   },
 });
 

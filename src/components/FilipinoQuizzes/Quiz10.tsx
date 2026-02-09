@@ -4,7 +4,7 @@ import { getQuizById } from "./QuizData";
 
 console.log("🔴 QUIZ10 FILE LOADED");
 
-const Quiz9: React.FC = () => {
+const Quiz10: React.FC = () => {
   console.log("🔴 QUIZ9 COMPONENT RENDERING");
   
   const quizData = getQuizById(10);
@@ -20,4 +20,4 @@ const Quiz9: React.FC = () => {
   return <QuizLogic quizData={quizData} />;
 };
 
-export default Quiz9;
+export default Quiz10;

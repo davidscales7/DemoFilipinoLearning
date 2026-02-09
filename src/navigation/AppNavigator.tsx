@@ -13,22 +13,20 @@ import FilipinoLearning from "../components/FilipinoLearning";
 
 // FLASHCARDS
 import FilipinoFlashHome from "../components/FilipinoFlashHome";
-import FilipinoFlashNumbersBasic from "../components/FilipinoFlash/FilipinoFlashNumbersBasic";
-
 // FLASH SUBSCREENS
-import FilipinoGreetingsScreen from "../components/FilipinoFlash/FilipinoGreetings";
-import FilipinoBodyParts from "../components/FilipinoFlash/FilipinoBodyparts";
-import FilipinoNewTopic from "../components/FilipinoFlash/FilipinoNewTopic";
-import FilipinoDailyLesson from "../components/FilipinoFlash/FilipinoDailyLesson";
-import FilipinoColoursScreen from "../components/FilipinoFlash/FilipinoColours";
-import FilipinoFamilyScreen from "../components/FilipinoFlash/FilipinoFamily";
-import FilipinoFoodAndDrinkScreen from "../components/FilipinoFlash/FilipinoFoodAndDrink";
-import FilipinoGeneralTopics from "../components/FilipinoFlash/FilipinoGeneralTopics";
-import FilipinoHouseItemsScreen from "../components/FilipinoFlash/FilipinoHouseItems";
-import FilipinoSportsScreen from "../components/FilipinoFlash/FilipinoSports";
-import FilipinoTransportScreen from "../components/FilipinoFlash/FilipinoTransports";
-import FilipinoWeatherScreen from "../components/FilipinoFlash/FilipinoWeather";
-import FilipinoAnimalsScreen from "../components/FilipinoFlash/FilipinoAnimals";
+import Filipinocard1 from "../components/FilipinoFlash/Flashcard1";
+import Filipinocard2 from "../components/FilipinoFlash/Flashcard2";
+import Filipinocard3 from "../components/FilipinoFlash/Flashcard3";
+import Filipinocard4 from "../components/FilipinoFlash/Flashcard4";
+import Filipinocard5 from "../components/FilipinoFlash/Flashcard5";
+import Filipinocard6 from "../components/FilipinoFlash/Flashcard6";
+import Filipinocard7 from "../components/FilipinoFlash/Flashcard7";
+import Filipinocard8 from "../components/FilipinoFlash/Flashcard8";
+import Filipinocard9 from "../components/FilipinoFlash/Flashcard9";
+import Filipinocard10 from "../components/FilipinoFlash/Flashcard10";
+import Filipinocard11 from "../components/FilipinoFlash/Flashcard11";
+
+// FLASHCARDS
 
 // LESSONS
 import LessonLayout from "../components/FilipinoLessons/LessonLayout";
@@ -81,10 +79,7 @@ function AppNavigator() {
 
       {/* FLASHCARDS */}
       <Stack.Screen name="FilipinoFlashHome" component={FilipinoFlashHome} />
-      <Stack.Screen
-        name="FilipinoFlashNumbersBasic"
-        component={FilipinoFlashNumbersBasic}
-      />
+   
 
       {/* QUIZZES */}
       <Stack.Screen name="FilipinoQuizzes" component={FilipinoQuizzes} />
@@ -117,31 +112,17 @@ function AppNavigator() {
       <Stack.Screen name="FilipinoAccolades" component={FilipinoAccolades} />
 
       {/* FLASH SUB SCREENS */}
-      <Stack.Screen name="FilipinoGreetings" component={FilipinoGreetingsScreen} />
-      <Stack.Screen name="FilipinoBodyParts" component={FilipinoBodyParts} />
-      <Stack.Screen name="FilipinoNewTopic" component={FilipinoNewTopic} />
-      <Stack.Screen name="FilipinoDailyLesson" component={FilipinoDailyLesson} />
-      <Stack.Screen name="FilipinoColours" component={FilipinoColoursScreen} />
-      <Stack.Screen name="FilipinoFamily" component={FilipinoFamilyScreen} />
-      <Stack.Screen
-        name="FilipinoFoodAndDrink"
-        component={FilipinoFoodAndDrinkScreen}
-      />
-      <Stack.Screen
-        name="FilipinoGeneralTopics"
-        component={FilipinoGeneralTopics}
-      />
-      <Stack.Screen
-        name="FilipinoHouseItems"
-        component={FilipinoHouseItemsScreen}
-      />
-      <Stack.Screen name="FilipinoSports" component={FilipinoSportsScreen} />
-      <Stack.Screen
-        name="FilipinoTransports"
-        component={FilipinoTransportScreen}
-      />
-      <Stack.Screen name="FilipinoWeather" component={FilipinoWeatherScreen} />
-      <Stack.Screen name="FilipinoAnimals" component={FilipinoAnimalsScreen} />
+      <Stack.Screen name="Filipinocard1" component={Filipinocard1} />
+      <Stack.Screen name="Filipinocard2" component={Filipinocard2} />
+      <Stack.Screen name="Filipinocard3" component={Filipinocard3} />
+      <Stack.Screen name="Filipinocard4" component={Filipinocard4} />
+      <Stack.Screen name="Filipinocard5" component={Filipinocard5}/>
+      <Stack.Screen name="Filipinocard6" component={Filipinocard6} />
+      <Stack.Screen name="Filipinocard7" component={Filipinocard7}/>
+      <Stack.Screen name="Filipinocard8" component={Filipinocard8} />
+      <Stack.Screen name="Filipinocard9" component={Filipinocard9}/>
+      <Stack.Screen name="Filipinocard10" component={Filipinocard10} />
+      <Stack.Screen name="Filipinocard11" component={Filipinocard11} />
     </Stack.Navigator>
   );
 }

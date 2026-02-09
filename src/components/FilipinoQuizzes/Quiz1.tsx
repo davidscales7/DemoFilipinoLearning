@@ -16,7 +16,6 @@ const Quiz1: React.FC = () => {
     return null; // or error screen
   }
   
-  console.log("🔴 QUIZ1 - Rendering QuizLogic component");
   return <QuizLogic quizData={quizData} />;
 };
 

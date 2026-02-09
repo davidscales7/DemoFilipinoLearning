@@ -10,19 +10,17 @@ export type RootStackParamList = {
     animatedEndXP?: number;
   } | undefined;
 
-  FilipinoGreetings: undefined;
-  FilipinoBodyParts: undefined;
-  FilipinoNewTopic: undefined;
-  FilipinoDailyLesson: undefined;
-  FilipinoColours: undefined;
-  FilipinoFamily: undefined;
-  FilipinoFoodAndDrink: undefined;
-  FilipinoWeather: undefined;
-  FilipinoGeneralTopics: undefined;
-  FilipinoHouseItems: undefined;
-  FilipinoSports: undefined;
-  FilipinoTransports: undefined;
-  FilipinoAnimals: undefined;
+  Filipinocard1: undefined;
+  Filipinocard2: undefined;
+  Filipinocard3: undefined;
+  Filipinocard4: undefined;
+  Filipinocard5: undefined;
+  Filipinocard6: undefined;
+  Filipinocard7: undefined;
+  Filipinocard8: undefined;
+  Filipinocard9: undefined;
+  Filipinocard10: undefined;
+  Filipinocard11: undefined;
   FilipinoLessons: undefined;
   FilipinoAccolades: undefined;
 
@@ -33,7 +31,7 @@ export type RootStackParamList = {
   FilipinoFlashNumbersBasic: undefined;
   FilipinoNumbersIntermediate: undefined;
   FilipinoNumbersExpert: undefined;
-LessonLayout: undefined;
+  LessonLayout: undefined;
   Lesson1: undefined;
   Lesson2: undefined;
   Lesson3: undefined;
