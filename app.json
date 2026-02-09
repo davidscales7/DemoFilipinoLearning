@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     
     "experiments": {
-      "baseUrl": "/filipino-demo"},
+      "baseUrl": "/DemoFilipinoLearning"},
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
