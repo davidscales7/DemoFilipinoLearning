@@ -47,10 +47,7 @@ const Sidebar = () => {
         ))}
       </View>
 
-      <TouchableOpacity style={styles.logoutSection}>
-        <MaterialCommunityIcons name="logout" size={22} color={theme.colors.sidebarText} />
-        <Text style={[styles.menuText, { color: theme.colors.sidebarText }]}>Logout</Text>
-      </TouchableOpacity>
+      
     </View>
   );
 };
@@ -60,7 +57,7 @@ const styles = StyleSheet.create({
     width: 220,
     paddingVertical: 40,
     paddingHorizontal: 20,
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
   },
   logoText: {
     fontSize: 20,
@@ -70,6 +67,7 @@ const styles = StyleSheet.create({
   menuList: {
     flexDirection: "column",
     gap: 18,
+    marginTop: 10, 
   },
   menuItem: {
     flexDirection: "row",
@@ -80,12 +78,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
   },
-  logoutSection: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    marginTop: 40,
-  },
+ 
 });
 
 export default Sidebar;

@@ -104,22 +104,23 @@ const FilipinoLessons: React.FC = () => {
           completed: completedLessons.includes(6),
           onPress: () => goTo("Lesson6"),
         },
-        {
-          title: "Clothes",
-          icon: "tshirt-crew",
-          color: "#2980b9",
+         {
+          title: "Hobbies",
+          icon: "gamepad-variant",
+          color: "#8e44ad",
           locked: !demoUnlocked && !isLessonUnlocked(7),
           completed: completedLessons.includes(7),
           onPress: () => goTo("Lesson7"),
         },
         {
-          title: "Hobbies",
-          icon: "gamepad-variant",
-          color: "#8e44ad",
+          title: "Clothes",
+          icon: "tshirt-crew",
+          color: "#2980b9",
           locked: !demoUnlocked && !isLessonUnlocked(8),
           completed: completedLessons.includes(8),
           onPress: () => goTo("Lesson8"),
         },
+       
         {
           title: "Sentence Structure",
           icon: "format-text",

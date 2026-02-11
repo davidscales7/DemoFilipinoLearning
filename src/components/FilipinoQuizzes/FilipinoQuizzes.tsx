@@ -50,22 +50,23 @@ const FilipinoQuizzes: React.FC = () => {
           completed: completedQuizzes.includes(1), // ✅ Track completion
           onPress: () => goTo("Quiz1"),
         },
-        {
-          title: "Family",
-          icon: "account-group",
-          color: "#a855f7",
+          {
+          title: "Numbers",
+          icon: "numeric",
+          color: "#22c55e",
           locked: !isQuizUnlocked(2),
           completed: completedQuizzes.includes(2), // ✅ Track completion
           onPress: () => goTo("Quiz2"),
         },
         {
-          title: "Numbers",
-          icon: "numeric",
-          color: "#22c55e",
+          title: "Family",
+          icon: "account-group",
+          color: "#a855f7",
           locked: !isQuizUnlocked(3),
-          completed: completedQuizzes.includes(2), // ✅ Track completion
+          completed: completedQuizzes.includes(3), // ✅ Track completion
           onPress: () => goTo("Quiz3"),
         },
+      
         
       ],
       
@@ -101,27 +102,43 @@ const FilipinoQuizzes: React.FC = () => {
       ],
     },
     {
-      number: 3,
-      title: "Putting It Together",
-      quizzes: [
-        {
-          title: "Sentence Structure",
-          icon: "format-text",
-          color: "#14b8a6",
-          locked: !isQuizUnlocked(9),
-          completed: completedQuizzes.includes(9), // ✅ Track completion
-          onPress: () => goTo("Quiz8"),
-        },
-        {
-          title: "Final Test",
-          icon: "clipboard-check",
-          color: "#22c55e",
-          locked: !isQuizUnlocked(10),
-          completed: completedQuizzes.includes(10), // ✅ Track completion
-          onPress: () => goTo("Quiz9"),
-        },
-      ],
+  number: 3,
+  title: "Putting It Together",
+  quizzes: [
+    {
+      title: "Hobbies",       // ✅ Quiz 7
+      icon: "gamepad-variant",
+      color: "#6366f1",
+      locked: !isQuizUnlocked(7),
+      completed: completedQuizzes.includes(7),
+      onPress: () => goTo("Quiz7"),
     },
+    {
+      title: "Clothes",          // ✅ Quiz 8
+      icon: "tshirt-crew",
+      color: "#f59e0b",
+      locked: !isQuizUnlocked(8),
+      completed: completedQuizzes.includes(8),
+      onPress: () => goTo("Quiz8"),
+    },
+    {
+      title: "Sentence Structure", // ✅ Quiz 9
+      icon: "format-text",
+      color: "#14b8a6",
+      locked: !isQuizUnlocked(9),
+      completed: completedQuizzes.includes(9),
+      onPress: () => goTo("Quiz9"),
+    },
+    {
+      title: "Final Test",        // ✅ Quiz 10
+      icon: "clipboard-check",
+      color: "#22c55e",
+      locked: !isQuizUnlocked(10),
+      completed: completedQuizzes.includes(10),
+      onPress: () => goTo("Quiz10"),
+    },
+  ],
+},
   ];
 
   // ✅ Calculate overall progress

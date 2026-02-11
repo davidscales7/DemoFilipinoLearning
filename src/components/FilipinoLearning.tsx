@@ -13,7 +13,7 @@ import { AppCard } from "../theme/components";
 import { useTheme } from "../theme/ThemeProvider";
 import ProfileHeader from "../components/ProfileHeader/ProfileHeader";
 import ProgressRing from "../components/XP/ProgressRing";
-
+import { useAccoladeStore } from "../store/useAccoladeStore";
 type Nav = StackNavigationProp<RootStackParamList, "FilipinoLearning">;
 type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
 
@@ -47,6 +47,12 @@ const FilipinoLearning: React.FC = () => {
   
   /* ✅ REACTIVE progress state */
   const completedLessons = useProgressStore((s) => s.completedLessons);
+  const completedQuizzes = useProgressStore((s) => s.completedQuizzes);
+  const completedFlashcards = useProgressStore((s) => s.completedFlashcards);
+ // ❌ Remove this
+
+// ✅ Add this - read from where accolades are ACTUALLY stored
+const unlockedAccolades = useAccoladeStore((s) => s.unlocked);
 
   const menuItems: MenuItem[] = [
     {
@@ -62,24 +68,24 @@ const FilipinoLearning: React.FC = () => {
       icon: "help-circle",
       color: theme.colors.accent,
       screen: "FilipinoQuizzes",
-      completed: 0,
-      total: 10,
+      completed: completedQuizzes.length,
+      total: 8,
     },
     {
       title: "Flashcards",
       icon: "cards",
       color: "#ff6f61",
       screen: "FilipinoFlashHome",
-      completed: 0,
-      total: 14,
+      completed: completedFlashcards.length,
+      total: 11,
     },
     {
       title: "Accolades",
       icon: "trophy",
       color: theme.colors.success,
       screen: "FilipinoAccolades",
-      completed: 0,
-      total: 4,},
+      completed: unlockedAccolades.length,
+      total: 31,},
   ];
 
   return (
@@ -89,8 +95,6 @@ const FilipinoLearning: React.FC = () => {
       animatedEndXP={params.animatedEndXP}
       showXPBadge={false}
     >
-      {/* Greeting */}
-      <ProfileHeader username="DJ" streak={3} />
 
       {/* Hero */}
       <View

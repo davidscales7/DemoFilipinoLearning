@@ -58,9 +58,9 @@ export const QUIZZES: QuizData[] = [
     ],
   },
   {
-    id: 2,
+    id: 3,
     title: "Family Quiz",
-    accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_2, // ✅ Second quiz → QUIZ_2
+    accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_3, // ✅ Second quiz → QUIZ_2
     xpReward: 20,
     questions: [
       {
@@ -79,9 +79,9 @@ export const QUIZZES: QuizData[] = [
     ],
   },
   {
-  id: 3,
+  id: 2,
   title: "Numbers Quiz",
-  accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_3, // ✅ Third quiz → QUIZ_3
+  accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_2,
   xpReward: 20,
   questions: [
     {
@@ -278,9 +278,9 @@ export const QUIZZES: QuizData[] = [
     },
   ],
 },{
-  id: 7,
-  title: "Clothes & Colours Quiz",
-  accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_7, // ✅ Seventh quiz → QUIZ_7
+  id: 8,
+  title: "Clothes Quiz",
+  accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_8, // ✅ Seventh quiz → QUIZ_7
   xpReward: 20,
   questions: [
     {
@@ -348,9 +348,9 @@ export const QUIZZES: QuizData[] = [
 
 
 {
-  id: 8,
+  id: 7,
   title: "Hobbies Quiz",
-  accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_8, // ✅ Eighth quiz → QUIZ_8
+  accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_7, // ✅ Eighth quiz → QUIZ_8
   xpReward: 20,
   questions: [
     {
