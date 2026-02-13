@@ -57,27 +57,7 @@ export const QUIZZES: QuizData[] = [
       },
     ],
   },
-  {
-    id: 3,
-    title: "Family Quiz",
-    accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_3, // ✅ Second quiz → QUIZ_2
-    xpReward: 20,
-    questions: [
-      {
-        question: "What is the Filipino word for 'Mother'?",
-        options: ["Ama", "Nanay", "Ate", "Kuya"],
-        correctAnswer: "Nanay",
-        image: require("../../../assets/images/mother.png"),
-      },
-      {
-        question: "What does 'Tatay' mean?",
-        options: ["Brother", "Father", "Sister", "Uncle"],
-        correctAnswer: "Father",
-        image: require("../../../assets/images/father.png"),
-      },
-      // Add more questions for Quiz 2...
-    ],
-  },
+
   {
   id: 2,
   title: "Numbers Quiz",
@@ -116,6 +96,28 @@ export const QUIZZES: QuizData[] = [
     },
   ],
 },
+  {
+    id: 3,
+    title: "Family Quiz",
+    accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_3, // ✅ Second quiz → QUIZ_2
+    xpReward: 20,
+    questions: [
+      {
+        question: "What is the Filipino word for 'Mother'?",
+        options: ["Ama", "Nanay", "Ate", "Kuya"],
+        correctAnswer: "Nanay",
+        image: require("../../../assets/images/mother.png"),
+      },
+      {
+        question: "What does 'Tatay' mean?",
+        options: ["Brother", "Father", "Sister", "Uncle"],
+        correctAnswer: "Father",
+        image: require("../../../assets/images/father.png"),
+      },
+      // Add more questions for Quiz 2...
+    ],
+  },
+  
 {
   id: 4,
   title: "Colours Quiz",
@@ -277,73 +279,6 @@ export const QUIZZES: QuizData[] = [
       image: require("../../../assets/images/soup.jpg"),
     },
   ],
-},{
-  id: 8,
-  title: "Clothes Quiz",
-  accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_8, // ✅ Seventh quiz → QUIZ_7
-  xpReward: 20,
-  questions: [
-    {
-      question: "What is the correct way to say 'Red Shirt' in Tagalog?",
-      options: ["Pulang Kamiseta", "Asul na Kamiseta", "Dilaw na Kamiseta", "Puting Kamiseta"],
-      correctAnswer: "Pulang Kamiseta",
-      image: require("../../../assets/images/red_shirt.jpg"),
-    },
-    {
-      question: "What is the correct way to say 'Blue Pants' in Tagalog?",
-      options: ["Asul na Pantalon", "Berdeng Pantalon", "Dilaw na Pantalon", "Kahel na Pantalon"],
-      correctAnswer: "Asul na Pantalon",
-      image: require("../../../assets/images/blue_pants.jpg"),
-    },
-    {
-      question: "What is the correct way to say 'Green Dress' in Tagalog?",
-      options: ["Berdeng Damit", "Rosang Damit", "Kayumangging Damit", "Dilaw na Damit"],
-      correctAnswer: "Berdeng Damit",
-      image: require("../../../assets/images/green_dress.jpg"),
-    },
-    {
-      question: "How many 'Black Shoes' (Itim na Sapatos) are shown in the game?",
-      options: ["1", "2", "3", "4"],
-      correctAnswer: "1",
-      image: require("../../../assets/images/black_shoes.jpg"),
-    },
-    {
-      question: "What is the correct way to say 'White Socks' in Tagalog?",
-      options: ["Puting Medyas", "Asul na Medyas", "Dilaw na Medyas", "Rosang Medyas"],
-      correctAnswer: "Puting Medyas",
-      image: require("../../../assets/images/white_socks.jpg"),
-    },
-    {
-      question: "What is the correct way to say 'Yellow Hat' in Tagalog?",
-      options: ["Dilaw na Sombrero", "Berdeng Sombrero", "Asul na Sombrero", "Kayumangging Sombrero"],
-      correctAnswer: "Dilaw na Sombrero",
-      image: require("../../../assets/images/yellow_hat.jpg"),
-    },
-    {
-      question: "What is the correct way to say 'Orange Scarf' in Tagalog?",
-      options: ["Kahel na Scarf", "Rosang Scarf", "Lilamg Scarf", "Puting Scarf"],
-      correctAnswer: "Kahel na Scarf",
-      image: require("../../../assets/images/orange_scarf.jpg"),
-    },
-    {
-      question: "Which of these items is 'Rosang Gwantes' in Tagalog?",
-      options: ["Pink Gloves", "Purple Jacket", "Green Dress", "Blue Pants"],
-      correctAnswer: "Pink Gloves",
-      image: require("../../../assets/images/pink_gloves.jpg"),
-    },
-    {
-      question: "What is the correct way to say 'Purple Jacket' in Tagalog?",
-      options: ["Lilamg Dyaket", "Dilaw na Dyaket", "Kahel na Dyaket", "Berdeng Dyaket"],
-      correctAnswer: "Lilamg Dyaket",
-      image: require("../../../assets/images/purple_jacket.jpg"),
-    },
-    {
-      question: "What is the correct way to say 'Brown Belt' in Tagalog?",
-      options: ["Kayumangging Sinturon", "Asul na Sinturon", "Rosang Sinturon", "Dilaw na Sinturon"],
-      correctAnswer: "Kayumangging Sinturon",
-      image: require("../../../assets/images/brown_belt.jpg"),
-    },
-  ],
 },
 
 
@@ -420,6 +355,76 @@ export const QUIZZES: QuizData[] = [
     },
   ],
 },
+{
+  id: 8,
+  title: "Clothes Quiz",
+  accoladeKey: DEMO_ACCOLADES.QUIZZES.QUIZ_8, // ✅ Seventh quiz → QUIZ_7
+  xpReward: 20,
+  questions: [
+    {
+      question: "What is the correct way to say 'Red Shirt' in Tagalog?",
+      options: ["Pulang Kamiseta", "Asul na Kamiseta", "Dilaw na Kamiseta", "Puting Kamiseta"],
+      correctAnswer: "Pulang Kamiseta",
+      image: require("../../../assets/images/red_shirt.jpg"),
+    },
+    {
+      question: "What is the correct way to say 'Blue Pants' in Tagalog?",
+      options: ["Asul na Pantalon", "Berdeng Pantalon", "Dilaw na Pantalon", "Kahel na Pantalon"],
+      correctAnswer: "Asul na Pantalon",
+      image: require("../../../assets/images/blue_pants.jpg"),
+    },
+    {
+      question: "What is the correct way to say 'Green Dress' in Tagalog?",
+      options: ["Berdeng Damit", "Rosang Damit", "Kayumangging Damit", "Dilaw na Damit"],
+      correctAnswer: "Berdeng Damit",
+      image: require("../../../assets/images/green_dress.jpg"),
+    },
+    {
+      question: "How many 'Black Shoes' (Itim na Sapatos) are shown in the game?",
+      options: ["1", "2", "3", "4"],
+      correctAnswer: "1",
+      image: require("../../../assets/images/black_shoes.jpg"),
+    },
+    {
+      question: "What is the correct way to say 'White Socks' in Tagalog?",
+      options: ["Puting Medyas", "Asul na Medyas", "Dilaw na Medyas", "Rosang Medyas"],
+      correctAnswer: "Puting Medyas",
+      image: require("../../../assets/images/white_socks.jpg"),
+    },
+    {
+      question: "What is the correct way to say 'Yellow Hat' in Tagalog?",
+      options: ["Dilaw na Sombrero", "Berdeng Sombrero", "Asul na Sombrero", "Kayumangging Sombrero"],
+      correctAnswer: "Dilaw na Sombrero",
+      image: require("../../../assets/images/yellow_hat.jpg"),
+    },
+    {
+      question: "What is the correct way to say 'Orange Scarf' in Tagalog?",
+      options: ["Kahel na Scarf", "Rosang Scarf", "Lilamg Scarf", "Puting Scarf"],
+      correctAnswer: "Kahel na Scarf",
+      image: require("../../../assets/images/orange_scarf.jpg"),
+    },
+    {
+      question: "Which of these items is 'Rosang Gwantes' in Tagalog?",
+      options: ["Pink Gloves", "Purple Jacket", "Green Dress", "Blue Pants"],
+      correctAnswer: "Pink Gloves",
+      image: require("../../../assets/images/pink_gloves.jpg"),
+    },
+    {
+      question: "What is the correct way to say 'Purple Jacket' in Tagalog?",
+      options: ["Lilamg Dyaket", "Dilaw na Dyaket", "Kahel na Dyaket", "Berdeng Dyaket"],
+      correctAnswer: "Lilamg Dyaket",
+      image: require("../../../assets/images/purple_jacket.jpg"),
+    },
+    {
+      question: "What is the correct way to say 'Brown Belt' in Tagalog?",
+      options: ["Kayumangging Sinturon", "Asul na Sinturon", "Rosang Sinturon", "Dilaw na Sinturon"],
+      correctAnswer: "Kayumangging Sinturon",
+      image: require("../../../assets/images/brown_belt.jpg"),
+    },
+  ],
+},
+
+
 {
   id: 9,
   title: "Sentences & Grammar Quiz",

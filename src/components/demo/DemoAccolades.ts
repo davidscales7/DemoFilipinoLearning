@@ -125,17 +125,73 @@ export const DEMO_ACCOLADES = {
       description: "Completed all quizzes",
       icon: "🎖️",
     },
+  },FLASHCARDS: {
+  FLASHCARDS_1: {
+    id: "flashcards_1" as const,
+    title: "Memory Builder",
+    description: "Completed your first flashcard set",
+    icon: "🃏",
   },
-  FLASHCARDS: {
-    FLASHCARDS_1: {
-      id: "flashcards_1" as const,
-      title: "Memory Builder",
-      description: "Completed your first flashcard set",
-      icon: "🃏",
-    },
+  FLASHCARDS_2: {
+    id: "flashcards_2" as const,
+    title: "Flashcard Explorer",
+    description: "Completed your second flashcard set",
+    icon: "🎴"
   },
-} as {
-  LESSONS: Record<string, Accolade>;
-  QUIZZES: Record<string, Accolade>;
-  FLASHCARDS: Record<string, Accolade>;
+  FLASHCARDS_3: {
+    id: "flashcards_3" as const,
+    title: "Flashcard Enthusiast",
+    description: "Completed your third flashcard set",
+    icon: "🀄"
+  },
+  FLASHCARDS_4: {
+    id: "flashcards_4" as const,
+    title: "Flashcard Master",
+    description: "Completed your fourth flashcard set",
+    icon: "🎭"
+  },
+  FLASHCARDS_5: {
+    id: "flashcards_5" as const,
+    title: "Halfway There",
+    description: "Completed your fifth flashcard set",
+    icon: "🏆"
+  },
+  FLASHCARDS_6: {
+    id: "flashcards_6" as const,
+    title: "Flashcard Champion",
+    description: "Completed your sixth flashcard set",
+    icon: "🎯"
+  },
+  FLASHCARDS_7: {
+    id: "flashcards_7" as const,
+    title: "Flashcard Expert",
+    description: "Completed your seventh flashcard set",
+    icon: "⭐"
+  },
+  FLASHCARDS_8: {
+    id: "flashcards_8" as const,
+    title: "Flashcard Wizard",
+    description: "Completed your eighth flashcard set",
+    icon: "🔮"
+  },
+  FLASHCARDS_9: {
+    id: "flashcards_9" as const,
+    title: "Almost There",
+    description: "Completed your ninth flashcard set",
+    icon: "🌟"
+  },
+  FLASHCARDS_10: {
+    id: "flashcards_10" as const,
+    title: "Flashcard Pro",
+    description: "Completed your tenth flashcard set",
+    icon: "💎"
+  },
+  FLASHCARDS_11: {
+    id: "flashcards_11" as const,
+    title: "Flashcard Legend",
+    description: "Completed all flashcard sets",
+    icon: "👑"
+  
+},
+  }
 };

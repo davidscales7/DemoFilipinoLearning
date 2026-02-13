@@ -8,7 +8,7 @@ import LessonLayout from "./LessonLayout";
 import { useXPStore } from "../../store/useXPStore";
 import { useProgressStore } from "../../store/useProgressStore";
 import { useAccoladeStore } from "../../store/useAccoladeStore";
-import { RootStackParamList } from "../../navigation/navigation";
+import type { RootStackParamList } from "../../navigation/navigation";
 import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
 
 /* ----------------------------------------
@@ -122,7 +122,7 @@ const Lesson9: React.FC = () => {
       <AppLayout title="Lesson 9 - Sentence Structure 🎉">
         <LessonLayout lessonNumber={9} mode="summary">
           <Text style={styles.title}>Congratulations!</Text>
-          <Text style={styles.text}>
+          <Text style={styles.body}>
             You now understand Filipino sentence structure, negation, and
             question forms. Great work!
           </Text>
@@ -152,22 +152,23 @@ const Lesson9: React.FC = () => {
         </Text>
 
         {/* Card */}
-        <View style={styles.card}>
+        <View style={styles.contentCard}>
           <Text style={styles.stepTitle}>{currentStep.title}</Text>
 
           <Text style={styles.explanation}>{currentStep.explanation}</Text>
 
-          {currentStep.examples.map((ex, i) => (
-            <Text key={i} style={styles.example}>
-              • {ex}
-            </Text>
-          ))}
-        </View>
+          <View style={styles.examplesContainer}>
+            {currentStep.examples.map((ex, i) => (
+              <Text key={i} style={styles.example}>
+                • {ex}
+              </Text>
+            ))}
+          </View>
 
-        {/* Next Button */}
-        <TouchableOpacity style={styles.button} onPress={next}>
-          <Text style={styles.buttonText}>Next →</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={next}>
+            <Text style={styles.buttonText}>Next →</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Progress Indicator */}
         <Text style={styles.progress}>
@@ -185,59 +186,78 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: "#6B7280",
   },
-  card: {
-    backgroundColor: "white",
+  contentCard: {
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
-    padding: 24,
+    padding: 40,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
     elevation: 5,
-    marginBottom: 20,
+    maxWidth: 500,
+    width: "100%",
+    alignSelf: "center",
+    marginVertical: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 42,
     fontWeight: "800",
-    marginBottom: 8,
+    marginBottom: 16,
     textAlign: "center",
+    color: "#2563EB",
+  },
+  body: {
+    textAlign: "center",
+    fontSize: 16,
+    marginBottom: 24,
   },
   stepTitle: {
-    fontSize: 22,
+    fontSize: 28,
     fontWeight: "800",
-    marginBottom: 12,
+    marginBottom: 16,
     textAlign: "center",
+    color: "#2563EB",
   },
   explanation: {
     fontSize: 16,
     textAlign: "center",
-    marginBottom: 16,
+    marginBottom: 24,
     lineHeight: 24,
+    color: "#4B5563",
+  },
+  examplesContainer: {
+    backgroundColor: "#F3F4F6",
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    marginBottom: 24,
   },
   example: {
     fontSize: 15,
-    marginBottom: 6,
-    color: "#444",
+    marginBottom: 8,
+    color: "#1F2937",
+    lineHeight: 22,
   },
   button: {
     marginTop: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    paddingVertical: 18,
+    paddingHorizontal: 60,
     backgroundColor: "#2563EB",
-    borderRadius: 14,
+    borderRadius: 12,
+    shadowColor: "#2563EB",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+    minWidth: 160,
     alignSelf: "center",
   },
   buttonText: {
     color: "#FFF",
     fontWeight: "700",
     textAlign: "center",
-    fontSize: 16,
-  },
-  text: {
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 12,
-    marginTop: 8,
+    fontSize: 18,
   },
   progress: {
     textAlign: "center",

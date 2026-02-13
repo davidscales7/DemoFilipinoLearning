@@ -49,7 +49,7 @@ const FilipinoLearning: React.FC = () => {
   const completedLessons = useProgressStore((s) => s.completedLessons);
   const completedQuizzes = useProgressStore((s) => s.completedQuizzes);
   const completedFlashcards = useProgressStore((s) => s.completedFlashcards);
- // ❌ Remove this
+
 
 // ✅ Add this - read from where accolades are ACTUALLY stored
 const unlockedAccolades = useAccoladeStore((s) => s.unlocked);

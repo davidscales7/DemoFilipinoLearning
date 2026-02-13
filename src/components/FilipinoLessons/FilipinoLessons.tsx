@@ -105,16 +105,16 @@ const FilipinoLessons: React.FC = () => {
           onPress: () => goTo("Lesson6"),
         },
          {
-          title: "Hobbies",
-          icon: "gamepad-variant",
+           title: "Clothes",
+          icon: "tshirt-crew",
           color: "#8e44ad",
           locked: !demoUnlocked && !isLessonUnlocked(7),
           completed: completedLessons.includes(7),
           onPress: () => goTo("Lesson7"),
         },
-        {
-          title: "Clothes",
-          icon: "tshirt-crew",
+        {title: "Hobbies",
+          icon: "gamepad-variant",
+
           color: "#2980b9",
           locked: !demoUnlocked && !isLessonUnlocked(8),
           completed: completedLessons.includes(8),

@@ -28,7 +28,20 @@ export type AccoladeId =
   | "quiz_9"
   | "quiz_10"
   // Flashcard Accolades
-  | "flashcards_1";
+  | "flashcards_1"
+  |"flashcards_2"
+  | "flashcards_3"
+  |  "flashcards_4"
+  |  "flashcards_5"
+  |  "flashcards_6"
+  |  "flashcards_7"
+  |  "flashcards_8"
+  |  "flashcards_9"
+  |  "flashcards_10"
+  |  "flashcards_11"
+  |  "flashcards_12"
+  |  "flashcards_13"
+
 
 export type Accolade = {
   id: AccoladeId;

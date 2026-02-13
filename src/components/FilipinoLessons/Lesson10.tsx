@@ -8,7 +8,7 @@ import LessonLayout from "./LessonLayout";
 import { useXPStore } from "../../store/useXPStore";
 import { useProgressStore } from "../../store/useProgressStore";
 import { useAccoladeStore } from "../../store/useAccoladeStore";
-import { RootStackParamList } from "../../navigation/navigation";
+import type { RootStackParamList } from "../../navigation/navigation";
 import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
 
 /* ----------------------------------------
@@ -147,7 +147,7 @@ const Lesson10: React.FC = () => {
           <Text style={styles.resultText}>
             You scored {score} / {QUESTIONS.length}
           </Text>
-          <Text style={styles.text}>
+          <Text style={styles.body}>
             Amazing work! You've completed all core Filipino lessons and built
             a strong foundation in vocabulary and sentence structure.
           </Text>
@@ -170,7 +170,7 @@ const Lesson10: React.FC = () => {
         total={QUESTIONS.length}
       >
         {/* Question Card */}
-        <View style={styles.card}>
+        <View style={styles.contentCard}>
           <Text style={styles.question}>{current.question}</Text>
 
           {current.options.map((opt, i) => {
@@ -191,21 +191,21 @@ const Lesson10: React.FC = () => {
               </TouchableOpacity>
             );
           })}
-        </View>
 
-        {/* Submit Button */}
-        <TouchableOpacity
-          onPress={submitAnswer}
-          disabled={selected === null}
-          style={[
-            styles.button,
-            { opacity: selected === null ? 0.5 : 1 },
-          ]}
-        >
-          <Text style={styles.buttonText}>
-            {index === QUESTIONS.length - 1 ? "Finish Test ✓" : "Submit →"}
-          </Text>
-        </TouchableOpacity>
+          {/* Submit Button */}
+          <TouchableOpacity
+            onPress={submitAnswer}
+            disabled={selected === null}
+            style={[
+              styles.button,
+              { opacity: selected === null ? 0.5 : 1 },
+            ]}
+          >
+            <Text style={styles.buttonText}>
+              {index === QUESTIONS.length - 1 ? "Finish Test ✓" : "Submit →"}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Progress Indicator */}
         <Text style={styles.progress}>
@@ -217,51 +217,61 @@ const Lesson10: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: "white",
+  contentCard: {
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
-    padding: 24,
+    padding: 40,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
     elevation: 5,
-    marginBottom: 20,
+    maxWidth: 500,
+    width: "100%",
+    alignSelf: "center",
+    marginVertical: 20,
   },
   question: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "800",
-    marginBottom: 16,
+    marginBottom: 24,
     textAlign: "center",
+    color: "#2563EB",
   },
   option: {
-    padding: 14,
+    padding: 16,
     borderRadius: 14,
     borderWidth: 2,
-    marginBottom: 10,
+    marginBottom: 12,
   },
   optionText: {
     fontSize: 16,
     textAlign: "center",
   },
   button: {
-    marginTop: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
+    marginTop: 28,
+    paddingVertical: 18,
+    paddingHorizontal: 60,
     backgroundColor: "#2563EB",
-    borderRadius: 14,
+    borderRadius: 12,
+    shadowColor: "#2563EB",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+    minWidth: 160,
     alignSelf: "center",
   },
   buttonText: {
     color: "#FFF",
     fontWeight: "700",
     textAlign: "center",
-    fontSize: 16,
+    fontSize: 18,
   },
-  text: {
+  body: {
     fontSize: 16,
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: 24,
     marginTop: 8,
   },
   progress: {
@@ -271,16 +281,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   finishTitle: {
-    fontSize: 26,
+    fontSize: 36,
     fontWeight: "900",
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: 16,
+    color: "#2563EB",
   },
   resultText: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "700",
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: 16,
     color: "#2563EB",
   },
 });

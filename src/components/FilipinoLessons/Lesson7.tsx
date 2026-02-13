@@ -8,7 +8,7 @@ import LessonLayout from "./LessonLayout";
 import { useProgressStore } from "../../store/useProgressStore";
 import { useXPStore } from "../../store/useXPStore";
 import { useAccoladeStore } from "../../store/useAccoladeStore";
-import { RootStackParamList } from "../../navigation/navigation";
+import type { RootStackParamList } from "../../navigation/navigation";
 import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
 
 /* ----------------------------------------
@@ -143,7 +143,7 @@ const Lesson7: React.FC = () => {
   };
 
   const finishLesson = () => {
-    console.log("🏁 FINISH LESSON 6 - Returning to lessons");
+    console.log("🏁 FINISH LESSON 7 - Returning to lessons");
     navigation.navigate("FilipinoLessons");
   };
 
@@ -156,9 +156,8 @@ if (stage === "summary") {
   return (
     <AppLayout title="Lesson 7 — Clothes">
       <LessonLayout lessonNumber={7} mode="summary">
- <Text style={styles.title}>Great job! 🎉</Text>
- 
- <Text>You can now talk about clothes in Filipino.</Text>
+        <Text style={styles.title}>Great job! 🎉</Text>
+        <Text style={styles.body}>You can now talk about clothes in Filipino.</Text>
 
         <TouchableOpacity style={styles.button} onPress={finishLesson}>
           <Text style={styles.buttonText}>Back to Lessons</Text>
@@ -179,7 +178,7 @@ if (stage === "summary") {
       total={CLOTHES.length}
       >
         {/*card*/}
-        <View style={styles.card}>
+        <View style={styles.contentCard}>
           <Image 
           source={current.image} 
           style={styles.image}
@@ -188,20 +187,23 @@ if (stage === "summary") {
           {stage === "word" ? (
             <>
               <Text style={styles.title}>{current.filipino}</Text>
-              <Text>{current.english}</Text>
+              <View style={styles.translationContainer}>
+                <Text style={styles.english}>{current.english}</Text>
+              </View>
             </>
           ) : (
             <>
-              <Text style={styles.title}>{current.sentenceTL}</Text>
-              <Text>{current.sentenceEN}</Text>
+              <Text style={styles.sentenceTL}>{current.sentenceTL}</Text>
+              <View style={styles.translationContainer}>
+                <Text style={styles.sentenceEN}>{current.sentenceEN}</Text>
+              </View>
             </>
           )}
-        </View>
 
-          {/* Next Button */}
-        <TouchableOpacity style={styles.button} onPress={next}>
-          <Text style={styles.buttonText}>Next →</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={next}>
+            <Text style={styles.buttonText}>Next →</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* Progress Indicator */}
         <Text style={styles.progress}>
@@ -216,66 +218,82 @@ if (stage === "summary") {
        STYLES
     ---------------------------------------- */
     const styles = StyleSheet.create({
-      card: {
-        backgroundColor: "white",
+      contentCard: {
+        backgroundColor: "#FFFFFF",
         borderRadius: 20,
-        padding: 24,
+        padding: 40,
         alignItems: "center",
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.08,
-        shadowRadius: 10,
+        shadowOpacity: 0.1,
+        shadowRadius: 12,
         elevation: 5,
-        marginBottom: 20,
+        maxWidth: 500,
+        width: "100%",
+        alignSelf: "center",
+        marginVertical: 20,
       },
       image: {
-        width: 120,
-        height: 120,
-        marginBottom: 16,
+        width: 200,
+        height: 200,
+        marginBottom: 24,
       },
       title: {
-        fontSize: 24,
+        fontSize: 42,
         fontWeight: "800",
-        marginBottom: 8,
+        marginBottom: 16,
         textAlign: "center",
+        color: "#2563EB",
       },
-      filipino: {
+      body: {
+        textAlign: "center",
+        fontSize: 16,
+        marginBottom: 24,
+      },
+      english: {
         fontSize: 20,
         fontWeight: "600",
-        color: "#2563EB",
-        marginVertical: 8,
+        color: "#4B5563",
         textAlign: "center",
       },
       sentenceEN: {
         fontSize: 18,
         fontWeight: "600",
         textAlign: "center",
-        marginBottom: 6,
+        color: "#4B5563",
       },
       sentenceTL: {
-        fontSize: 16,
+        fontSize: 22,
+        fontWeight: "700",
         textAlign: "center",
+        marginBottom: 16,
         color: "#2563EB",
       },
+      translationContainer: {
+        backgroundColor: "#F3F4F6",
+        paddingVertical: 16,
+        paddingHorizontal: 32,
+        borderRadius: 12,
+        marginVertical: 12,
+      },
       button: {
-        marginTop: 20,
-        paddingVertical: 12,
-        paddingHorizontal: 24,
+        marginTop: 32,
+        paddingVertical: 18,
+        paddingHorizontal: 60,
         backgroundColor: "#2563EB",
-        borderRadius: 14,
-        alignSelf: "center",
+        borderRadius: 12,
+        shadowColor: "#2563EB",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
+        minWidth: 160,
       },
       buttonText: {
         color: "#FFF",
         fontWeight: "700",
         textAlign: "center",
-        fontSize: 16,
-      },
-      text: {
-        fontSize: 16,
-        textAlign: "center",
-        marginBottom: 12,
-        marginTop: 8,
+        fontSize: 18,
       },
       progress: {
         textAlign: "center",

@@ -1,14 +1,16 @@
+// I'll provide Lessons 4-10 separately. Here's Lesson 4:
+
 // Lesson4.tsx
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, Image, StyleSheet } from "react-native";
+import { Text, TouchableOpacity, Image, StyleSheet, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 
 import AppLayout from "../../components/Layout/AppLayout";
 import LessonLayout from "./LessonLayout";
 import { useProgressStore } from "../../store/useProgressStore";
-import { useXPStore } from "../../store/useXPStore"; // ✅ ADDED
-import { RootStackParamList } from "../../navigation/navigation";
+import { useXPStore } from "../../store/useXPStore";
+import type { RootStackParamList } from "../../navigation/navigation";
 import { useAccoladeStore } from "../../store/useAccoladeStore";
 import { DEMO_ACCOLADES } from "../demo/DemoAccolades";
 
@@ -57,14 +59,14 @@ const questions = [
   },
 ];
 
-// ✅ XP REWARDS
+// XP REWARDS
 const XP_PER_SLIDE = 10;
 const XP_PER_QUESTION = 15;
 
 const Lesson4: React.FC = () => {
   const navigation = useNavigation<Nav>();
   const completeLesson = useProgressStore((s) => s.completeLesson);
-  const addXP = useXPStore((s) => s.addXP); // ✅ ADDED
+  const addXP = useXPStore((s) => s.addXP);
   const unlockAccolade = useAccoladeStore((s) => s.unlockAccolade);
   
   // local state
@@ -94,7 +96,7 @@ const Lesson4: React.FC = () => {
         <LessonLayout lessonNumber={4} mode="summary">
           
           <Text style={styles.title}>Great job 🎉</Text>
-          <Text>You've completed Lesson 4</Text>
+          <Text style={styles.body}>You've completed Lesson 4</Text>
 
           <TouchableOpacity
             style={styles.button}
@@ -142,14 +144,14 @@ const Lesson4: React.FC = () => {
                 //Wrong answer
                 if (opt !== q.correct) {
                   setWrong(opt);
-                  setTimeout(() => setWrong(null), 600); // if wrong, clear after 600ms
+                  setTimeout(() => setWrong(null), 600);
                   return;
                 }
 
 
-                // Correct answer ✅ AWARD XP HERE
+                // Correct answer
                 setLocked(true);
-                addXP(XP_PER_QUESTION); // ✅ ADDED
+                addXP(XP_PER_QUESTION);
                 
                 setTimeout(() => {
                   setSelected(null);
@@ -186,58 +188,100 @@ const Lesson4: React.FC = () => {
         step={slideIndex + 1}
         total={slides.length}
       >
-        <Text style={styles.title}>{slide.word}</Text>
-        <Image source={slide.image} style={styles.image} />
-        <Text>{slide.translated}</Text>
+        <View style={styles.contentCard}>
+          <Text style={styles.title}>{slide.word}</Text>
+          <Image source={slide.image} style={styles.image} />
+          
+          <View style={styles.translationContainer}>
+            <Text style={styles.translated}>{slide.translated}</Text>
+          </View>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            addXP(XP_PER_SLIDE); // ✅ ADDED
-            
-            if (slideIndex < slides.length - 1) {
-              setSlideIndex((i) => i + 1);
-            } else {
-              setPage("quiz");
-            }
-          }}
-        >
-          <Text style={styles.buttonText}>Next</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              addXP(XP_PER_SLIDE);
+              
+              if (slideIndex < slides.length - 1) {
+                setSlideIndex((i) => i + 1);
+              } else {
+                setPage("quiz");
+              }
+            }}
+          >
+            <Text style={styles.buttonText}>Next</Text>
+          </TouchableOpacity>
+        </View>
       </LessonLayout>
     </AppLayout>
   );
 };
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    fontWeight: "800",
-    marginBottom: 16,
-    textAlign: "center",
+  contentCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    padding: 40,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
+    maxWidth: 500,
+    width: "100%",
+    alignSelf: "center",
+    marginVertical: 20,
   },
-  text: {
-    fontSize: 16,
+  title: {
+    fontSize: 42,
+    fontWeight: "800",
+    marginBottom: 24,
     textAlign: "center",
-    marginBottom: 12,
+    color: "#2563EB",
+  },
+  body: {
+    textAlign: "center",
+    fontSize: 16,
+    marginBottom: 24,
   },
   image: {
-    width: 220,
-    height: 220,
-    marginVertical: 16,
+    width: 280,
+    height: 280,
+    marginVertical: 24,
     resizeMode: "contain",
+    borderRadius: 16,
+  },
+  translationContainer: {
+    backgroundColor: "#F3F4F6",
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    marginTop: 20,
+  },
+  translated: {
+    fontSize: 20,
+    textAlign: "center",
+    color: "#4B5563",
+    fontWeight: "600",
   },
   button: {
-    marginTop: 20,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    marginTop: 36,
+    paddingVertical: 18,
+    paddingHorizontal: 60,
     backgroundColor: "#2563EB",
-    borderRadius: 10,
+    borderRadius: 12,
+    shadowColor: "#2563EB",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+    minWidth: 160,
   },
   buttonText: {
     color: "#FFF",
     fontWeight: "700",
     textAlign: "center",
+    fontSize: 18,
   },
   option: {
     width: "100%",
