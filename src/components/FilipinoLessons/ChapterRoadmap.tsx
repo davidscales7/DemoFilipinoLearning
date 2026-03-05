@@ -3,9 +3,7 @@ import { View, StyleSheet } from "react-native";
 import ChapterRow from "./ChapterRow";
 import { Chapter } from "./types";
 
-type Props = {
-  chapters: Chapter[];
-};
+type Props = { chapters: Chapter[] };
 
 const ChapterRoadmap: React.FC<Props> = ({ chapters }) => {
   return (
@@ -17,12 +15,13 @@ const ChapterRoadmap: React.FC<Props> = ({ chapters }) => {
   );
 };
 
-export default ChapterRoadmap;
-
 const styles = StyleSheet.create({
   container: {
     width: "100%",
     alignItems: "center",
-    paddingVertical: 32,
+    paddingVertical: 24,
+    paddingHorizontal: 16,
   },
 });
+
+export default ChapterRoadmap;

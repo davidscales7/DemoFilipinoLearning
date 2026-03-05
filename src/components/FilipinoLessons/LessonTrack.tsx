@@ -1,17 +1,16 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, useWindowDimensions } from "react-native";
 import LessonNode from "./LessonNode";
 import { Lesson } from "./types";
 
-type Props = {
-  lessons: Lesson[];
-};
+type Props = { lessons: Lesson[] };
 
 const LessonTrack: React.FC<Props> = ({ lessons }) => {
-  return (
-    <View style={styles.wrapper}>
-     
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
 
+  return (
+    <View style={[styles.wrapper, isMobile && styles.wrapperMobile]}>
       {lessons.map((lesson, index) => (
         <LessonNode key={index} {...lesson} />
       ))}
@@ -19,13 +18,20 @@ const LessonTrack: React.FC<Props> = ({ lessons }) => {
   );
 };
 
-export default LessonTrack;
 const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
-    justifyContent: "center", // ✅ key change
+    justifyContent: "center",
     alignItems: "flex-start",
-    gap: 32,                  // ✅ consistent spacing
-    paddingVertical: 24,
+    gap: 12,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  wrapperMobile: {
+    flexWrap: "wrap",
+    gap: 12,
+    justifyContent: "flex-start",
   },
 });
+
+export default LessonTrack;

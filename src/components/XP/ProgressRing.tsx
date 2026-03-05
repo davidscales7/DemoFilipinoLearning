@@ -3,7 +3,6 @@ import { Text, Pressable } from "react-native";
 import Svg, { Defs, LinearGradient, Stop, Circle } from "react-native-svg";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-
 import { useTheme } from "../../theme/ThemeProvider";
 import { useXPStore } from "../../store/useXPStore";
 import { RootStackParamList } from "../../navigation/navigation";
@@ -15,56 +14,34 @@ type Props = {
   size?: number;
 };
 
-/**
- * 🔒 XP RULES (single source of truth)
- */
 const XP_PER_LEVEL = 100;
 
 const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
   const navigation = useNavigation<Nav>();
   const { colors } = useTheme();
-
   const xp = useXPStore((s) => s.xp);
   const ready = useXPStore((s) => s.hasHydrated);
 
-  if (!ready) return null;
-
-  const activeXP = typeof xpOverride === "number" ? xpOverride : xp;
-
-  /**
-   * 🧠 LEVEL + PROGRESS (FIXED)
-   */
-  const level = Math.floor(activeXP / XP_PER_LEVEL) + 1;
-  const xpIntoLevel = activeXP % XP_PER_LEVEL;
-  const percent = (xpIntoLevel / XP_PER_LEVEL) * 100;
-
-  /**
-   * 🎨 SVG MATH
-   */
-  const STROKE = size * 0.15;
-  const RADIUS = (size - STROKE) / 2;
-  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
-  const strokeDashoffset =
-    CIRCUMFERENCE - (CIRCUMFERENCE * percent) / 100;
-
-  /**
-   * ✅ Unique gradient id (prevents RN-web collisions)
-   */
   const gradientId = useMemo(
     () => `xpGradient-${Math.random().toString(36).slice(2)}`,
     []
   );
 
+  if (!ready) return null;
+
+  const activeXP = typeof xpOverride === "number" ? xpOverride : xp;
+  const level = Math.floor(activeXP / XP_PER_LEVEL) + 1;
+  const xpIntoLevel = activeXP % XP_PER_LEVEL;
+  const percent = (xpIntoLevel / XP_PER_LEVEL) * 100;
+  const STROKE = size * 0.15;
+  const RADIUS = (size - STROKE) / 2;
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+  const strokeDashoffset = CIRCUMFERENCE - (CIRCUMFERENCE * percent) / 100;
+
   return (
     <Pressable
       onPress={() => navigation.navigate("FilipinoLearning")}
-      style={{
-        width: size,
-        height: size,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+      style={{ width: size, height: size, justifyContent: "center", alignItems: "center" }}
     >
       <Svg width={size} height={size}>
         <Defs>
@@ -74,7 +51,7 @@ const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
           </LinearGradient>
         </Defs>
 
-        {/* Background ring */}
+        {/* Background ring - grey */}
         <Circle
           cx={size / 2}
           cy={size / 2}
@@ -85,7 +62,7 @@ const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
           fill="none"
         />
 
-        {/* Progress ring */}
+        {/* Progress ring - blue */}
         <Circle
           cx={size / 2}
           cy={size / 2}
@@ -96,20 +73,11 @@ const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
           fill="none"
           strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
           strokeDashoffset={strokeDashoffset}
-          rotation="-90"
-          origin={`${size / 2}, ${size / 2}`}
+          transform={`rotate(-90, ${size / 2}, ${size / 2})`}
         />
       </Svg>
 
-      {/* Level label */}
-      <Text
-        style={{
-          position: "absolute",
-          fontSize: size * 0.28,
-          fontWeight: "700",
-          color: colors.textPrimary,
-        }}
-      >
+      <Text style={{ position: "absolute", fontSize: size * 0.28, fontWeight: "700", color: colors.textPrimary }}>
         {level}
       </Text>
     </Pressable>

@@ -1,10 +1,13 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, useWindowDimensions } from "react-native";
 import QuizNode from "./QuizNode";
 
 const QuizTrack = ({ quizzes }: any) => {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, isMobile && styles.wrapperMobile]}>
       {quizzes.map((quiz: any, index: number) => (
         <QuizNode key={index} {...quiz} />
       ))}
@@ -18,6 +21,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 32,
     paddingVertical: 24,
+  },
+  wrapperMobile: {
+    flexWrap: "wrap",
+    gap: 16,
+    paddingHorizontal: 8,
   },
 });
 

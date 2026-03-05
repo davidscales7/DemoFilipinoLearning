@@ -1,9 +1,16 @@
 import React, { useRef } from "react";
-import { Pressable, View, Text, StyleSheet, Animated } from "react-native";
+import {
+  Pressable,
+  View,
+  Text,
+  StyleSheet,
+  Animated,
+  useWindowDimensions,
+  Platform,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useTheme } from "../../theme/ThemeProvider";
 
-/* ✅ Correct icon name type */
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>["name"];
 
 type Props = {
@@ -16,125 +23,143 @@ type Props = {
 };
 
 const LessonNode: React.FC<Props> = ({
-  icon,
-  title,
-  color,
-  locked,
-  completed = false,
-  onPress,
+  icon, title, color, locked, completed = false, onPress,
 }) => {
-  const { colors, typography } = useTheme();
+  const { colors } = useTheme();
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
+  const circleSize = isMobile ? 56 : 72;
+  const iconSize = isMobile ? 22 : 28;
+  const nodeWidth = isMobile ? 72 : 96;
+
   const scale = useRef(new Animated.Value(1)).current;
 
   const animatePress = () => {
     if (locked) return;
-    
     Animated.sequence([
-      Animated.timing(scale, {
-        toValue: 0.95,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-      Animated.timing(scale, {
-        toValue: 1,
-        duration: 100,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      onPress();
-    });
+      Animated.timing(scale, { toValue: 0.92, duration: 80, useNativeDriver: true }),
+      Animated.spring(scale, { toValue: 1, friction: 4, useNativeDriver: true }),
+    ]).start(() => onPress());
   };
 
+  const bgColor = locked ? "#F3F4F6" : completed ? color : "#EEF2FF";
+  const borderColor = locked ? "#E5E7EB" : completed ? color : color + "60";
+  const iconColor = locked ? "#D1D5DB" : "#FFFFFF";
+
   return (
-    <View style={styles.nodeBox}>
+    <View style={[styles.nodeBox, { width: nodeWidth }]}>
       <Pressable onPress={animatePress} disabled={locked}>
         <Animated.View
           style={[
             styles.circle,
             {
-              backgroundColor: locked ? "#f3f4f6" : color,
-              borderColor: locked ? "#d1d5db" : color,
+              width: circleSize,
+              height: circleSize,
+              borderRadius: circleSize / 2,
+              backgroundColor: locked ? "#F3F4F6" : bgColor,
+              borderColor,
               transform: [{ scale }],
-              opacity: locked ? 0.5 : 1,
+              // Glow effect for unlocked nodes
+              ...(Platform.OS === "web" && !locked
+                ? { boxShadow: `0 4px 16px ${color}40` }
+                : {}),
+            },
+            !locked && Platform.OS !== "web" && {
+              shadowColor: color,
+              shadowOpacity: completed ? 0.35 : 0.2,
+              shadowRadius: 10,
+              shadowOffset: { width: 0, height: 4 },
+              elevation: 4,
             },
           ]}
         >
+          {/* Completed gets a filled circle, unlocked gets icon on tinted bg */}
           {completed && !locked ? (
-            <MaterialCommunityIcons
-              name="check"
-              size={32}
-              color="#FFFFFF"
-            />
+            <View style={[styles.completedInner, { backgroundColor: color }]}>
+              <MaterialCommunityIcons name="check-bold" size={iconSize} color="#FFF" />
+            </View>
+          ) : locked ? (
+            <MaterialCommunityIcons name="lock" size={iconSize - 2} color="#D1D5DB" />
           ) : (
-            <MaterialCommunityIcons
-              name={locked ? "lock" : icon}
-              size={32}
-              color={locked ? "#9ca3af" : "#FFFFFF"}
-            />
+            <View style={[styles.iconInner, { backgroundColor: color }]}>
+              <MaterialCommunityIcons name={icon} size={iconSize} color="#FFF" />
+            </View>
           )}
         </Animated.View>
       </Pressable>
 
+      {/* Title */}
       <Text
         style={[
-          typography.body,
           styles.label,
-          { color: locked ? "#9ca3af" : colors.textPrimary },
+          {
+            color: locked ? "#9CA3AF" : colors.textPrimary,
+            fontSize: isMobile ? 10 : 12,
+          },
         ]}
+        numberOfLines={2}
       >
         {title}
       </Text>
 
-      {locked && (
-        <Text style={styles.lockedText}>Complete previous lessons</Text>
-      )}
-
+      {/* Status text */}
       {completed && !locked && (
-        <Text style={[styles.completedText, { color: color }]}>
-          ✓ Completed
-        </Text>
+        <View style={[styles.statusPill, { backgroundColor: color + "20" }]}>
+          <Text style={[styles.statusText, { color }]}>Done</Text>
+        </View>
+      )}
+      {locked && (
+        <Text style={styles.lockedText}>Locked</Text>
       )}
     </View>
   );
 };
 
-export default LessonNode;
-
-/* ✅ Updated styles to match the unified design */
 const styles = StyleSheet.create({
   nodeBox: {
-    width: 160,
     alignItems: "center",
+    gap: 6,
   },
   circle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    borderWidth: 3,
+    borderWidth: 2.5,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 3,
+    overflow: "hidden",
+  },
+  completedInner: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  iconInner: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   label: {
-    marginTop: 10,
     textAlign: "center",
-    width: "100%",
-    fontWeight: "500",
+    fontWeight: "600",
+    lineHeight: 14,
+  },
+  statusPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  statusText: {
+    fontSize: 9,
+    fontWeight: "800",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
   },
   lockedText: {
-    marginTop: 4,
-    fontSize: 11,
-    color: "#9ca3af",
-    textAlign: "center",
-  },
-  completedText: {
-    marginTop: 4,
-    fontSize: 11,
-    textAlign: "center",
+    fontSize: 9,
+    color: "#D1D5DB",
     fontWeight: "600",
   },
 });
+
+export default LessonNode;

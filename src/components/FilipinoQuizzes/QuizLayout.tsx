@@ -1,6 +1,5 @@
-// src/components/Layout/QuizLayout.tsx
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import { useTheme } from "../../theme/ThemeProvider";
 
 type QuizLayoutProps = {
@@ -12,144 +11,81 @@ type QuizLayoutProps = {
 };
 
 const QuizLayout: React.FC<QuizLayoutProps> = ({
-  quizNumber,
-  mode,
-  step,
-  total,
-  children,
+  quizNumber, mode, step, total, children,
 }) => {
   const theme = useTheme();
-
-  // Calculate progress
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
   const progress = step && total ? (step / total) * 100 : 0;
-  const radius = 40;
-  const strokeWidth = 8;
-  const normalizedRadius = radius - strokeWidth / 2;
-  const circumference = normalizedRadius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   return (
     <View style={styles.container}>
-      {/* Sidebar */}
-      <View style={[styles.sidebar, { backgroundColor: theme.colors.primary }]}>
-        {mode !== "summary" && (
-          <>
-            {/* Progress Ring */}
-            <View style={styles.progressRing}>
-              <svg width={radius * 2} height={radius * 2}>
-                {/* Background circle */}
-                <circle
-                  stroke="rgba(255,255,255,0.2)"
-                  fill="transparent"
-                  strokeWidth={strokeWidth}
-                  r={normalizedRadius}
-                  cx={radius}
-                  cy={radius}
-                />
-                {/* Progress circle */}
-                <circle
-                  stroke="#FFF"
-                  fill="transparent"
-                  strokeWidth={strokeWidth}
-                  strokeDasharray={`${circumference} ${circumference}`}
-                  style={{ strokeDashoffset }}
-                  strokeLinecap="round"
-                  r={normalizedRadius}
-                  cx={radius}
-                  cy={radius}
-                  transform={`rotate(-90 ${radius} ${radius})`}
-                />
-              </svg>
-              <View style={styles.progressText}>
-                <Text style={styles.progressNumber}>{step}</Text>
-                <Text style={styles.progressTotal}>/{total}</Text>
-              </View>
+      {/* ── TOP BAR (replaces sidebar on mobile) ── */}
+      <View style={[styles.topBar, { backgroundColor: theme.colors.primary }]}>
+        <Text style={styles.quizLabel}>Quiz {quizNumber}</Text>
+
+        {mode !== "summary" && step !== undefined && total !== undefined && (
+          <View style={styles.topBarRight}>
+            <Text style={styles.stepText}>{step} / {total}</Text>
+            <View style={styles.progressTrack}>
+              <View style={[styles.progressFill, { width: `${progress}%` as any }]} />
             </View>
-
-            <Text style={styles.sidebarLabel}>Questions</Text>
-          </>
-        )}
-
-        {mode === "summary" && (
-          <View style={styles.completedIcon}>
-            <Text style={styles.checkmark}>✓</Text>
           </View>
         )}
 
-        <Text style={styles.quizNumber}>Quiz {quizNumber}</Text>
+        {mode === "summary" && (
+          <View style={styles.completedBadge}>
+            <Text style={styles.checkmark}>✓ Complete</Text>
+          </View>
+        )}
       </View>
 
-      {/* Main Content */}
+      {/* ── CONTENT ── */}
       <View style={styles.content}>{children}</View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: { flex: 1, flexDirection: "column" },
+  topBar: {
     flexDirection: "row",
-  },
-  sidebar: {
-    width: 120,
-    padding: 20,
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    paddingVertical: 12,
   },
-  progressRing: {
-    position: "relative",
-    width: 80,
-    height: 80,
-    marginBottom: 16,
+  quizLabel: { fontSize: 15, fontWeight: "700", color: "#FFF" },
+  topBarRight: {
+    flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    gap: 10,
+    flex: 1,
+    justifyContent: "flex-end",
   },
-  progressText: {
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  progressNumber: {
-    fontSize: 20,
-    fontWeight: "900",
-    color: "#FFF",
-  },
-  progressTotal: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "rgba(255,255,255,0.8)",
-  },
-  sidebarLabel: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: "rgba(255,255,255,0.9)",
-    marginBottom: 8,
-    textAlign: "center",
-  },
-  quizNumber: {
+  stepText: {
     fontSize: 14,
     fontWeight: "700",
-    color: "#FFF",
-    textAlign: "center",
+    color: "rgba(255,255,255,0.9)",
+    minWidth: 40,
+    textAlign: "right",
   },
-  completedIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+  progressTrack: {
+    width: 120,
+    height: 8,
+    backgroundColor: "rgba(255,255,255,0.3)",
+    borderRadius: 999,
+    overflow: "hidden",
+  },
+  progressFill: { height: "100%", backgroundColor: "#FFF", borderRadius: 999 },
+  completedBadge: {
     backgroundColor: "rgba(255,255,255,0.2)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
   },
-  checkmark: {
-    fontSize: 40,
-    color: "#FFF",
-    fontWeight: "900",
-  },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
+  checkmark: { color: "#FFF", fontWeight: "700", fontSize: 14 },
+  content: { flex: 1, padding: 16 },
 });
 
 export default QuizLayout;

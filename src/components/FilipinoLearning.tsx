@@ -1,19 +1,25 @@
 import React from "react";
-import { View, Text, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  StyleSheet,
+  Dimensions,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { ComponentProps } from "react";
 
+import AppLayout from "../components/Layout/AppLayout";
+import { useTheme } from "../theme/ThemeProvider";
+import { RootStackParamList } from "../navigation/navigation";
 import { useDemoStore } from "../store/useDemoStore";
 import { useProgressStore } from "../store/useProgressStore";
-import { RootStackParamList } from "../navigation/navigation";
-import AppLayout from "../components/Layout/AppLayout";
 import { AppCard } from "../theme/components";
-import { useTheme } from "../theme/ThemeProvider";
-import ProfileHeader from "../components/ProfileHeader/ProfileHeader";
 import ProgressRing from "../components/XP/ProgressRing";
 import { useAccoladeStore } from "../store/useAccoladeStore";
+
 type Nav = StackNavigationProp<RootStackParamList, "FilipinoLearning">;
 type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
 
@@ -26,14 +32,24 @@ type MenuItem = {
   total: number;
 };
 
-const CARD_MIN_HEIGHT = 230;
+/* ── RESPONSIVE HELPERS ── */
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const IS_SMALL = SCREEN_WIDTH < 400;
+const IS_MEDIUM = SCREEN_WIDTH >= 400 && SCREEN_WIDTH < 700;
 
-/* ✅ Static base style (TS-safe) */
+const getCardWidth = () => {
+  if (IS_SMALL) return "100%";   // 1 column on phones
+  if (IS_MEDIUM) return "47%";   // 2 columns on normal phones
+  return "45%";                  // 2 columns on tablets/desktop
+};
+
+const CARD_MIN_HEIGHT = IS_SMALL ? 160 : 200;
+
 const cardPressableBaseStyle = {
   alignItems: "center" as const,
-  gap: 10,
-  paddingVertical: 18,
-  paddingHorizontal: 12,
+  gap: IS_SMALL ? 6 : 10,
+  paddingVertical: IS_SMALL ? 14 : 18,
+  paddingHorizontal: IS_SMALL ? 10 : 12,
 };
 
 const FilipinoLearning: React.FC = () => {
@@ -42,17 +58,11 @@ const FilipinoLearning: React.FC = () => {
   const params: any = route.params || {};
   const theme = useTheme();
 
-  /* ✅ REACTIVE demo state */
   const demoUnlocked = useDemoStore((s) => s.isUnlocked);
-  
-  /* ✅ REACTIVE progress state */
   const completedLessons = useProgressStore((s) => s.completedLessons);
   const completedQuizzes = useProgressStore((s) => s.completedQuizzes);
   const completedFlashcards = useProgressStore((s) => s.completedFlashcards);
-
-
-// ✅ Add this - read from where accolades are ACTUALLY stored
-const unlockedAccolades = useAccoladeStore((s) => s.unlocked);
+  const unlockedAccolades = useAccoladeStore((s) => s.unlocked);
 
   const menuItems: MenuItem[] = [
     {
@@ -60,7 +70,7 @@ const unlockedAccolades = useAccoladeStore((s) => s.unlocked);
       icon: "book-open-page-variant",
       color: theme.colors.secondary,
       screen: "FilipinoLessons",
-      completed: completedLessons.length, 
+      completed: completedLessons.length,
       total: 10,
     },
     {
@@ -85,178 +95,86 @@ const unlockedAccolades = useAccoladeStore((s) => s.unlocked);
       color: theme.colors.success,
       screen: "FilipinoAccolades",
       completed: unlockedAccolades.length,
-      total: 31,},
+      total: 31,
+    },
   ];
 
   return (
     <AppLayout
-      title=""
+      title="Learn Filipino"
       animatedStartXP={params.animatedStartXP}
       animatedEndXP={params.animatedEndXP}
-      showXPBadge={false}
+      showXPBadge={true}
     >
+  
 
-      {/* Hero */}
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: theme.spacing.lg,
-          gap: theme.spacing.lg,
-        }}
-      >
-        <View style={{ maxWidth: 500 }}>
-          <Text
-            style={[
-              theme.typography.title,
-              { marginBottom: theme.spacing.xs },
-            ]}
-          >
-            Filipino Learning
-          </Text>
-
-          {!demoUnlocked && (
-            <Text
-              style={[
-                theme.typography.body,
-                { color: theme.colors.textSecondary },
-              ]}
-            >
-              🔒 Demo Mode — complete Lesson 1 to unlock all features
-            </Text>
-          )}
-        </View>
-
-        <ProgressRing size={88} />
-      </View>
-
-      {/* Dashboard grid */}
-      <View
-        style={{
-          flexDirection: "row",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: theme.spacing.lg,
-          paddingBottom: theme.spacing.xl,
-        }}
-      >
+      {/* ── DASHBOARD GRID ── */}
+      <View style={styles.grid}>
         {menuItems.map((item) => {
           const locked = !demoUnlocked && item.title !== "Lessons";
-          const progressPercent =
-            (item.completed / item.total) * 100;
+          const progressPercent = (item.completed / item.total) * 100;
 
           return (
             <View
               key={item.title}
-              style={{
-                width: "45%",
-                minWidth: 260,
-                minHeight: CARD_MIN_HEIGHT,
-              }}
+              style={{ width: getCardWidth(), minHeight: CARD_MIN_HEIGHT }}
             >
               <AppCard color={item.color}>
-                {/* 🔒 Demo badge */}
                 {locked && (
-                  <View
-                    style={{
-                      position: "absolute",
-                      top: 12,
-                      right: 12,
-                      backgroundColor: "rgba(0,0,0,0.55)",
-                      borderRadius: 999,
-                      paddingHorizontal: 10,
-                      paddingVertical: 4,
-                    }}
-                  >
-                    <Text style={{ color: "white", fontSize: 12 }}>
-                      🔒 Demo
-                    </Text>
+                  <View style={styles.demoBadge}>
+                    <Text style={styles.demoBadgeText}>🔒 Demo</Text>
                   </View>
                 )}
 
                 <Pressable
                   disabled={locked}
-                  onPress={() =>
-                    navigation.navigate(item.screen as any)
-                  }
+                  onPress={() => navigation.navigate(item.screen as any)}
                   style={({ pressed }) => [
                     cardPressableBaseStyle,
                     {
-                      opacity: locked
-                        ? 0.45
-                        : pressed
-                        ? 0.85
-                        : 1,
-                      transform: [
-                        {
-                          scale: locked
-                            ? 1
-                            : pressed
-                            ? 0.98
-                            : 1,
-                        },
-                      ],
+                      opacity: locked ? 0.45 : pressed ? 0.85 : 1,
+                      transform: [{ scale: locked ? 1 : pressed ? 0.98 : 1 }],
                     },
                   ]}
                 >
                   <MaterialCommunityIcons
                     name={item.icon}
-                    size={38}
+                    size={IS_SMALL ? 30 : 38}
                     color={item.color}
                   />
 
                   <Text
                     style={[
                       theme.typography.subtitle,
-                      { textAlign: "center" },
+                      { textAlign: "center", fontSize: IS_SMALL ? 15 : undefined },
                     ]}
                   >
                     {item.title}
                   </Text>
 
-                  {/* ⭐ Start here */}
                   {item.title === "Lessons" && !demoUnlocked && (
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        color: item.color,
-                        fontWeight: "600",
-                      }}
-                    >
+                    <Text style={{ fontSize: 12, color: item.color, fontWeight: "600" }}>
                       ⭐ Start here
                     </Text>
                   )}
 
                   {/* Progress bar */}
                   <View
-                    style={{
-                      width: "100%",
-                      height: 8,
-                      backgroundColor: theme.colors.border,
-                      borderRadius: 999,
-                      overflow: "hidden",
-                      marginTop: 6,
-                    }}
+                    style={[styles.progressTrack, { backgroundColor: theme.colors.border }]}
                   >
                     <View
-                      style={{
-                        width: locked
-                          ? "0%"
-                          : `${progressPercent}%`,
-                        height: "100%",
-                        backgroundColor: item.color,
-                        opacity: locked ? 0.3 : 1,
-                      }}
+                      style={[
+                        styles.progressFill,
+                        {
+                          width: locked ? "0%" : (`${progressPercent}%` as any),
+                          backgroundColor: item.color,
+                          opacity: locked ? 0.3 : 1,
+                        },
+                      ]}
                     />
                   </View>
 
-                  <Text
-                    style={{
-                      fontSize: 13,
-                      color: theme.colors.textSecondary,
-                    }}
-                  >
+                  <Text style={{ fontSize: IS_SMALL ? 11 : 13, color: theme.colors.textSecondary, textAlign: "center" }}>
                     {locked
                       ? "Complete Lesson 1 to unlock"
                       : `${item.completed} / ${item.total} completed`}
@@ -265,14 +183,12 @@ const unlockedAccolades = useAccoladeStore((s) => s.unlocked);
                   <Text
                     style={{
                       marginTop: 4,
-                      fontSize: 13,
+                      fontSize: IS_SMALL ? 12 : 13,
                       fontWeight: "600",
-                      color: locked
-                        ? theme.colors.textSecondary
-                        : item.color,
+                      color: locked ? theme.colors.textSecondary : item.color,
                     }}
                   >
-                    {locked ? "Locked" : "Continue"}
+                    {locked ? "Locked" : "Continue →"}
                   </Text>
                 </Pressable>
               </AppCard>
@@ -283,5 +199,58 @@ const unlockedAccolades = useAccoladeStore((s) => s.unlocked);
     </AppLayout>
   );
 };
+
+const styles = StyleSheet.create({
+  hero: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: IS_SMALL ? 16 : 24,
+    gap: 12,
+  },
+  heroSmall: {
+    flexDirection: "column-reverse", // ring on top, text below
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  heroText: {
+    flex: 1,
+  },
+  heroTextCentered: {
+    alignItems: "center",
+  },
+  grid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: IS_SMALL ? 12 : 16,
+    paddingBottom: 60,
+  },
+  demoBadge: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    backgroundColor: "rgba(0,0,0,0.55)",
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    zIndex: 1,
+  },
+  demoBadgeText: {
+    color: "white",
+    fontSize: 12,
+  },
+  progressTrack: {
+    width: "100%",
+    height: 8,
+    borderRadius: 999,
+    overflow: "hidden",
+    marginTop: 6,
+  },
+  progressFill: {
+    height: "100%",
+    borderRadius: 999,
+  },
+});
 
 export default FilipinoLearning;

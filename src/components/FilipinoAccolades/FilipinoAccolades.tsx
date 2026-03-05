@@ -74,41 +74,43 @@ const FilipinoAccolades: React.FC = () => {
                 {section.icon} {section.title}
               </Text>
 
-              {section.items.length > 0 ? (
-                section.items.map((acc) => (
-                  <AppCard key={acc.id} color={section.color}>
-                    <Text
-                      style={{
-                        textAlign: "center",
-                        fontWeight: "700",
-                        color: theme.colors.textLight ?? "#411a56",
-                      }}
-                    >
-                      {acc.icon} {acc.title}
-                    </Text>
-                    <Text
-                      style={{
-                        textAlign: "center",
-                        marginTop: 4,
-                        fontSize: 13,
-                        opacity: 0.85,
-                        color: theme.colors.textLight ?? "#411a56",
-                      }}
-                    >
-                      {acc.description}
-                    </Text>
-                  </AppCard>
-                ))
-              ) : (
-                <Text
-                  style={{
-                    textAlign: "center",
-                    color: theme.colors.textSecondary,
-                  }}
-                >
-                  No {section.title.toLowerCase()} accolades yet.
-                </Text>
-              )}
+             {section.items.length > 0 ? (
+  section.items.map((acc) => (
+    <AppCard key={acc.id} color={section.color}>
+      <Text
+        style={{
+          textAlign: "center",
+          fontWeight: "800",
+          color: theme.colors.textPrimary,
+          fontSize: 16,
+        }}
+      >
+        {acc.icon} {acc.title}
+      </Text>
+
+      <Text
+        style={{
+          textAlign: "center",
+          marginTop: 6,
+          fontSize: 13,
+          lineHeight: 18,
+          color: theme.colors.textSecondary,
+        }}
+      >
+        {acc.description}
+      </Text>
+    </AppCard>
+  ))
+) : (
+  <Text
+    style={{
+      textAlign: "center",
+      color: theme.colors.textSecondary,
+    }}
+  >
+    No {section.title.toLowerCase()} accolades yet.
+  </Text>
+)}
             </View>
           ))}
         </View>

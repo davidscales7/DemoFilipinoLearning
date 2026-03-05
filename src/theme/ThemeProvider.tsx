@@ -4,9 +4,19 @@ import { colors } from "./colors";
 import { spacing } from "./spacing";
 import { typography } from "./typography";
 
-const ThemeContext = createContext({ colors, spacing, typography });
+export type Theme = {
+  colors: typeof colors;
+  spacing: typeof spacing;
+  typography: typeof typography;
+};
 
-export const ThemeProvider = ({ children }) => {
+const ThemeContext = createContext<Theme>({
+  colors,
+  spacing,
+  typography,
+});
+
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <ThemeContext.Provider value={{ colors, spacing, typography }}>
       {children}

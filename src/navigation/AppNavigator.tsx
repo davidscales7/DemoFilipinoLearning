@@ -4,8 +4,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./navigation";
 
 // AUTH
-import RegisterScreen from "../components/RegisterScreen";
-import LoginScreen from "../components/LoginScreen";
 import Loading from "./Loading";
 
 // MAIN DASHBOARD
@@ -70,10 +68,8 @@ function AppNavigator() {
       }}
     >
       {/* AUTH FLOW */}
-      <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-      <Stack.Screen name="Loading" component={Loading} />
-      <Stack.Screen name="Login" component={LoginScreen} />
-
+       <Stack.Screen name="Loading" component={Loading} />
+     
       {/* MAIN DASHBOARD */}
       <Stack.Screen name="FilipinoLearning" component={FilipinoLearning} />
 
