@@ -9,6 +9,7 @@ import { ChapterRoadmap } from ".";
 import { useDemoStore } from "../../store/useDemoStore";
 import { useProgressStore } from "../../store/useProgressStore";
 import { RootStackParamList } from "../../navigation/navigation";
+import { FadeInBanner, StaggerItem } from "../AnimatedEntrance/AnimatedEntrance";
 
 type Nav = StackNavigationProp<RootStackParamList>;
 type LessonRoute = "Lesson1" | "Lesson2" | "Lesson3" | "Lesson4" | "Lesson5"
@@ -56,8 +57,8 @@ const FilipinoLessons: React.FC = () => {
   return (
     <AppLayout title="Lessons">
 
-      {/* ── Overall progress banner ── */}
-      <View style={[styles.banner, isMobile && styles.bannerMobile]}>
+      {/* ── Overall progress banner (fades down) ── */}
+      <FadeInBanner style={[styles.banner, isMobile && styles.bannerMobile]}>
         <View style={styles.bannerLeft}>
           <Text style={styles.bannerTitle}>Your Progress</Text>
           <Text style={styles.bannerSub}>
@@ -69,19 +70,21 @@ const FilipinoLessons: React.FC = () => {
             {Math.round((totalCompleted / totalLessons) * 100)}%
           </Text>
         </View>
-      </View>
+      </FadeInBanner>
 
-      {/* ── Demo notice ── */}
+      {/* ── Demo notice (staggers up) ── */}
       {!demoUnlocked && (
-        <View style={styles.demoNotice}>
+        <StaggerItem index={0} style={styles.demoNotice}>
           <Text style={styles.demoNoticeText}>
             🔒 Complete Lesson 1 — Greetings to unlock all lessons
           </Text>
-        </View>
+        </StaggerItem>
       )}
 
-      {/* ── Chapter roadmap ── */}
-      <ChapterRoadmap chapters={chapters} />
+      {/* ── Chapter roadmap (staggers up after) ── */}
+      
+        <ChapterRoadmap chapters={chapters} />
+      
 
     </AppLayout>
   );

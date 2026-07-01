@@ -5,7 +5,7 @@ export const colors = {
   accent: "#7C3AED",
 
   // Backgrounds
-  background: "#F7F8FF",
+  background: "#12a1c5",
   bg1: "#EEF2FF",
   bg2: "#F5F3FF",
 
@@ -15,8 +15,8 @@ export const colors = {
 
   // Text (new)
   textPrimary: "#111827",
-  textSecondary: "#6B7280",
-  textLight: "#FFFFFF",
+  textSecondary: "#0f1520",
+  textLight: "#7e5b5b",
 
   // Pills / chips
   pillBg: "#EEF2FF",
@@ -33,8 +33,8 @@ export const colors = {
 
 // Topbar (soft blue)
 // Topbar (neutral)
-topbarBg: "#FFFFFF",
-topbarSurface: "#FFFFFF",
+topbarBg: "#12a1c5",
+topbarSurface: "#000000",
 topbarTitle: "#111827",
 topbarEyebrow: "#6B7280",
 topbarAccent: "#2563EB",

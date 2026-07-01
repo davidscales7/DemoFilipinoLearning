@@ -1,13 +1,15 @@
 import React from "react";
 import { View, ScrollView, StyleSheet, useWindowDimensions } from "react-native";
 import { useRoute } from "@react-navigation/native";
-
 import Sidebar, { MobileTabBar } from "../Sidebar/Sidebar";
 import TopBar from "./TopBar";
 import { useTheme } from "../../theme/ThemeProvider";
 
 interface AppLayoutProps {
   title?: string;
+  hideTitle?: boolean;        // hide the TopBar title block but keep XP ring
+  hideTopBar?: boolean;       // skip the TopBar entirely (removes top gap)
+  hideSidebarXP?: boolean;    // 👈 NEW: hide the XP ring in the sidebar (this page only)
   children: React.ReactNode;
   animatedStartXP?: number | null;
   animatedEndXP?: number | null;
@@ -15,7 +17,10 @@ interface AppLayoutProps {
 }
 
 const AppLayout: React.FC<AppLayoutProps> = ({
-  title,
+  title = "Learn Filipino",
+  hideTitle = false,
+  hideTopBar = false,
+  hideSidebarXP = false, // 👈 NEW
   children,
   animatedStartXP = null,
   animatedEndXP = null,
@@ -29,18 +34,20 @@ const AppLayout: React.FC<AppLayoutProps> = ({
   return (
     <View style={styles.root}>
       {/* Desktop sidebar — returns null on mobile */}
-      <Sidebar />
+      <Sidebar hideXP={hideSidebarXP} />
 
       <View style={styles.column}>
-
-        {/* ✅ TopBar OUTSIDE scroll — stays pinned at top */}
-        <TopBar
-          key={route.name}
-          title={title}
-          animatedStartXP={animatedStartXP}
-          animatedEndXP={animatedEndXP}
-          showXPBadge={showXPBadge}
-        />
+        {/* ✅ TopBar OUTSIDE scroll — stays pinned at top (skipped if hideTopBar) */}
+        {!hideTopBar && (
+          <TopBar
+            key={route.name}
+            title={title}
+            hideTitle={hideTitle}
+            animatedStartXP={animatedStartXP}
+            animatedEndXP={animatedEndXP}
+            showXPBadge={showXPBadge}
+          />
+        )}
 
         {/* ✅ Only the page content scrolls */}
         <ScrollView
@@ -57,7 +64,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({
 
         {/* ✅ Bottom tabs OUTSIDE scroll — pinned at bottom on mobile */}
         {isMobile && <MobileTabBar />}
-
       </View>
     </View>
   );

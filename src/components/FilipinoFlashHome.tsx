@@ -16,6 +16,7 @@ import { useTheme } from "../theme/ThemeProvider";
 import { RootStackParamList } from "../navigation/navigation";
 import { useDemoStore } from "../store/useDemoStore";
 import { useProgressStore } from "../store/useProgressStore";
+import { FadeInBanner, StaggerItem } from "../components/AnimatedEntrance/AnimatedEntrance";
 
 /* -------------------- TYPES -------------------- */
 
@@ -33,89 +34,23 @@ type FlashcardItem = {
 /* -------------------- DATA -------------------- */
 
 const coreVocabulary: FlashcardItem[] = [
-  {
-    title: "Greetings",
-    icon: "hand-wave",
-    screen: "Filipinocard1",
-    color: "#3b82f6",
-    requiredLesson: 1,
-  },
-  {
-    title: "Numbers",
-    icon: "numeric",
-    screen: "Filipinocard2",
-    color: "#22c55e",
-    requiredLesson: 2,
-  },
-  {
-    title: "Family",
-    icon: "account-group",
-    screen: "Filipinocard3",
-    color: "#a855f7",
-    requiredLesson: 3,
-  },
-  {
-    title: "Colours",
-    icon: "palette",
-    screen: "Filipinocard4",
-    color: "#ef4444",
-    requiredLesson: 3,
-  },
-  {
-    title: "Animals",
-    icon: "paw",
-    screen: "Filipinocard5",
-    color: "#f97316",
-    requiredLesson: 4,
-  },
+  { title: "Greetings", icon: "hand-wave", screen: "Filipinocard1", color: "#3b82f6", requiredLesson: 1 },
+  { title: "Numbers", icon: "numeric", screen: "Filipinocard2", color: "#22c55e", requiredLesson: 2 },
+  { title: "Family", icon: "account-group", screen: "Filipinocard3", color: "#a855f7", requiredLesson: 3 },
+  { title: "Colours", icon: "palette", screen: "Filipinocard4", color: "#ef4444", requiredLesson: 3 },
+  { title: "Animals", icon: "paw", screen: "Filipinocard5", color: "#f97316", requiredLesson: 4 },
 ];
 
 const everydayTopics: FlashcardItem[] = [
-  {
-    title: "Food & Drink",
-    icon: "food",
-    screen: "Filipinocard6",
-    color: "#f59e0b",
-    requiredLesson: 6,
-  },
-  {
-    title: "Hobbies",
-    icon: "car",
-    screen: "Filipinocard7",
-    color: "#0ea5e9",
-    requiredLesson: 6,
-  },
-  {
-    title: "Clothes",
-    icon: "weather-sunny",
-    screen: "Filipinocard8",
-    color: "#eab308",
-    requiredLesson: 6,
-  },
-  {
-    title: "Sentence Structure",
-    icon: "soccer",
-    screen: "Filipinocard9",
-    color: "#10b981",
-    requiredLesson: 8,
-  },
-  {
-    title: "House Items",
-    icon: "home-outline",
-    screen: "Filipinocard10",
-    color: "#6366f1",
-    requiredLesson: 7,
-  },
+  { title: "Food & Drink", icon: "food", screen: "Filipinocard6", color: "#f59e0b", requiredLesson: 6 },
+  { title: "Hobbies", icon: "car", screen: "Filipinocard7", color: "#0ea5e9", requiredLesson: 6 },
+  { title: "Clothes", icon: "weather-sunny", screen: "Filipinocard8", color: "#eab308", requiredLesson: 6 },
+  { title: "Sentence Structure", icon: "soccer", screen: "Filipinocard9", color: "#10b981", requiredLesson: 8 },
+  { title: "House Items", icon: "home-outline", screen: "Filipinocard10", color: "#6366f1", requiredLesson: 7 },
 ];
 
 const extras: FlashcardItem[] = [
-  {
-    title: "General",
-    icon: "book-outline",
-    screen: "Filipinocard11",
-    color: "#64748b",
-    requiredLesson: 5,
-  },
+  { title: "General", icon: "book-outline", screen: "Filipinocard11", color: "#64748b", requiredLesson: 5 },
 ];
 
 /* -------------------- TRACK COMPONENT -------------------- */
@@ -210,51 +145,61 @@ const FilipinoFlashHome: React.FC = () => {
   return (
     <AppLayout title="Flashcards">
       <ScrollView contentContainerStyle={{ paddingBottom: 60 }}>
-        <Text
-          style={[
-            theme.typography.body,
-            {
-              textAlign: "center",
-              marginBottom: theme.spacing.lg,
-              color: theme.colors.textSecondary,
-            },
-          ]}
-        >
-          Drill vocabulary with focused flashcard tracks.
-        </Text>
-
-        {!demoUnlocked && (
+        {/* Intro (fades down) */}
+        <FadeInBanner>
           <Text
-            style={{
-              textAlign: "center",
-              marginBottom: 28,
-              color: theme.colors.textSecondary,
-            }}
+            style={[
+              theme.typography.body,
+              {
+                textAlign: "center",
+                marginBottom: theme.spacing.lg,
+                color: theme.colors.textSecondary,
+              },
+            ]}
           >
-            🔒 Complete lessons to unlock flashcards
+            Drill vocabulary with focused flashcard tracks.
           </Text>
-        )}
 
-        <FlashcardTrack
-          title="Core Vocabulary"
-          items={coreVocabulary}
-          demoUnlocked={demoUnlocked}
-          completedLessons={completedLessons}
-        />
+          {!demoUnlocked && (
+            <Text
+              style={{
+                textAlign: "center",
+                marginBottom: 28,
+                color: theme.colors.textSecondary,
+              }}
+            >
+              🔒 Complete lessons to unlock flashcards
+            </Text>
+          )}
+        </FadeInBanner>
 
-        <FlashcardTrack
-          title="Everyday Topics"
-          items={everydayTopics}
-          demoUnlocked={demoUnlocked}
-          completedLessons={completedLessons}
-        />
+        {/* Tracks (each staggers up) */}
+        <StaggerItem index={0}>
+          <FlashcardTrack
+            title="Core Vocabulary"
+            items={coreVocabulary}
+            demoUnlocked={demoUnlocked}
+            completedLessons={completedLessons}
+          />
+        </StaggerItem>
 
-        <FlashcardTrack
-          title="Extras"
-          items={extras}
-          demoUnlocked={demoUnlocked}
-          completedLessons={completedLessons}
-        />
+        <StaggerItem index={1}>
+          <FlashcardTrack
+            title="Everyday Topics"
+            items={everydayTopics}
+            demoUnlocked={demoUnlocked}
+            completedLessons={completedLessons}
+          />
+        </StaggerItem>
+
+        <StaggerItem index={2}>
+          <FlashcardTrack
+            title="Extras"
+            items={extras}
+            demoUnlocked={demoUnlocked}
+            completedLessons={completedLessons}
+          />
+        </StaggerItem>
       </ScrollView>
     </AppLayout>
   );
@@ -269,25 +214,21 @@ const styles = StyleSheet.create({
     marginBottom: 48,
     alignItems: "center",
   },
-
   trackTitle: {
     fontSize: 20,
     fontWeight: "700",
     marginBottom: 18,
   },
-
   trackRow: {
     flexDirection: "row",
     justifyContent: "center",
     gap: 32,
     flexWrap: "wrap",
   },
-
   nodeWrap: {
     alignItems: "center",
     width: 110,
   },
-
   node: {
     width: 72,
     height: 72,
@@ -301,14 +242,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 6 },
     elevation: 3,
   },
-
   nodeLabel: {
     marginTop: 8,
     fontSize: 13,
     textAlign: "center",
     fontWeight: "500",
   },
-
   lockedText: {
     marginTop: 4,
     fontSize: 11,

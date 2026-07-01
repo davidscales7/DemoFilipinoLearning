@@ -2,7 +2,11 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { RootStackParamList } from "./navigation";
+import { useXPStore } from "../store/useXPStore";
 
+
+// ONBOARDING
+import Onboarding from "../components/Onboarding/Onboarding";
 // AUTH
 import Loading from "./Loading";
 
@@ -57,20 +61,25 @@ import Quiz10 from "../components/FilipinoQuizzes/Quiz10";
 import FilipinoAccolades from "../components/FilipinoAccolades/FilipinoAccolades";
 
 
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function AppNavigator() {
   return (
     <Stack.Navigator
-      initialRouteName="FilipinoLearning"
+      initialRouteName="Onboarding"
       screenOptions={{
         headerShown: false, // 👈 hide native headers everywhere
       }}
     >
       {/* AUTH FLOW */}
        <Stack.Screen name="Loading" component={Loading} />
-     
+ 
+     {/* Onboarding */}
+     <Stack.Screen name="Onboarding" component={Onboarding} />
+
       {/* MAIN DASHBOARD */}
+
       <Stack.Screen name="FilipinoLearning" component={FilipinoLearning} />
 
       {/* FLASHCARDS */}

@@ -11,6 +11,8 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { ComponentProps } from "react";
 import { useTheme } from "../../theme/ThemeProvider";
+import ProgressRing from "../XP/ProgressRing";
+import { useXPStore } from "../../store/useXPStore";
 
 type IconName = ComponentProps<typeof MaterialCommunityIcons>["name"];
 
@@ -23,33 +25,60 @@ const menu: { label: string; icon: IconName; screen: string }[] = [
 ];
 
 /* ── DESKTOP SIDEBAR ── */
-const DesktopSidebar = () => {
+const DesktopSidebar = ({ hideXP }: { hideXP?: boolean }) => {
   const navigation = useNavigation();
+  const route = useRoute();
   const theme = useTheme();
+  const xp = useXPStore((s) => s.xp);
 
   return (
     <View style={[styles.sidebar, { backgroundColor: theme.colors.sidebarBg }]}>
       <Text style={[styles.logoText, { color: theme.colors.sidebarText }]}>
         Learn 🇵🇭
       </Text>
+
+      {/* ── XP RING / LEVEL (hidden when hideXP) ── */}
+      {!hideXP && (
+        <View
+          style={[
+            styles.xpBlock,
+            { backgroundColor: "rgba(255,255,255,0.06)" },
+          ]}
+        >
+          <Text style={[styles.xpLabel, { color: "rgba(255,255,255,0.6)" }]}>
+            LEVEL
+          </Text>
+          <ProgressRing key={xp} xpOverride={xp} size={54} />
+        </View>
+      )}
+
       <View style={styles.menuList}>
-        {menu.map((item, index) => (
-          <TouchableOpacity
-            key={index}
-            style={styles.menuItem}
-            onPress={() => navigation.navigate(item.screen as never)}
-          >
-            <MaterialCommunityIcons
-              name={item.icon}
-              size={22}
-              color={theme.colors.sidebarText}
-              style={{ marginRight: 12 }}
-            />
-            <Text style={[styles.menuText, { color: theme.colors.sidebarText }]}>
-              {item.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        {menu.map((item, index) => {
+          const isActive = route.name === item.screen;
+          return (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.menuItem,
+                isActive && {
+                  backgroundColor: "rgba(255,255,255,0.08)",
+                  borderRadius: 10,
+                },
+              ]}
+              onPress={() => navigation.navigate(item.screen as never)}
+            >
+              <MaterialCommunityIcons
+                name={item.icon}
+                size={22}
+                color={theme.colors.sidebarText}
+                style={{ marginRight: 12 }}
+              />
+              <Text style={[styles.menuText, { color: theme.colors.sidebarText }]}>
+                {item.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
     </View>
   );
@@ -66,7 +95,6 @@ export const MobileTabBar = () => {
       {menu.map((item, index) => {
         const isActive = route.name === item.screen;
         const color = isActive ? "#fff" : "rgba(255,255,255,0.5)";
-
         return (
           <TouchableOpacity
             key={index}
@@ -84,10 +112,10 @@ export const MobileTabBar = () => {
 };
 
 /* ── SMART SIDEBAR: picks correct version reactively ── */
-const Sidebar = () => {
+const Sidebar = ({ hideXP }: { hideXP?: boolean }) => {
   const { width } = useWindowDimensions(); // ✅ reactive — works on web
   if (width < 768) return null;
-  return <DesktopSidebar />;
+  return <DesktopSidebar hideXP={hideXP} />;
 };
 
 export default Sidebar;
@@ -102,17 +130,32 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 20,
     fontWeight: "700",
-    marginBottom: 30,
+    marginBottom: 20,
+  },
+  xpBlock: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 14,
+    marginBottom: 24,
+  },
+  xpLabel: {
+    fontSize: 11,
+    fontWeight: "800",
+    letterSpacing: 1.2,
   },
   menuList: {
     flexDirection: "column",
-    gap: 18,
-    marginTop: 10,
+    gap: 6,
+    marginTop: 4,
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 10,
+    paddingHorizontal: 10,
   },
   menuText: {
     fontSize: 16,

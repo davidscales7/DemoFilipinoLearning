@@ -5,7 +5,13 @@ import {
   Pressable,
   StyleSheet,
   Dimensions,
+  Image,
 } from "react-native";
+import Animated, {
+  FadeInDown,
+  FadeInUp,
+  FadeIn,
+} from "react-native-reanimated";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -18,6 +24,7 @@ import { useDemoStore } from "../store/useDemoStore";
 import { useProgressStore } from "../store/useProgressStore";
 import { AppCard } from "../theme/components";
 import ProgressRing from "../components/XP/ProgressRing";
+import { useXPStore } from "../store/useXPStore";
 import { useAccoladeStore } from "../store/useAccoladeStore";
 
 type Nav = StackNavigationProp<RootStackParamList, "FilipinoLearning">;
@@ -36,6 +43,7 @@ type MenuItem = {
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const IS_SMALL = SCREEN_WIDTH < 400;
 const IS_MEDIUM = SCREEN_WIDTH >= 400 && SCREEN_WIDTH < 700;
+const IS_DESKTOP = SCREEN_WIDTH >= 700;
 
 const getCardWidth = () => {
   if (IS_SMALL) return "100%";   // 1 column on phones
@@ -58,6 +66,7 @@ const FilipinoLearning: React.FC = () => {
   const params: any = route.params || {};
   const theme = useTheme();
 
+  const xp = useXPStore((s) => s.xp);
   const demoUnlocked = useDemoStore((s) => s.isUnlocked);
   const completedLessons = useProgressStore((s) => s.completedLessons);
   const completedQuizzes = useProgressStore((s) => s.completedQuizzes);
@@ -101,22 +110,81 @@ const FilipinoLearning: React.FC = () => {
 
   return (
     <AppLayout
-      title="Learn Filipino"
-      animatedStartXP={params.animatedStartXP}
-      animatedEndXP={params.animatedEndXP}
-      showXPBadge={true}
+      hideTopBar
+      hideSidebarXP
     >
-  
+      {/* ── DECORATIVE BLOBS (behind everything) ── */}
+      <View pointerEvents="none" style={styles.blobLayer}>
+        <View style={[styles.blob, styles.blobOne, { backgroundColor: theme.colors.secondary }]} />
+        <View style={[styles.blob, styles.blobTwo, { backgroundColor: "#ff6f61" }]} />
+        <View style={[styles.blob, styles.blobThree, { backgroundColor: theme.colors.accent }]} />
+        <View style={[styles.blob, styles.blobFour, { backgroundColor: theme.colors.success }]} />
+      </View>
 
-      {/* ── DASHBOARD GRID ── */}
+      {/* ── HERO SECTION (animated: fades + slides down) ── */}
+      <Animated.View
+        entering={FadeInDown.duration(600).springify().damping(18)}
+        style={[
+          styles.heroSection,
+          IS_SMALL && styles.heroSectionStacked,
+        ]}
+      >
+        {/* LEFT: Text */}
+        <View style={styles.heroTextContainer}>
+          <Text style={[styles.heroTitle, { color: theme.colors.textPrimary }]}>
+            Learn Filipino{"\n"}the easy way!
+          </Text>
+          <Text style={[styles.heroSubtitle, { color: theme.colors.textSecondary }]}>
+            Bite-sized lessons, quizzes, and flashcards. Just five minutes a day to fluency.
+          </Text>
+
+          {/* Button + bare XP ring */}
+          <View style={styles.heroActionsRow}>
+            <Pressable
+              onPress={() => navigation.navigate("FilipinoLessons" as any)}
+              style={({ pressed }) => [
+                styles.heroButton,
+                {
+                  backgroundColor: theme.colors.primary,
+                  opacity: pressed ? 0.85 : 1,
+                },
+              ]}
+            >
+              <Text style={styles.heroButtonText}>Start Learning →</Text>
+            </Pressable>
+
+            {/* XP RING — beside the button */}
+            <ProgressRing key={xp} xpOverride={xp} size={IS_SMALL ? 52 : 60} />
+          </View>
+        </View>
+
+        {/* RIGHT: Image (fades in slightly later) */}
+        <Animated.View
+          entering={FadeIn.duration(800).delay(200)}
+          style={styles.heroImageContainer}
+        >
+          <Image
+            source={require("../../assets/images/GreetingImg.jpg")}
+            style={styles.heroImage}
+            resizeMode="cover"
+          />
+        </Animated.View>
+      </Animated.View>
+
+      {/* ── DASHBOARD GRID (cards stagger in) ── */}
       <View style={styles.grid}>
-        {menuItems.map((item) => {
+        {menuItems.map((item, index) => {
           const locked = !demoUnlocked && item.title !== "Lessons";
           const progressPercent = (item.completed / item.total) * 100;
 
           return (
-            <View
+            <Animated.View
               key={item.title}
+              entering={FadeInUp
+                .duration(500)
+                .delay(300 + index * 120) // stagger: each card 120ms after the last
+                .springify()
+                .damping(16)}
               style={{ width: getCardWidth(), minHeight: CARD_MIN_HEIGHT }}
             >
               <AppCard color={item.color}>
@@ -192,7 +260,7 @@ const FilipinoLearning: React.FC = () => {
                   </Text>
                 </Pressable>
               </AppCard>
-            </View>
+            </Animated.View>
           );
         })}
       </View>
@@ -201,24 +269,102 @@ const FilipinoLearning: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  hero: {
+  /* ── BLOBS ── */
+  blobLayer: {
+    ...StyleSheet.absoluteFillObject,
+    overflow: "hidden",
+  },
+  blob: {
+    position: "absolute",
+    borderRadius: 9999,
+    opacity: 0.1,
+  },
+  blobOne: {
+    width: 340,
+    height: 340,
+    top: -90,
+    right: -70,
+  },
+  blobTwo: {
+    width: 280,
+    height: 280,
+    top: 260,
+    left: -120,
+  },
+  blobThree: {
+    width: 320,
+    height: 320,
+    bottom: 140,
+    right: -90,
+  },
+  blobFour: {
+    width: 240,
+    height: 240,
+    bottom: -70,
+    left: 60,
+  },
+
+  /* ── HERO ── */
+  heroSection: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: IS_SMALL ? 16 : 24,
-    gap: 12,
+    marginBottom: IS_SMALL ? 24 : 36,
+    gap: 24,
   },
-  heroSmall: {
-    flexDirection: "column-reverse", // ring on top, text below
-    alignItems: "center",
+  heroSectionStacked: {
+    flexDirection: "column",
+    alignItems: "flex-start",
+  },
+  heroTextContainer: {
+    flex: 1,
     justifyContent: "center",
   },
-  heroText: {
-    flex: 1,
+  heroTitle: {
+    fontSize: IS_SMALL ? 26 : 36,
+    fontWeight: "900",
+    marginBottom: 12,
+    lineHeight: IS_SMALL ? 32 : 42,
   },
-  heroTextCentered: {
+  heroSubtitle: {
+    fontSize: IS_SMALL ? 14 : 16,
+    lineHeight: 22,
+    marginBottom: 20,
+  },
+  heroActionsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+    flexWrap: "wrap",
+  },
+  heroButton: {
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    shadowColor: "#000",
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
+  },
+  heroButtonText: {
+    color: "white",
+    fontWeight: "800",
+    fontSize: 15,
+  },
+  heroImageContainer: {
+    flex: 1,
+    width: IS_SMALL ? "100%" : undefined,
+    height: IS_SMALL ? 140 : 200,
+    justifyContent: "center",
     alignItems: "center",
   },
+  heroImage: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 16,
+  },
+
+  /* ── GRID ── */
   grid: {
     flexDirection: "row",
     flexWrap: "wrap",

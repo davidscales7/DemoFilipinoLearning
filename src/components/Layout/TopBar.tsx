@@ -10,6 +10,7 @@ interface TopBarProps {
   animatedStartXP?: number | null;
   animatedEndXP?: number | null;
   showXPBadge?: boolean;
+  hideTitle?: boolean; // 👈 NEW: hide the title block but keep XP ring
 }
 
 const TopBar: React.FC<TopBarProps> = ({
@@ -17,6 +18,7 @@ const TopBar: React.FC<TopBarProps> = ({
   animatedStartXP = null,
   animatedEndXP = null,
   showXPBadge = true,
+  hideTitle = false, // 👈 NEW
 }) => {
   const theme = useTheme();
   const { width } = useWindowDimensions();
@@ -36,6 +38,7 @@ const TopBar: React.FC<TopBarProps> = ({
   const surface = (theme.colors.topbarSurface ?? theme.colors.card) as any;
 
   return (
+    
     <View
       style={[
         styles.container,
@@ -44,10 +47,12 @@ const TopBar: React.FC<TopBarProps> = ({
           paddingHorizontal: isMobile ? 14 : 20,
           backgroundColor: bg as any,
           borderBottomColor: border,
+          // when title is hidden, push XP ring to the right
+          justifyContent: hideTitle ? "flex-end" : "space-between",
         },
       ]}
     >
-      {!!title && (
+      {!!title && !hideTitle && (
         <View style={styles.titleBlock}>
           <View style={[styles.accentBar, { backgroundColor: accent as any }]} />
 
@@ -142,7 +147,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.3,
   },
 
-  // ✅ makes XP feel “placed” rather than floating
+  // ✅ makes XP feel "placed" rather than floating
   xpPill: {
     flexDirection: "row",
     alignItems: "center",

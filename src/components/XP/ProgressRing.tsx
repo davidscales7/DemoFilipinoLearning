@@ -77,9 +77,9 @@ const ProgressRing: React.FC<Props> = ({ xpOverride, size = 70 }) => {
         />
       </Svg>
 
-      <Text style={{ position: "absolute", fontSize: size * 0.28, fontWeight: "700", color: colors.textPrimary }}>
-        {level}
-      </Text>
+  <Text style={{ position: "absolute", fontSize: size * 0.28, fontWeight: "700", color: "#fff" }}>
+  {level}
+</Text>
     </Pressable>
   );
 };

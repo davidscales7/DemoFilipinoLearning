@@ -5,11 +5,12 @@ export type RootStackParamList = {
   Ukrainian: undefined;
   Filipino: undefined;
 
+
+  Onboarding: undefined;
   FilipinoLearning: {
     animatedStartXP?: number;
     animatedEndXP?: number;
   } | undefined;
-
   Filipinocard1: undefined;
   Filipinocard2: undefined;
   Filipinocard3: undefined;

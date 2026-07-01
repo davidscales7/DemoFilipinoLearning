@@ -1,4 +1,3 @@
-console.log("🚨🚨🚨 QUIZLOGIC FILE LOADED 🚨🚨🚨");
 
 import React, { useEffect, useState } from "react";
 // ... rest of imports
@@ -14,7 +13,8 @@ import QuizChapter from "./QuizChapter";
 import { useDemoStore } from "../../store/useDemoStore";
 import { useProgressStore } from "../../store/useProgressStore";
 import { useTheme } from "../../theme/ThemeProvider";
-/* ----------------------------------------
+import { FadeInBanner, StaggerItem } from "../AnimatedEntrance/AnimatedEntrance";
+/* ----------------------------------------r
    TYPES
 ---------------------------------------- */
 type Nav = StackNavigationProp<RootStackParamList>;
@@ -32,10 +32,7 @@ const FilipinoQuizzes: React.FC = () => {
     navigation.navigate(screen as never);
   };
 
-  console.log("📊 Quiz Progress:", {
-    demoUnlocked,
-    completedQuizzes,
-  });
+
 
   const chapters = [
     {
@@ -149,18 +146,18 @@ const FilipinoQuizzes: React.FC = () => {
   return (
     <AppLayout title="Quizzes">
       <ScrollView>
-        {/* Demo Message */}
+        {/* Demo Message (fades down) */}
         {!demoUnlocked && (
-          <View style={styles.demoMessage}>
+          <FadeInBanner style={styles.demoMessage}>
             <Text style={[theme.typography.body, styles.demoText]}>
               🔒 Complete lesson 1 to unlock all quizzes
             </Text>
-          </View>
+          </FadeInBanner>
         )}
 
-        {/* Overall Progress Bar */}
+        {/* Overall Progress Bar (fades down) */}
         {completedCount > 0 && (
-          <View style={styles.progressContainer}>
+          <FadeInBanner style={styles.progressContainer} delay={80}>
             <View style={styles.progressHeader}>
               <Text style={styles.progressTitle}>Overall Progress</Text>
               <Text style={styles.progressStats}>
@@ -175,12 +172,14 @@ const FilipinoQuizzes: React.FC = () => {
                 ]}
               />
             </View>
-          </View>
+          </FadeInBanner>
         )}
 
-        {/* Quiz Chapters */}
-        {chapters.map((chapter) => (
-          <QuizChapter key={chapter.number} chapter={chapter} />
+        {/* Quiz Chapters (each staggers up) */}
+        {chapters.map((chapter, index) => (
+          <StaggerItem key={chapter.number} index={index}>
+            <QuizChapter chapter={chapter} />
+          </StaggerItem>
         ))}
       </ScrollView>
     </AppLayout>
